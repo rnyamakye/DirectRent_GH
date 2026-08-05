@@ -1,0 +1,78 @@
+import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+
+export default async function ContactPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return (
+      <main className="flex-1 px-6 py-24 max-w-2xl mx-auto w-full flex flex-col items-center justify-center text-center gap-6">
+        <h1 className="text-3xl font-bold text-heading">Contact Us</h1>
+        <p className="font-supporting text-lg text-body max-w-md">
+          To ensure the best support experience and prevent spam, please log in or create an account before contacting our team.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+          <Link 
+            href="/auth/login"
+            className="rounded-full bg-primary px-8 py-3 text-sm font-bold text-white transition hover:bg-primary-hover shadow-sm w-full sm:w-auto"
+          >
+            Log In
+          </Link>
+          <Link 
+            href="/auth/register"
+            className="rounded-full bg-card border border-border px-8 py-3 text-sm font-bold text-heading transition hover:bg-slate-50 shadow-sm w-full sm:w-auto"
+          >
+            Sign Up
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="flex-1 px-6 py-16 max-w-2xl mx-auto w-full flex flex-col gap-8">
+      <div>
+        <h1 className="text-3xl font-bold text-heading mb-3">Contact Us</h1>
+        <p className="font-supporting text-base text-body">
+          Have a question or need assistance? We&apos;re here to help. Reach out to us using any of the methods below.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 mt-4">
+        <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <h3 className="font-semibold text-heading">Email Support</h3>
+          <p className="font-supporting text-sm text-body mb-2">For general inquiries and support.</p>
+          <a href="mailto:support@directrent.gh" className="text-sm font-medium text-primary hover:text-primary-hover">support@directrent.gh</a>
+        </div>
+        
+        <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <h3 className="font-semibold text-heading">Phone</h3>
+          <p className="font-supporting text-sm text-body mb-2">Available Mon-Fri, 9am - 5pm GMT.</p>
+          <a href="tel:+233123456789" className="text-sm font-medium text-primary hover:text-primary-hover">+233 (0) 123 456 789</a>
+        </div>
+      </div>
+
+      <section className="flex flex-col gap-4 mt-6">
+        <h2 className="text-xl font-semibold text-heading">Send us a message</h2>
+        <form className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="name" className="text-sm font-medium text-heading">Name</label>
+            <input id="name" type="text" className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="Your name" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-heading">Email</label>
+            <input id="email" type="email" className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="your@email.com" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="message" className="text-sm font-medium text-heading">Message</label>
+            <textarea id="message" rows={4} className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="How can we help?"></textarea>
+          </div>
+          <button type="button" className="mt-2 w-full rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary-hover">
+            Send Message
+          </button>
+        </form>
+      </section>
+    </main>
+  );
+}

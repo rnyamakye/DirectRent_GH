@@ -23,6 +23,8 @@ export default function BoostListingPage({
   const [selectedDays, setSelectedDays] = useState(7);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [paymentMethod, setPaymentMethod] = useState<"paystack" | "wallet">("paystack");
 
   useEffect(() => {
     async function loadListing() {
@@ -30,6 +32,11 @@ export default function BoostListingPage({
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
+      if (!user) {
+          router.push("/auth/login");
+          return;
+      }
 
       const { data, error: fetchError } = await supabase
         .from("listings")
@@ -47,6 +54,16 @@ export default function BoostListingPage({
         return;
       }
 
+      const { data: wallet } = await supabase
+        .from("wallets")
+        .select("balance_pesewas")
+        .eq("user_id", user.id)
+        .single();
+        
+      if (wallet) {
+          setWalletBalance(wallet.balance_pesewas);
+      }
+
       setListing({ title: data.title, price: data.price });
       setLoading(false);
     }
@@ -60,6 +77,25 @@ export default function BoostListingPage({
     e.preventDefault();
     setSubmitting(true);
     setError("");
+
+    if (paymentMethod === "wallet") {
+        const res = await fetch("/api/payments/boost/wallet", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ targetType: "listing", targetId: id, days: selectedDays }),
+        });
+
+        const data = await res.json();
+        
+        if (!res.ok) {
+            setError(data.error ?? "Could not start payment.");
+            setSubmitting(false);
+            return;
+        }
+
+        router.push(data.redirectUrl);
+        return;
+    }
 
     const res = await fetch("/api/payments/boost/initialize", {
       method: "POST",
@@ -81,6 +117,8 @@ export default function BoostListingPage({
   if (loading || !listing) {
     return <p className="font-supporting text-sm text-body">Loading...</p>;
   }
+
+  const hasSufficientWalletBalance = walletBalance >= selectedDuration.cost * 100;
 
   return (
     <form onSubmit={handlePay} className="flex flex-col gap-6 max-w-sm">
@@ -114,10 +152,35 @@ export default function BoostListingPage({
         </div>
       </div>
 
-      <p className="font-supporting text-xs text-body">
-        You&apos;ll enter your Mobile Money details on the next screen
-        (Paystack&apos;s secure checkout).
-      </p>
+      <div>
+        <p className="font-supporting text-xs text-body mb-2">Payment Method</p>
+        <div className="flex flex-col gap-2">
+            <label className="flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-supporting cursor-pointer">
+              <span className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  checked={paymentMethod === "paystack"}
+                  onChange={() => setPaymentMethod("paystack")}
+                />
+                Pay with Mobile Money/Card
+              </span>
+            </label>
+            <label className={`flex items-center justify-between rounded-lg border px-4 py-3 text-sm font-supporting cursor-pointer ${!hasSufficientWalletBalance ? 'opacity-50 border-border' : 'border-border'}`}>
+              <span className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  checked={paymentMethod === "wallet"}
+                  disabled={!hasSufficientWalletBalance}
+                  onChange={() => setPaymentMethod("wallet")}
+                />
+                Pay with Wallet Balance
+              </span>
+              <span className="text-xs text-body/60">GHS {(walletBalance/100).toFixed(2)} available</span>
+            </label>
+        </div>
+      </div>
 
       <div className="rounded-xl bg-mint p-4 flex justify-between text-sm font-semibold">
         <span>Total</span>

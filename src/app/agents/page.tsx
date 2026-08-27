@@ -1,9 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { AgentsPageClient } from "@/components/agents-page-client";
+import { redirect } from "next/navigation";
 
 export default async function AgentsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/auth/login?returnTo=/agents");
+  }
 
   // 1. Fetch all agent profiles
   const { data: profilesData } = await supabase

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 type NotifPrefs = {
@@ -77,6 +79,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 }
 
 export default function NotificationsPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -121,8 +124,8 @@ export default function NotificationsPage() {
 
     setSaving(false);
     if (updateError) { setError(updateError.message); return; }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    toast.success("Notification preferences saved.");
+    router.back();
   }
 
   if (loading) {
@@ -138,7 +141,6 @@ export default function NotificationsPage() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-heading">Notifications</h1>
-          <p className="text-sm text-body/70 mt-0.5">Choose what you'd like to be notified about.</p>
         </div>
       </div>
       <div className="flex flex-col gap-8 w-full">

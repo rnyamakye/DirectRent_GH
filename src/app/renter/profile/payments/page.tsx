@@ -131,7 +131,6 @@ export default function PaymentsPage() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-heading">Payments &amp; methods</h1>
-          <p className="text-sm text-body/70 mt-0.5">Manage your saved mobile money accounts and cards.</p>
         </div>
       </div>
       <div className="flex flex-col gap-8 w-full">

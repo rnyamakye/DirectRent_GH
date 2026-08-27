@@ -30,6 +30,14 @@ export async function GET(request: Request) {
     const successUrl =
         payment.target_type === "listing" ? "/agent/boost/success" : "/artisan/boost/success";
 
+    const params = new URLSearchParams({ days: String(payment.days) });
+    if (payment.target_type === "listing") params.set("listingId", payment.target_id);
+
+    // Idempotency check: if already processed by the webhook, just redirect
+    if (payment.status === "success") {
+        return NextResponse.redirect(`${origin}${successUrl}?${params.toString()}`);
+    }
+
     const verifyRes = await fetch(
         `https://api.paystack.co/transaction/verify/${reference}`,
         { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
@@ -56,9 +64,6 @@ export async function GET(request: Request) {
         .from(table)
         .update({ boosted_until: boostedUntil.toISOString() })
         .eq("id", payment.target_id);
-
-    const params = new URLSearchParams({ days: String(payment.days) });
-    if (payment.target_type === "listing") params.set("listingId", payment.target_id);
 
     return NextResponse.redirect(`${origin}${successUrl}?${params.toString()}`);
 }

@@ -3,9 +3,6 @@ import { createClient } from "@/lib/supabase/client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-
-
 export default function NewListingPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -22,6 +19,9 @@ export default function NewListingPage() {
   const [bedrooms, setBedrooms] = useState("1");
   const [bathrooms, setBathrooms] = useState("1");
   const [city, setCity] = useState("Accra");
+  const [isSelfContained, setIsSelfContained] = useState(false);
+  const [hasSharedKitchen, setHasSharedKitchen] = useState(false);
+  const [hasSharedBathroom, setHasSharedBathroom] = useState(false);
 
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -69,41 +69,76 @@ export default function NewListingPage() {
       photoUrls.push(urlData.publicUrl);
     }
 
-    const { data: listing, error: insertError } = await supabase
+    const { count } = await supabase
       .from("listings")
-      .insert({
-        agent_id: user.id,
-        title,
-        description,
-        price: Number(price),
-        landmark,
-        property_type: propertyType,
-        bedrooms: Number(bedrooms),
-        bathrooms: Number(bathrooms),
-      })
-      .select()
-      .single();
+      .select("*", { count: "exact", head: true })
+      .eq("agent_id", user.id);
 
-    setSubmitting(false);
+    const isQuotaExceeded = (count ?? 0) >= 5;
+    const listingStatus = isQuotaExceeded ? "pending_payment" : "available";
 
-    if (insertError) {
-      setError(insertError.message);
+    const payload = {
+      title,
+      description,
+      price: Number(price),
+      landmark,
+      property_type: propertyType,
+      bedrooms: Number(bedrooms),
+      bathrooms: Number(bathrooms),
+      is_self_contained: isSelfContained,
+      has_shared_kitchen: hasSharedKitchen,
+      has_shared_bathroom: hasSharedBathroom,
+      status: listingStatus,
+      photo_urls: photoUrls,
+      city
+    };
+
+    let listing;
+    try {
+      const res = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create listing");
+      listing = data.listing;
+    } catch (err: any) {
+      setError(err.message);
+      setSubmitting(false);
       return;
     }
 
+    if (isQuotaExceeded) {
+      try {
+        const res = await fetch("/api/payments/listing/initialize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ listingId: listing.id }),
+        });
+        const data = await res.json();
+        if (data.authorizationUrl) {
+          window.location.href = data.authorizationUrl;
+          return; // Do not clear submitting state during redirect
+        } else {
+          setError(data.error || "Failed to initialize payment.");
+          setSubmitting(false);
+        }
+      } catch (err: any) {
+        setError(err.message || "Failed to start payment.");
+        setSubmitting(false);
+      }
+      return;
+    }
+
+    setSubmitting(false);
     router.refresh();
     router.push(`/agent/listings`);
   }
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto w-full">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Dashboard", href: "/agent/dashboard" },
-        { label: "My Listings", href: "/agent/listings" },
-        { label: "Create Listing" }
-      ]} />
-      <div className="flex flex-col gap-6 max-w-md">
+<div className="flex flex-col gap-6 max-w-md">
         <h1 className="text-xl font-bold">New listing — step {step} of 4</h1>
 
         {step === 1 && (
@@ -209,6 +244,42 @@ export default function NewListingPage() {
               rows={4}
               className="rounded-lg border border-border px-4 py-2 text-sm font-supporting"
             />
+            
+            <div className="mt-4 flex flex-col gap-3">
+              <label className="text-xs font-semibold uppercase tracking-wide text-body/60 mb-1 block">
+                Room Features
+              </label>
+              
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+                <input 
+                  type="checkbox" 
+                  checked={isSelfContained}
+                  onChange={(e) => setIsSelfContained(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="text-sm font-medium text-heading">Self Contained</span>
+              </label>
+
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+                <input 
+                  type="checkbox" 
+                  checked={hasSharedKitchen}
+                  onChange={(e) => setHasSharedKitchen(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="text-sm font-medium text-heading">Shared Kitchen</span>
+              </label>
+
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+                <input 
+                  type="checkbox" 
+                  checked={hasSharedBathroom}
+                  onChange={(e) => setHasSharedBathroom(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="text-sm font-medium text-heading">Shared Bathroom</span>
+              </label>
+            </div>
           </div>
         )}
 

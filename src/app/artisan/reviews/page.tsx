@@ -19,7 +19,7 @@ export default async function ArtisanReviewsPage() {
     id: r.id,
     rating: r.rating,
     comment: r.comment,
-    reviewer: r.profiles?.full_name ?? "Anonymous",
+    reviewer: (r.profiles as any)?.full_name ?? "Anonymous",
   }));
 
   const average =

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 function Field({
@@ -19,6 +21,7 @@ const INPUT =
   "w-full rounded-2xl border border-border px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition bg-card";
 
 export default function AgentPersonalInformationPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -82,8 +85,8 @@ export default function AgentPersonalInformationPage() {
 
     setSaving(false);
     if (updateError) { setError(updateError.message); return; }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    toast.success("Personal information saved.");
+    router.back();
   }
 
   if (loading) {
@@ -99,7 +102,6 @@ export default function AgentPersonalInformationPage() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-heading">Personal information</h1>
-          <p className="text-sm text-body/70 mt-0.5">This information is private and won't appear on your public profile.</p>
         </div>
       </div>
       <form onSubmit={handleSave} className="lg:col-span-8 flex flex-col gap-8 w-full">

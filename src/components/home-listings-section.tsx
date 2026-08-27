@@ -32,12 +32,16 @@ function ListingCard({ listing }: { listing: Listing }) {
             href={`/listings/${listing.id}`}
             className="group block rounded-2xl overflow-hidden bg-card border border-border hover:shadow-lg transition-all duration-200"
         >
-            <div className="relative aspect-[4/3] overflow-hidden bg-mint">
-                <img
-                    src={listing.photoUrl || "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600"}
-                    alt={listing.title}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+            <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
+                {listing.photoUrl ? (
+                    <img
+                        src={listing.photoUrl}
+                        alt={listing.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                )}
                 {listing.isNew && (
                     <span className="absolute left-3 top-3 rounded-full bg-saffron px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-heading shadow">
                         New

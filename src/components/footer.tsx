@@ -95,15 +95,14 @@ export function Footer() {
     ];
   } else {
     footerLinks = [
-      {
+      ...(user ? [{
         heading: "Explore",
         links: [
           { label: "Properties", href: "/listings" },
           { label: "Artisans", href: "/artisans" },
           { label: "Agents", href: "/agents" },
-          { label: "How It Works", href: "/about" },
         ],
-      },
+      }] : []),
       {
         heading: "Account",
         links: user ? [
@@ -157,7 +156,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-[#0e1a14] text-white/70">
+    <footer className="bg-[#0e1a14] text-white/70 relative -bottom-25">
       {/* ── Newsletter banner ── */}
       <div className="border-b border-white/10">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">

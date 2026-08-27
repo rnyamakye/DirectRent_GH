@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import { Header } from "@/components/header";
-import { ConditionalFooter } from "@/components/conditional-footer";
+import { Footer } from "@/components/footer";
 import { MobileNav } from "@/components/mobile-nav";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -40,8 +41,9 @@ export default function RootLayout({
           {children}
           {modal}
         </div>
-        <ConditionalFooter />
+        <Footer />
         <MobileNav />
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );

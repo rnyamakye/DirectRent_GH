@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import Image from "next/image";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SaveButton } from "@/components/save-button";
 import { ReviewsSection } from "@/components/reviews-section";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import { BackButton } from "@/components/back-button";
 import { ContactAgentButton } from "@/components/contact-agent-button";
+import { RequestTourButton } from "./request-tour-button";
 
-function ShareIcon() {
-  return (
-    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentColor', strokeWidth: 2, overflow: 'visible' }}><g fill="none"><path d="M27 18v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9M16 3v23V3zM6 13l9.3-9.3a1 1 0 0 1 1.4 0L26 13"></path></g></svg>
-  );
-}
+import { ShareButton } from "@/components/share-button";
+import { TrackListingView } from "@/components/track-listing-view";
 
 export default async function ListingDetailPage({
   params,
@@ -19,21 +18,26 @@ export default async function ListingDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/auth/login?returnTo=/listings/${id}`);
+  }
 
   const { data: listing, error } = await supabase
     .from("listings")
-    .select("*, profiles!listings_agent_id_fkey(full_name, phone, avatar_url)")
+    .select("*, profiles!listings_agent_id_fkey(full_name, phone, email, avatar_url)")
     .eq("id", id)
     .single();
 
   if (error || !listing) {
     notFound();
   }
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
 
   let initialSaved = false;
+  let existingTour = null;
+
   if (user) {
     const { data: savedRow } = await supabase
       .from("saved_listings")
@@ -42,6 +46,18 @@ export default async function ListingDetailPage({
       .eq("listing_id", id)
       .maybeSingle();
     initialSaved = !!savedRow;
+
+    const { data: tourRow } = await supabase
+      .from("tour_requests")
+      .select("id, status")
+      .eq("renter_id", user.id)
+      .eq("listing_id", id)
+      .in("status", ["pending", "confirmed"])
+      .maybeSingle();
+
+    if (tourRow) {
+      existingTour = tourRow;
+    }
   }
   const { data: reviewsData } = await supabase
     .from("reviews")
@@ -55,7 +71,7 @@ export default async function ListingDetailPage({
     rating: r.rating,
     comment: r.comment,
     reviewer_id: r.reviewer_id,
-    reviewerName: r.profiles?.full_name ?? "Anonymous",
+    reviewerName: (r.profiles as any)?.full_name ?? "Anonymous",
   }));
 
   const photos = listing.photo_urls || [];
@@ -68,20 +84,14 @@ export default async function ListingDetailPage({
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-6">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Listings", href: "/listings" },
-        { label: listing.title },
-      ]} />
+      <TrackListingView listingId={id} />
+      <BackButton />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <h1 className="text-3xl sm:text-4xl font-bold text-heading">{listing.title}</h1>
         <div className="flex items-center gap-4 text-sm font-semibold underline text-heading">
-          <button className="flex items-center gap-2 hover:bg-slate-100 px-3 py-2 rounded-lg transition">
-            <ShareIcon />
-            Share
-          </button>
+          <ShareButton title={listing.title} />
           <div className="flex items-center gap-2 hover:bg-slate-100 rounded-lg transition">
             <SaveButton listingId={id} initialSaved={initialSaved} isLoggedIn={!!user} />
           </div>
@@ -92,23 +102,24 @@ export default async function ListingDetailPage({
       {hasPhotos ? (
         <div className="relative grid grid-cols-4 grid-rows-2 gap-2 h-[400px] sm:h-[500px] md:h-[60vh] min-h-[400px] rounded-2xl overflow-hidden group">
           <div className="col-span-4 sm:col-span-2 row-span-2 relative">
-            <img
+            <Image
               src={displayPhotos[0]}
               alt={listing.title}
-              className="w-full h-full object-cover hover:opacity-90 transition cursor-pointer"
+              fill
+              className="object-cover hover:opacity-90 transition cursor-pointer"
             />
           </div>
           <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <img src={displayPhotos[1]} alt="" className="w-full h-full object-cover hover:opacity-90 transition cursor-pointer" />
+            <Image src={displayPhotos[1]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
           </div>
           <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <img src={displayPhotos[2]} alt="" className="w-full h-full object-cover hover:opacity-90 transition cursor-pointer" />
+            <Image src={displayPhotos[2]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
           </div>
           <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <img src={displayPhotos[3]} alt="" className="w-full h-full object-cover hover:opacity-90 transition cursor-pointer" />
+            <Image src={displayPhotos[3]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
           </div>
           <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <img src={displayPhotos[4]} alt="" className="w-full h-full object-cover hover:opacity-90 transition cursor-pointer" />
+            <Image src={displayPhotos[4]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
             <button className="absolute bottom-4 right-4 bg-white border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
               <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
               Show all photos
@@ -116,8 +127,8 @@ export default async function ListingDetailPage({
           </div>
         </div>
       ) : (
-        <div className="h-[40vh] sm:h-[500px] md:h-[60vh] min-h-[300px] rounded-2xl overflow-hidden group border border-border">
-          <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600" alt="Placeholder" className="w-full h-full object-cover" />
+        <div className="h-[40vh] sm:h-[500px] md:h-[60vh] min-h-[300px] rounded-2xl overflow-hidden group border border-border bg-slate-100 flex items-center justify-center text-slate-300">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-24 h-24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
         </div>
       )}
 
@@ -141,8 +152,12 @@ export default async function ListingDetailPage({
             href={`/agents/${listing.agent_id}`}
             className="flex items-center gap-4 hover:opacity-80 transition"
           >
-            <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-border flex items-center justify-center text-heading font-bold text-lg">
-              <img src={listing.profiles?.avatar_url || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"} alt={listing.profiles?.full_name ?? "Agent"} className="w-full h-full object-cover" />
+            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-border flex items-center justify-center text-heading font-bold text-lg">
+              {listing.profiles?.avatar_url ? (
+                <Image src={listing.profiles.avatar_url} alt={listing.profiles?.full_name ?? "Agent"} fill className="object-cover" />
+              ) : (
+                <span>{(listing.profiles?.full_name ?? "Agent").charAt(0).toUpperCase()}</span>
+              )}
             </div>
             <div>
               <h3 className="font-semibold text-heading text-lg">Hosted by {listing.profiles?.full_name ?? "Unknown"}</h3>
@@ -162,6 +177,43 @@ export default async function ListingDetailPage({
 
           <hr className="border-border" />
 
+          {/* Room Features */}
+          {(listing.is_self_contained || listing.has_shared_kitchen || listing.has_shared_bathroom) && (
+            <>
+              <div>
+                <h3 className="text-xl font-semibold text-heading mb-4">Room Features</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {listing.is_self_contained && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-mint/50 flex items-center justify-center text-primary">
+                        🏠
+                      </div>
+                      <span className="text-body font-medium">Self Contained</span>
+                    </div>
+                  )}
+                  {listing.has_shared_kitchen && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-mint/50 flex items-center justify-center text-primary">
+                        🍳
+                      </div>
+                      <span className="text-body font-medium">Shared Kitchen</span>
+                    </div>
+                  )}
+                  {listing.has_shared_bathroom && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-mint/50 flex items-center justify-center text-primary">
+                        🚿
+                      </div>
+                      <span className="text-body font-medium">Shared Bathroom</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <hr className="border-border" />
+            </>
+          )}
+
           <div>
             <h3 className="text-xl font-semibold text-heading mb-4">About this space</h3>
             <div className="font-supporting text-body text-base leading-relaxed whitespace-pre-wrap">
@@ -176,6 +228,7 @@ export default async function ListingDetailPage({
             <ReviewsSection
               targetType="listing"
               targetId={listing.id}
+              targetName={listing.title}
               initialReviews={reviews}
               currentUserId={user?.id ?? null}
               currentUserRole={user?.user_metadata?.role ?? null}
@@ -185,33 +238,65 @@ export default async function ListingDetailPage({
         </div>
 
         <div className="relative">
-          <div className="sticky top-28 border border-border rounded-2xl p-6 shadow-xl bg-white flex flex-col gap-6">
+          <div className="relative border border-border rounded-2xl p-6 shadow-xl bg-white flex flex-col gap-6">
             <h3 className="text-2xl font-bold text-heading">
               GHS {listing.price.toLocaleString()} <span className="text-base font-normal text-body">/ mo</span>
             </h3>
 
-            <div className="border border-border rounded-lg overflow-hidden flex flex-col">
-              <div className="flex border-b border-border">
-                <div className="flex-1 p-3 border-r border-border hover:bg-slate-50 cursor-pointer">
-                  <p className="text-[10px] font-bold uppercase text-heading">Check-in</p>
-                  <p className="text-sm text-body mt-0.5">Add date</p>
+            {/* Location Map */}
+            {listing.latitude && listing.longitude ? (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-body">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-primary flex-shrink-0">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-sm font-medium">{listing.landmark}{listing.city ? `, ${listing.city}` : ''}</span>
                 </div>
-                <div className="flex-1 p-3 hover:bg-slate-50 cursor-pointer">
-                  <p className="text-[10px] font-bold uppercase text-heading">Checkout</p>
-                  <p className="text-sm text-body mt-0.5">Add date</p>
+                <div className="rounded-xl overflow-hidden border border-border aspect-[4/3]">
+                  <iframe
+                    title="Listing location"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.longitude - 0.01},${listing.latitude - 0.01},${listing.longitude + 0.01},${listing.latitude + 0.01}&layer=mapnik&marker=${listing.latitude},${listing.longitude}`}
+                  />
+                </div>
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${listing.latitude}&mlon=${listing.longitude}#map=16/${listing.latitude}/${listing.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+                >
+                  View larger map
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3"><path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5zm7.25-.182a.75.75 0 01.75-.75h3.5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0V6.56l-5.22 5.22a.75.75 0 11-1.06-1.06l5.22-5.22h-1.69a.75.75 0 01-.75-.75z" clipRule="evenodd" /></svg>
+                </a>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-slate-50 aspect-[4/3] flex items-center justify-center text-slate-300">
+                <div className="text-center">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10 mx-auto mb-2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p className="text-sm text-slate-400">Map unavailable</p>
                 </div>
               </div>
-              <div className="p-3 hover:bg-slate-50 cursor-pointer">
-                <p className="text-[10px] font-bold uppercase text-heading">Guests</p>
-                <p className="text-sm text-body mt-0.5">1 guest</p>
-              </div>
-            </div>
+            )}
 
-            <ContactAgentButton 
-              agentId={listing.agent_id} 
-              phone={listing.profiles?.phone ?? null} 
+            <ContactAgentButton
+              agentId={listing.agent_id}
+              phone={listing.profiles?.phone ?? null}
+              email={listing.profiles?.email ?? null}
             />
-            <p className="text-center text-sm text-body/70">You won't be charged yet</p>
+            <RequestTourButton
+              listingId={listing.id}
+              agentId={listing.agent_id}
+              existingTour={existingTour}
+            />
+            <p className="text-center text-sm text-body/70 mt-3">You won't be charged yet</p>
           </div>
         </div>
       </div>

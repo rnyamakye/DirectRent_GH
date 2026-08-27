@@ -23,11 +23,17 @@ export function ArtisanCard({ artisan }: { artisan: Artisan }) {
         <div className="relative flex-shrink-0 w-full group cursor-pointer">
             <Link href={`/artisans/${artisan.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-mint">
-                    <img
-                        src={artisan.photoUrl || "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=400"}
-                        alt={artisan.name}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    {artisan.photoUrl ? (
+                        <img
+                            src={artisan.photoUrl}
+                            alt={artisan.name}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-mint/40 text-5xl font-bold text-primary">
+                            {artisan.name.charAt(0).toUpperCase()}
+                        </div>
+                    )}
 
                     <div className="absolute left-3 top-3 flex flex-col gap-1 items-start">
                         {artisan.isBoosted && (

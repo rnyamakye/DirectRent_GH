@@ -1,4 +1,4 @@
-import { DynamicBreadcrumbs } from "@/components/dynamic-breadcrumbs";
+import { BackButton } from "@/components/back-button";
 
 export default function RenterLayout({
   children,
@@ -8,7 +8,7 @@ export default function RenterLayout({
   return (
     <div className="flex-1 flex flex-col sm:flex-row px-4 sm:px-8 py-10 max-w-[1200px] mx-auto w-full gap-4 sm:gap-12">
       <div className="flex-1 min-w-0">
-        <DynamicBreadcrumbs />
+        <BackButton />
         {children}
       </div>
     </div>

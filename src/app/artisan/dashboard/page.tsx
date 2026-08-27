@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Breadcrumbs } from "@/components/breadcrumbs";
 import { createClient } from "@/lib/supabase/server";
-import { SignOutButton } from "@/components/sign-out-button";
+
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
+import { AnalyticsCharts } from "@/components/dashboard/analytics-charts";
+import { VerificationCard } from "@/components/dashboard/verification-card";
 
 const SETTINGS_SECTIONS = [
   {
@@ -45,6 +46,18 @@ const SETTINGS_SECTIONS = [
       </svg>
     ),
   },
+  {
+    href: "/artisan/wallet",
+    title: "Wallet & Earnings",
+    description: "Track your balance, view transactions, and request payouts.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+      </svg>
+    ),
+  },
 ];
 
 export default async function ArtisanDashboardPage() {
@@ -61,22 +74,28 @@ export default async function ArtisanDashboardPage() {
     return null;
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, avatar_url")
-    .eq("id", user.id)
-    .single();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const thirtyDaysAgoISO = thirtyDaysAgo.toISOString();
 
-  const { data: artisanProfile } = await supabase
-    .from("artisan_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const [
+    { data: profile },
+    { data: kycRequest },
+    { data: artisanProfile },
+    { count, error: viewsError },
+    { data: reviewsData },
+    { data: viewsData },
+    { data: walletData },
+  ] = await Promise.all([
+    supabase.from("profiles").select("full_name, avatar_url, is_verified").eq("id", user.id).single(),
+    supabase.from("verification_requests").select("status, notes").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("artisan_profiles").select("*").eq("id", user.id).single(),
+    supabase.from("profile_views").select("*", { count: "exact", head: true }).eq("target_id", user.id),
+    supabase.from("reviews").select("rating").eq("target_type", "artisan").eq("target_id", user.id),
+    supabase.from("profile_views").select("created_at").eq("target_id", user.id).gte("created_at", thirtyDaysAgoISO),
+    supabase.from("wallets").select("id").eq("user_id", user.id).single(),
+  ]);
 
-  const { count, error: viewsError } = await supabase
-    .from("profile_views")
-    .select("*", { count: "exact", head: true })
-    .eq("target_id", user.id);
   const profileViewsCount = viewsError ? 0 : (count ?? 0);
 
   // No artisan_profiles row yet means they haven't filled in
@@ -96,20 +115,77 @@ export default async function ArtisanDashboardPage() {
   const isBoosted =
     !!artisanProfile?.boosted_until && new Date(artisanProfile.boosted_until) > new Date();
 
+  // --- Analytics Data Fetching ---
+
+  // 1. Average Rating
+  let avgRatingStr = "—";
+  if (reviewsData && reviewsData.length > 0) {
+    const sum = reviewsData.reduce((acc, row) => acc + row.rating, 0);
+    const avg = sum / reviewsData.length;
+    avgRatingStr = avg.toFixed(1);
+  }
+
+  let txData: any[] = [];
+  if (walletData?.id) {
+    const { data: txs } = await supabase
+      .from("wallet_transactions")
+      .select("amount_pesewas, created_at")
+      .eq("wallet_id", walletData.id)
+      .eq("type", "credit")
+      .gte("created_at", thirtyDaysAgoISO);
+    
+    txData = txs ?? [];
+  }
+
+  // Aggregate into daily buckets
+  const chartDataMap = new Map<string, { views: number; earnings: number }>();
+  
+  // Pre-fill last 30 days
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    chartDataMap.set(dateStr, { views: 0, earnings: 0 });
+  }
+
+  if (viewsData) {
+    viewsData.forEach(row => {
+      const dateStr = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      if (chartDataMap.has(dateStr)) {
+        chartDataMap.get(dateStr)!.views += 1;
+      }
+    });
+  }
+
+  if (txData.length > 0) {
+    txData.forEach(row => {
+      const dateStr = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      if (chartDataMap.has(dateStr)) {
+        chartDataMap.get(dateStr)!.earnings += (row.amount_pesewas / 100);
+      }
+    });
+  }
+
+  const chartData = Array.from(chartDataMap.entries()).map(([date, metrics]) => ({
+    date,
+    views: metrics.views,
+    earnings: Number(metrics.earnings.toFixed(2)),
+  }));
+
   return (
     <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12 flex flex-col gap-12">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Dashboard" }
-      ]} />
-      {/* Hero Header */}
+{/* Hero Header */}
       <div className="flex flex-col items-center justify-center text-center gap-6">
         <div className="w-32 h-32 rounded-full overflow-hidden bg-mint flex items-center justify-center text-primary font-bold text-3xl shadow-md border-4 border-white">
-          <img
-            src={profile?.avatar_url || "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=400"}
-            alt={profile?.full_name ?? "Artisan"}
-            className="w-full h-full object-cover"
-          />
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile?.full_name ?? "Artisan"}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span>{(profile?.full_name ?? "A").charAt(0).toUpperCase()}</span>
+          )}
         </div>
         <div className="flex flex-col gap-2 items-center">
           <h1 className="text-3xl sm:text-4xl font-bold text-heading">
@@ -139,14 +215,10 @@ export default async function ArtisanDashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-1">
           <p className="text-3xl font-bold text-heading">{profileViewsCount}</p>
           <p className="text-sm font-medium text-body/70">Profile Views</p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-1 opacity-60">
-          <p className="text-3xl font-bold text-heading">—</p>
-          <p className="text-sm font-medium text-body/70">Avg Rating</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-1">
           <p className="text-3xl font-bold text-heading">
@@ -165,6 +237,17 @@ export default async function ArtisanDashboardPage() {
           </div>
         )}
       </div>
+
+      <hr className="border-border" />
+
+      {/* Analytics Charts */}
+      <AnalyticsCharts data={chartData} />
+
+      <VerificationCard 
+        isVerified={profile?.is_verified ?? false}
+        kycStatus={kycRequest?.status ?? null}
+        kycNotes={kycRequest?.notes ?? null}
+      />
 
       <hr className="border-border" />
 
@@ -221,11 +304,7 @@ export default async function ArtisanDashboardPage() {
           ))}
         </div>
 
-        <div className="pt-4 flex justify-start">
-          <SignOutButton className="px-4 py-3 rounded-2xl border border-border bg-red-700 font-semibold hover:bg-red-600 text-white transition-colors shadow-sm">
-            Sign out
-          </SignOutButton>
-        </div>
+
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import { BackButton } from "@/components/back-button";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
@@ -47,10 +47,7 @@ export default async function PublicRenterProfilePage({
   return (
     <main className="min-h-screen bg-background py-16 px-4 sm:px-8">
       <div className="max-w-2xl mx-auto flex flex-col gap-8">
-        <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: displayName },
-      ]} />
+        <BackButton />
         {/* Profile card */}
         <div className="rounded-3xl border border-border bg-card p-8 sm:p-10 flex flex-col items-center text-center gap-5 shadow-sm">
           {/* Avatar */}

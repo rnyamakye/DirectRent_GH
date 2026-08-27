@@ -81,13 +81,11 @@ export function MobileNav() {
   if (role === "agent") {
     navItems = [
       { label: "My Listings", href: "/agent/listings", icon: listingsIcon },
-      { label: "Explore", href: "/", icon: homeIcon, isMain: true },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else if (role === "artisan") {
     navItems = [
-      { label: "Artisans", href: "/artisans", icon: artisansIcon },
-      { label: "Explore", href: "/", icon: homeIcon, isMain: true },
+      { label: "Home", href: "/artisan/overview", icon: homeIcon },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else {

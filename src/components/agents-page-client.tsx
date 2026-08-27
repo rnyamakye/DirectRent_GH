@@ -24,11 +24,17 @@ export function AgentCard({ agent }: { agent: Agent }) {
         <div className="relative flex-shrink-0 w-full group cursor-pointer">
             <Link href={`/agents/${agent.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-mint flex items-center justify-center">
-                    <img
-                        src={agent.avatarUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"}
-                        alt={displayName}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    {agent.avatarUrl ? (
+                        <img
+                            src={agent.avatarUrl}
+                            alt={displayName}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-mint/40 text-5xl font-bold text-primary">
+                            {initial}
+                        </div>
+                    )}
 
                     {agent.activeListingsCount > 0 && (
                         <span className="absolute left-3 top-3 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-800 shadow-sm border border-emerald-200 backdrop-blur">

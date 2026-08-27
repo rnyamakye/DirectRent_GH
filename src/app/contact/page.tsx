@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import ContactForm from "./contact-form";
 
 export default async function ContactPage() {
   const supabase = await createClient();
@@ -55,23 +56,7 @@ export default async function ContactPage() {
 
       <section className="flex flex-col gap-4 mt-6">
         <h2 className="text-xl font-semibold text-heading">Send us a message</h2>
-        <form className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className="text-sm font-medium text-heading">Name</label>
-            <input id="name" type="text" className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="Your name" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="text-sm font-medium text-heading">Email</label>
-            <input id="email" type="email" className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="your@email.com" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="message" className="text-sm font-medium text-heading">Message</label>
-            <textarea id="message" rows={4} className="rounded-xl border border-border bg-canvas px-4 py-2.5 text-sm text-heading outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20" placeholder="How can we help?"></textarea>
-          </div>
-          <button type="button" className="mt-2 w-full rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary-hover">
-            Send Message
-          </button>
-        </form>
+        <ContactForm />
       </section>
     </main>
   );

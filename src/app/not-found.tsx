@@ -15,12 +15,6 @@ export default function NotFound() {
         >
           Go home
         </Link>
-        <Link
-          href="/listings"
-          className="border border-border text-heading rounded-lg px-5 py-2.5 font-semibold"
-        >
-          Search listings
-        </Link>
       </div>
     </main>
   );

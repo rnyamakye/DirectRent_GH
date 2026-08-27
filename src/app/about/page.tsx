@@ -1,7 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const supabase = await createClient();
+  const [
+    { count: usersCount },
+    { count: listingsCount },
+    { count: artisansCount }
+  ] = await Promise.all([
+    supabase.from("profiles").select("*", { count: "exact", head: true }),
+    supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "available"),
+    supabase.from("artisan_profiles").select("*", { count: "exact", head: true })
+  ]);
+
+  const stats = {
+    users: usersCount ?? 0,
+    listings: listingsCount ?? 0,
+    artisans: artisansCount ?? 0
+  };
+
   return (
     <div className="min-h-screen bg-canvas pb-24">
       {/* 1. Hero Section */}
@@ -51,17 +69,17 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-center text-heading mb-10">Fast Facts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6 rounded-2xl bg-canvas border border-border transition-transform hover:-translate-y-1 hover:shadow-md">
-              <div className="text-4xl font-black text-primary mb-2">50k+</div>
+              <div className="text-4xl font-black text-primary mb-2">{stats.users.toLocaleString()}</div>
               <div className="text-heading font-semibold">Active Users</div>
               <div className="text-sm text-body mt-2">Renters and professionals across Ghana.</div>
             </div>
             <div className="text-center p-6 rounded-2xl bg-canvas border border-border transition-transform hover:-translate-y-1 hover:shadow-md">
-              <div className="text-4xl font-black text-primary mb-2">10k+</div>
+              <div className="text-4xl font-black text-primary mb-2">{stats.listings.toLocaleString()}</div>
               <div className="text-heading font-semibold">Verified Properties</div>
               <div className="text-sm text-body mt-2">Carefully vetted for your peace of mind.</div>
             </div>
             <div className="text-center p-6 rounded-2xl bg-canvas border border-border transition-transform hover:-translate-y-1 hover:shadow-md">
-              <div className="text-4xl font-black text-primary mb-2">500+</div>
+              <div className="text-4xl font-black text-primary mb-2">{stats.artisans.toLocaleString()}</div>
               <div className="text-heading font-semibold">Trusted Artisans</div>
               <div className="text-sm text-body mt-2">Ready to assist with maintenance and repairs.</div>
             </div>

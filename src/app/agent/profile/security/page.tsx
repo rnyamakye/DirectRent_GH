@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import Link from "next/link";
+import { SignOutButton } from "@/components/sign-out-button";
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 flex flex-col gap-6 shadow-sm">
@@ -37,11 +39,8 @@ export default function LoginSecurityPage() {
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [deactivating, setDeactivating] = useState(false);
 
-  // Sessions (placeholder data)
-  const sessions = [
-    { device: "Chrome on Windows", location: "Accra, Ghana", current: true, time: "Now" },
-    { device: "Safari on iPhone", location: "Kumasi, Ghana", current: false, time: "2 days ago" },
-  ];
+  // Sessions state
+  const [signingOutGlobal, setSigningOutGlobal] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -66,9 +65,17 @@ export default function LoginSecurityPage() {
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     setPwSaving(false);
     if (error) { setPwError(error.message); return; }
-    setPwSuccess(true);
+    toast.success("Password updated successfully.");
+    toast.success("Password updated successfully.");
     setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
-    setTimeout(() => setPwSuccess(false), 3000);
+    router.back();
+  }
+
+  async function handleGlobalSignOut() {
+    setSigningOutGlobal(true);
+    const supabase = createClient();
+    await supabase.auth.signOut({ scope: "global" });
+    router.push("/");
   }
 
   async function handleDeactivate() {
@@ -97,7 +104,6 @@ export default function LoginSecurityPage() {
       <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-heading">Login &amp; security</h1>
-          <p className="text-sm text-body/70 mt-0.5">Manage your password, connected accounts and active sessions.</p>
         </div>
       </div>
       <div className="flex flex-col gap-8 w-full">
@@ -161,26 +167,30 @@ export default function LoginSecurityPage() {
       </Section>
 
       {/* Active sessions */}
-      <Section title="Active sessions" subtitle="Devices currently signed in to your account.">
-        <div className="flex flex-col divide-y divide-border">
-          {sessions.map((s, i) => (
-            <div key={i} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-heading">{s.device}</p>
-                  <p className="text-xs text-body/60">{s.location} · {s.time}</p>
-                </div>
-              </div>
-              {s.current ? (
-                <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full">This device</span>
-              ) : (
-                <button className="text-xs text-body/60 hover:text-accent font-semibold transition">Sign out</button>
-              )}
-            </div>
-          ))}
+      <Section title="Active sessions" subtitle="Manage devices currently signed in to your account.">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-body/80">
+            If you notice any suspicious activity, you can sign out of all other devices and sessions immediately. You will also be signed out of this device.
+          </p>
+          <div>
+            <button
+              type="button"
+              onClick={handleGlobalSignOut}
+              disabled={signingOutGlobal}
+              className="rounded-full border border-border bg-card hover:bg-slate-50 px-6 py-2.5 text-sm font-bold text-heading transition shadow-sm disabled:opacity-50"
+            >
+              {signingOutGlobal ? "Signing out..." : "Log out of all devices"}
+            </button>
+          </div>
+        </div>
+      </Section>
+
+      {/* Sign out */}
+      <Section title="Sign out" subtitle="Sign out of your account on this device.">
+        <div className="flex justify-start">
+          <SignOutButton className="px-4 py-3 rounded-2xl border border-border bg-red-700 text-heading font-semibold hover:bg-red-600 text-white transition-colors shadow-sm">
+            Sign out
+          </SignOutButton>
         </div>
       </Section>
 

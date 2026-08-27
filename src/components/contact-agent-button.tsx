@@ -5,10 +5,12 @@ import { AuthGuardLink } from "@/components/auth-guard-link";
 
 export function ContactAgentButton({
     agentId,
-    phone
+    phone,
+    email
 }: {
     agentId: string;
     phone: string | null;
+    email?: string | null;
 }) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -19,7 +21,7 @@ export function ContactAgentButton({
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="w-full flex items-center justify-center bg-primary text-white rounded-lg py-3.5 font-bold hover:bg-primary-hover transition"
+                className="w-full flex items-center justify-center bg-primary text-white rounded-lg py-3 font-bold hover:bg-primary-hover transition mt-6"
             >
                 Contact Agent
             </button>
@@ -83,8 +85,23 @@ export function ContactAgentButton({
                                 </>
                             ) : (
                                 <div className="p-4 text-center text-body/70">
-                                    No direct contact number available.
+                                    No direct phone number available.
                                 </div>
+                            )}
+
+                            {email && (
+                                <a
+                                    href={`mailto:${email}`}
+                                    className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-blue-400/50 hover:bg-blue-400/5 transition group"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-blue-400/10 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">
+                                        📧
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="font-bold text-heading">Email Agent</p>
+                                        <p className="text-sm text-body">{email}</p>
+                                    </div>
+                                </a>
                             )}
 
                             <AuthGuardLink

@@ -40,8 +40,8 @@ export default async function SavedListingsPage() {
     
   const savedProfileIds = (savedProfilesData ?? []).map(r => r.profile_id);
 
-  let savedAgents = [];
-  let savedArtisans = [];
+  let savedAgents: any[] = [];
+  let savedArtisans: any[] = [];
 
   if (savedProfileIds.length > 0) {
     const { data: agentData } = await supabase

@@ -1,22 +1,37 @@
-export default function BlogPage() {
-  const posts = [
+import { createClient } from "@/lib/supabase/server";
+
+export const revalidate = 60; // Revalidate every minute
+
+export default async function BlogPage() {
+  const supabase = await createClient();
+  const { data: postsData } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .order("published_at", { ascending: false });
+
+  const posts = postsData ?? [];
+
+  // Fallback to dummy data if database is completely empty (just for demo/initial purposes)
+  const displayPosts = posts.length > 0 ? posts.map(p => ({
+    title: p.title,
+    excerpt: p.excerpt,
+    date: new Date(p.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    category: p.category,
+    slug: p.slug
+  })) : [
     {
       title: "How to Find the Perfect Room in Accra",
       excerpt: "Searching for a room in Accra can be daunting. Follow these simple tips to navigate the rental market like a pro.",
       date: "July 24, 2026",
-      category: "Guides"
+      category: "Guides",
+      slug: "find-perfect-room"
     },
     {
       title: "Top 5 Questions to Ask Your Landlord",
       excerpt: "Before signing any lease, make sure you ask your potential landlord these critical questions.",
       date: "July 18, 2026",
-      category: "Tips"
-    },
-    {
-      title: "The Importance of Using Verified Artisans",
-      excerpt: "Why it's crucial to hire verified artisans for your home repairs and maintenance tasks.",
-      date: "July 10, 2026",
-      category: "Maintenance"
+      category: "Tips",
+      slug: "questions-to-ask-landlord"
     }
   ];
 
@@ -30,7 +45,7 @@ export default function BlogPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post, idx) => (
+        {displayPosts.map((post, idx) => (
           <article key={idx} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-md hover:border-primary/30">
             <div className="flex items-center gap-2 mb-2">
               <span className="rounded-md bg-mint/50 px-2.5 py-1 text-xs font-semibold text-primary">{post.category}</span>

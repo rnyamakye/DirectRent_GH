@@ -1,13 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { ArtisansPageClient } from "@/components/artisans-page-client";
+import { redirect } from "next/navigation";
 
 export default async function ArtisansPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  if (!user) {
+    redirect("/auth/login?returnTo=/artisans");
+  }
+
   const { data } = await supabase
     .from("artisan_profiles")
-    .select("*, profiles(full_name, avatar_url)");
+    .select("*, profiles(full_name, avatar_url)")
+    .order("boosted_until", { ascending: false, nullsFirst: false });
 
   // One extra query to compute a real average rating per artisan,
   // rather than showing a card with no rating at all (which reads as

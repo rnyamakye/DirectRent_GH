@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Breadcrumbs } from "@/components/breadcrumbs";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AgentListingsPage() {
@@ -23,13 +22,7 @@ export default async function AgentListingsPage() {
 
   return (
     <div className="flex flex-col gap-8 max-w-7xl mx-auto w-full">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Dashboard", href: "/agent/dashboard" },
-        { label: "My Listings" }
-      ]} />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-heading">My Listings</h1>
           <p className="text-body/80 mt-1">Manage and track your property listings.</p>

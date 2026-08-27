@@ -14,6 +14,7 @@ type Listing = {
     photoUrl: string | null;
     rating: number | null;
     isSaved: boolean;
+    isBoosted?: boolean;
 };
 
 type Artisan = {
@@ -23,6 +24,7 @@ type Artisan = {
     photoUrl: string | null;
     rating: number | null;
     isSaved?: boolean;
+    isBoosted?: boolean;
 };
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -39,16 +41,29 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
 
 function ListingCard({ listing }: { listing: Listing }) {
     return (
-        <div className="relative flex-shrink-0 w-36 sm:w-64">
+        <div className="relative flex-shrink-0 w-40 sm:w-56 md:w-full">
             <AuthGuardLink href={`/listings/${listing.id}`} className="block">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-mint">
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
+                  {listing.photoUrl ? (
                     <img
-                        src={listing.photoUrl || "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600"}
+                        src={listing.photoUrl}
                         alt={listing.title}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                  )}
                 </div>
             </AuthGuardLink>
+
+            {/* Badges */}
+            <div className="absolute left-2 top-2 flex flex-col gap-1 items-start z-10 pointer-events-none">
+                {listing.isBoosted && (
+                    <span className="rounded-full bg-saffron px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-heading shadow-sm backdrop-blur">
+                        Featured
+                    </span>
+                )}
+            </div>
 
             {/* Heart save */}
             <HeartSaveButton targetId={listing.id} initialSaved={listing.isSaved} isLoggedIn={true} />
@@ -74,16 +89,29 @@ function ListingCard({ listing }: { listing: Listing }) {
 
 function ArtisanCard({ artisan }: { artisan: Artisan }) {
     return (
-        <div className="relative flex-shrink-0 w-36 sm:w-64 block">
+        <div className="relative flex-shrink-0 w-40 sm:w-56 md:w-full block">
             <Link href={`/artisans/${artisan.id}`} className="block">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-mint">
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-3xl">
+                  {artisan.photoUrl ? (
                     <img
-                        src={artisan.photoUrl || "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=400"}
+                        src={artisan.photoUrl}
                         alt={artisan.name}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                  ) : (
+                    <span>{artisan.name.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
             </Link>
+
+            {/* Badges */}
+            <div className="absolute left-2 top-2 flex flex-col gap-1 items-start z-10 pointer-events-none">
+                {artisan.isBoosted && (
+                    <span className="rounded-full bg-saffron px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-heading shadow-sm backdrop-blur">
+                        Featured
+                    </span>
+                )}
+            </div>
 
             <HeartSaveButton targetId={artisan.id} saveType="profile" initialSaved={artisan.isSaved} isLoggedIn={true} />
 
@@ -133,7 +161,7 @@ export function CarouselRow(props: CarouselRowProps) {
                             </svg>
                         </Link>
                     )}
-                    <div className="hidden sm:flex gap-2">
+                    <div className="hidden sm:flex lg:hidden gap-2">
                         <button
                             onClick={() => scroll("left")}
                             className="w-9 h-9 rounded-full border border-border bg-card flex items-center justify-center text-heading hover:border-primary/40 transition"
@@ -152,7 +180,7 @@ export function CarouselRow(props: CarouselRowProps) {
                 </div>
             </div>
 
-            <div ref={scrollRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2">
+            <div ref={scrollRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:gap-6">
                 {props.type === "listing"
                     ? props.listings.map((listing) => <ListingCard key={listing.id} listing={listing} />)
                     : props.artisans.map((artisan) => <ArtisanCard key={artisan.id} artisan={artisan} />)}

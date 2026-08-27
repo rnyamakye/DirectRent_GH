@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import Image from "next/image";
+import { notFound, redirect } from "next/navigation";
+import { BackButton } from "@/components/back-button";
 import { createClient } from "@/lib/supabase/server";
+import { ContactAgentButton } from "@/components/contact-agent-button";
 
 export default async function AgentProfilePage({
     params,
@@ -12,10 +14,14 @@ export default async function AgentProfilePage({
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    if (!user) {
+        redirect(`/auth/login?returnTo=/agents/${id}`);
+    }
+
     // 1. Fetch Agent Profile
     const { data: agent, error } = await supabase
         .from("profiles")
-        .select("full_name, business_name, avatar_url, created_at, bio, location, languages, fun_fact")
+        .select("full_name, business_name, avatar_url, created_at, bio, location, languages, fun_fact, phone, email, is_verified")
         .eq("id", id)
         .eq("role", "agent")
         .single();
@@ -55,7 +61,7 @@ export default async function AgentProfilePage({
         rating: r.rating,
         comment: r.comment,
         reviewer_id: r.reviewer_id,
-        reviewerName: r.profiles?.full_name ?? "Anonymous",
+        reviewerName: (r.profiles as any)?.full_name ?? "Anonymous",
         created_at: r.created_at,
     }));
 
@@ -77,32 +83,35 @@ export default async function AgentProfilePage({
 
     return (
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full min-h-[80vh]">
-            <Breadcrumbs items={[
-                { label: "Home", href: "/" },
-                { label: "Agents", href: "/agents" },
-                { label: displayName },
-            ]} />
+            <BackButton />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-start mt-6">
                 {/* Left Column: Airbnb Style Host Card */}
-                <div className="lg:col-span-1 sticky top-28">
+                <div className="lg:col-span-1 top-28">
                     <div className="bg-white rounded-3xl p-8 shadow-[0_12px_36px_rgba(0,0,0,0.12)] border border-border/50 flex flex-col items-center text-center">
                         <div className="relative">
                             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
-                                    <img
-                                        src={agent.avatar_url || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"}
+                                {agent.avatar_url ? (
+                                    <Image
+                                        src={agent.avatar_url}
                                         alt={displayName}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        className="object-cover"
                                     />
+                                ) : (
+                                    <span>{initials}</span>
+                                )}
                             </div>
                             <div className="absolute bottom-0 right-0 bg-[#E61E4D] text-white p-2 rounded-full border-2 border-white" title="Identity Verified">
-                                <svg viewBox="0 0 16 16" className="w-4 h-4 fill-current"><path d="M13.102 2.537l.092-.007a1 1 0 01.764.298l.067.08c.187.242.234.56.126.853l-.053.116-2.5 5a1 1 0 01-1.62.19l-.076-.08-2.5-3a1 1 0 011.41-1.4l.08.086 1.637 1.964 1.83-3.66a1 1 0 01.743-.44z"></path></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" /></svg>
                             </div>
                         </div>
 
                         <h1 className="text-3xl font-extrabold text-heading mt-5">{displayName}</h1>
-                        <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-6">
+                        <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-2">
                             🏆 <span className="uppercase tracking-widest text-[#E61E4D]">Superagent</span>
                         </div>
+
+                        <ContactAgentButton agentId={id} phone={agent.phone} email={agent.email} />
 
                         <div className="flex w-full divide-x divide-border border-t border-border pt-6">
                             <div className="flex-1 flex flex-col items-center">
@@ -116,8 +125,8 @@ export default async function AgentProfilePage({
                                 <span className="text-xs text-body uppercase tracking-wider font-semibold mt-1">Rating</span>
                             </div>
                             <div className="flex-1 flex flex-col items-center">
-                                <span className="font-extrabold text-heading text-lg">{Math.max(1, monthsHosting)}</span>
-                                <span className="text-xs text-body uppercase tracking-wider font-semibold mt-1">Months</span>
+                                <span className="font-extrabold text-heading text-lg">{listings.length}</span>
+                                <span className="text-xs text-body uppercase tracking-wider font-semibold mt-1">Listings</span>
                             </div>
                         </div>
                     </div>
@@ -216,12 +225,17 @@ export default async function AgentProfilePage({
                                         href={`/listings/${listing.id}`}
                                         className="group rounded-2xl border border-border overflow-hidden bg-card hover:shadow-lg transition-all"
                                     >
-                                        <div className="aspect-[4/3] bg-mint overflow-hidden relative">
-                                            <img
-                                                src={listing.photo_urls && listing.photo_urls.length > 0 ? listing.photo_urls[0] : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600"}
-                                                alt={listing.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                            />
+                                        <div className="aspect-[4/3] overflow-hidden relative bg-slate-100 flex items-center justify-center text-slate-300">
+                                            {listing.photo_urls && listing.photo_urls.length > 0 ? (
+                                                <Image
+                                                    src={listing.photo_urls[0]}
+                                                    alt={listing.title}
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                            ) : (
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                                            )}
                                         </div>
                                         <div className="p-4">
                                             <p className="font-semibold text-heading truncate">{listing.title}</p>

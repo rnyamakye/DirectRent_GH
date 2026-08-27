@@ -2,8 +2,14 @@
 
 import { use, useState, useEffect } from "react";
 import { useRouter, notFound } from "next/navigation";
+import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import dynamic from "next/dynamic";
+
+const LocationPicker = dynamic(
+  () => import("@/components/location-picker"),
+  { ssr: false, loading: () => <p className="text-xs text-body/60 h-64 flex items-center justify-center border border-border rounded-xl">Loading map...</p> }
+);
 
 export default function EditListingPage({
   params,
@@ -29,6 +35,9 @@ export default function EditListingPage({
   const [city, setCity] = useState("Accra");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [isSelfContained, setIsSelfContained] = useState(false);
+  const [hasSharedKitchen, setHasSharedKitchen] = useState(false);
+  const [hasSharedBathroom, setHasSharedBathroom] = useState(false);
 
   useEffect(() => {
     async function loadListing() {
@@ -69,6 +78,9 @@ export default function EditListingPage({
       setLoading(false);
       setLatitude(listing.latitude);
       setLongitude(listing.longitude);
+      setIsSelfContained(listing.is_self_contained ?? false);
+      setHasSharedKitchen(listing.has_shared_kitchen ?? false);
+      setHasSharedBathroom(listing.has_shared_bathroom ?? false);
     }
 
     loadListing();
@@ -132,6 +144,9 @@ export default function EditListingPage({
         property_type: propertyType,
         bedrooms: Number(bedrooms),
         bathrooms: Number(bathrooms),
+        is_self_contained: isSelfContained,
+        has_shared_kitchen: hasSharedKitchen,
+        has_shared_bathroom: hasSharedBathroom,
         photo_urls: [...photoUrls, ...uploadedUrls],
       })
       .eq("id", id);
@@ -163,13 +178,7 @@ export default function EditListingPage({
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto w-full">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Dashboard", href: "/agent/dashboard" },
-        { label: "My Listings", href: "/agent/listings" },
-        { label: "Edit Listing" }
-      ]} />
-      <form onSubmit={handleSave} className="flex flex-col gap-4 max-w-md">
+<form onSubmit={handleSave} className="flex flex-col gap-4 max-w-md">
         <h1 className="text-xl font-bold">Edit listing</h1>
 
         <div>
@@ -250,6 +259,43 @@ export default function EditListingPage({
         />
         <input type="text" value={landmark} onChange={(e) => setLandmark(e.target.value)} className="rounded-lg border border-border px-4 py-2 text-sm font-supporting" />
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="rounded-lg border border-border px-4 py-2 text-sm font-supporting" />
+        
+        <div className="flex flex-col gap-3">
+          <label className="text-xs font-semibold uppercase tracking-wide text-body/60 mb-1 block">
+            Room Features
+          </label>
+          
+          <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+            <input 
+              type="checkbox" 
+              checked={isSelfContained}
+              onChange={(e) => setIsSelfContained(e.target.checked)}
+              className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <span className="text-sm font-medium text-heading">Self Contained</span>
+          </label>
+
+          <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+            <input 
+              type="checkbox" 
+              checked={hasSharedKitchen}
+              onChange={(e) => setHasSharedKitchen(e.target.checked)}
+              className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <span className="text-sm font-medium text-heading">Shared Kitchen</span>
+          </label>
+
+          <label className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-slate-50 cursor-pointer transition">
+            <input 
+              type="checkbox" 
+              checked={hasSharedBathroom}
+              onChange={(e) => setHasSharedBathroom(e.target.checked)}
+              className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <span className="text-sm font-medium text-heading">Shared Bathroom</span>
+          </label>
+        </div>
+
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide text-body/60 mb-1.5 block">
             Pin the exact location

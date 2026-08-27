@@ -10,6 +10,7 @@ import {
   HomeIcon, ListingsIcon, ArtisansIcon, AgentsIcon,
   SavedIcon, InfoIcon, ContactIcon, BlogIcon, HelpIcon
 } from "@/components/icons";
+import { NotificationBell } from "@/components/notification-bell";
 
 interface HeaderProps {
   className?: string;
@@ -110,15 +111,12 @@ export function Header({ className }: HeaderProps) {
   if (user) {
     if (role === "agent") {
       desktopLinks = [
-        { label: "Explore", href: "/", icon: <HomeIcon className="h-4 w-4" /> },
         { label: "Listings", href: "/listings", icon: <ListingsIcon className="h-4 w-4" /> },
         { label: "My Listings", href: "/agent/listings", icon: <ListingsIcon className="h-4 w-4" /> },
       ];
     } else if (role === "artisan") {
       desktopLinks = [
-        { label: "Explore", href: "/", icon: <HomeIcon className="h-4 w-4" /> },
-        { label: "Artisans", href: "/artisans", icon: <ArtisansIcon className="h-4 w-4" /> },
-        { label: "Listings", href: "/listings", icon: <ListingsIcon className="h-4 w-4" /> },
+        { label: "Home", href: "/artisan/overview", icon: <HomeIcon className="h-4 w-4" /> },
       ];
     } else {
       desktopLinks = [
@@ -133,7 +131,7 @@ export function Header({ className }: HeaderProps) {
 
   return (
     <div className={twMerge(
-      "sticky top-0 z-50 w-full transition-all duration-300",
+      "relative z-50 w-full transition-all duration-300",
       !isAuthLoaded ? "hidden md:block opacity-0" : (user ? "hidden md:block" : "block")
     )}>
       <header
@@ -189,18 +187,21 @@ export function Header({ className }: HeaderProps) {
             user ? "hidden md:flex" : "flex"
           )}>
             {user ? (
-              <Link
-                href={role ? `/${role}/dashboard` : "/auth/select-role"}
-                className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-500 text-white text-sm font-semibold overflow-hidden border border-border hover:ring-2 hover:ring-primary/50 transition-all"
-              >
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
-                ) : initials ? (
-                  <span>{initials}</span>
-                ) : (
-                  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" className="h-full w-full fill-current text-white"><path d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"></path></svg>
-                )}
-              </Link>
+              <>
+                <NotificationBell userId={user.id} />
+                <Link
+                  href={role ? `/${role}/dashboard` : "/auth/select-role"}
+                  className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-500 text-white text-sm font-semibold overflow-hidden border border-border hover:ring-2 hover:ring-primary/50 transition-all"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                  ) : initials ? (
+                    <span>{initials}</span>
+                  ) : (
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" className="h-full w-full fill-current text-white"><path d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"></path></svg>
+                  )}
+                </Link>
+              </>
             ) : (
               <Link href="/auth/login" className="px-5 py-2 text-sm font-semibold bg-primary text-white rounded-full hover:bg-primary-hover transition">
                 Sign in

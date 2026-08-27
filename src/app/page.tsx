@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { MarketingHome } from "@/components/marketing-home";
 import { LoggedInHome } from "@/components/logged-in-home";
+import { redirect } from "next/navigation";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -9,7 +10,37 @@ export default async function HomePage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return <MarketingHome />;
+    const [
+      { count: usersCount },
+      { count: listingsCount },
+      { count: artisansCount }
+    ] = await Promise.all([
+      supabase.from("profiles").select("*", { count: "exact", head: true }),
+      supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "available"),
+      supabase.from("artisan_profiles").select("*", { count: "exact", head: true })
+    ]);
+
+    const stats = {
+      users: usersCount ?? 0,
+      listings: listingsCount ?? 0,
+      artisans: artisansCount ?? 0
+    };
+
+    return <MarketingHome stats={stats} />;
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role === "agent") {
+    redirect("/agent/dashboard");
+  }
+
+  if (profile?.role === "artisan") {
+    redirect("/artisan/dashboard");
   }
 
   const { data: listingsData } = await supabase
@@ -59,6 +90,7 @@ export default async function HomePage() {
       photoUrl: (l.photo_urls?.[0] as string) ?? null,
       rating: ratingEntry ? ratingEntry.total / ratingEntry.count : null,
       isSaved: savedIds.has(l.id),
+      isBoosted: !!l.boosted_until && new Date(l.boosted_until) > new Date(),
     };
   });
 
@@ -74,7 +106,8 @@ export default async function HomePage() {
 
   const { data: artisanRows } = await supabase
     .from("artisan_profiles")
-    .select("id, trade, photo_urls, profiles(full_name)")
+    .select("id, trade, photo_urls, boosted_until, profiles(full_name)")
+    .order("boosted_until", { ascending: false, nullsFirst: false })
     .limit(10);
 
   const artisanIds = (artisanRows ?? []).map(a => a.id);
@@ -97,11 +130,12 @@ export default async function HomePage() {
     const ratingEntry = ratingsByArtisan.get(a.id);
     return {
       id: a.id as string,
-      name: a.profiles?.full_name ?? "Artisan",
+      name: (a.profiles as any)?.full_name ?? "Artisan",
       trade: a.trade as string,
       photoUrl: (a.photo_urls?.[0] as string) ?? null,
       rating: ratingEntry ? ratingEntry.total / ratingEntry.count : null,
       isSaved: savedProfileIds.has(a.id),
+      isBoosted: !!a.boosted_until && new Date(a.boosted_until) > new Date(),
     };
   });
 

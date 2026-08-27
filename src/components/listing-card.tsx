@@ -31,18 +31,19 @@ export function ListingCard({
   isLoggedIn?: boolean;
   hideSaveButton?: boolean;
 }) {
-  // Use a fallback image if none provided
-  const imageUrl = listing.image || "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600";
-
   return (
     <article className={`group cursor-pointer ${listing.isUnavailable ? "opacity-75" : ""}`}>
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100">
-        <img
-          src={imageUrl}
-          alt={listing.title}
-          className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${listing.isUnavailable ? "grayscale" : ""}`}
-        />
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
+        {listing.image ? (
+          <img
+            src={listing.image}
+            alt={listing.title}
+            className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${listing.isUnavailable ? "grayscale" : ""}`}
+          />
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+        )}
         {/* Heart save */}
         {!hideSaveButton && (
           <HeartSaveButton targetId={listing.id} initialSaved={initialSaved} isLoggedIn={isLoggedIn} />

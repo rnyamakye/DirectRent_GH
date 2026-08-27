@@ -2,8 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ReviewsSection } from "@/components/reviews-section";
-import { BackButton } from "@/components/back-button";
-
 export default async function AgentProfilePage({
   params,
 }: {
@@ -48,7 +46,7 @@ export default async function AgentProfilePage({
     rating: r.rating,
     comment: r.comment,
     reviewer_id: r.reviewer_id,
-    reviewerName: r.profiles?.full_name ?? "Anonymous",
+    reviewerName: (r.profiles as any)?.full_name ?? "Anonymous",
   }));
 
   const displayName = agent.business_name ?? agent.full_name ?? "Agent";
@@ -63,9 +61,7 @@ export default async function AgentProfilePage({
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex flex-col gap-10">
-      <BackButton />
-
-      {/* Header */}
+{/* Header */}
       <div className="flex items-center gap-6">
         <div className="w-20 h-20 rounded-full bg-mint flex items-center justify-center text-primary font-bold text-2xl flex-shrink-0">
           {displayName.charAt(0).toUpperCase()}
@@ -140,7 +136,7 @@ export default async function AgentProfilePage({
         <h2 className="text-xl font-semibold text-heading mb-4">Reviews</h2>
         <ReviewsSection
           targetType="agent"
-          targetId={agent.id}
+          targetId={id}
           initialReviews={reviews}
           currentUserId={user?.id ?? null}
           currentUserRole={user?.user_metadata?.role ?? null}

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Breadcrumbs } from "@/components/breadcrumbs";
 import { createClient } from "@/lib/supabase/server";
-import { SignOutButton } from "@/components/sign-out-button";
+
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
+import { RecentlyViewedSection } from "@/components/recently-viewed-section";
 
 const SETTINGS_SECTIONS = [
   {
@@ -58,11 +58,17 @@ export default async function RenterDashboardPage() {
     return null;
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, bio, location, occupation, languages, fun_fact, interests, avatar_url, created_at")
-    .eq("id", user.id)
-    .single();
+  const [
+    { data: profile },
+    { data: saved },
+    { data: savedProfilesData },
+    { data: recentReviews }
+  ] = await Promise.all([
+    supabase.from("profiles").select("full_name, bio, location, occupation, languages, fun_fact, interests, avatar_url, created_at").eq("id", user.id).single(),
+    supabase.from("saved_listings").select("listing_id, listings(*)").eq("renter_id", user.id).limit(4),
+    supabase.from("saved_profiles").select("profile_id").eq("renter_id", user.id),
+    supabase.from("reviews").select("*").eq("reviewer_id", user.id).order("created_at", { ascending: false }).limit(3)
+  ]);
 
   const completenessChecks = [
     !!profile?.avatar_url,
@@ -73,21 +79,9 @@ export default async function RenterDashboardPage() {
   const completedCount = completenessChecks.filter(Boolean).length;
   const completenessPercent = Math.round((completedCount / completenessChecks.length) * 100);
 
-  // Pull the full listing through the saved_listings join table.
-  const { data: saved } = await supabase
-    .from("saved_listings")
-    .select("listing_id, listings(*)")
-    .eq("renter_id", user.id)
-    .limit(4);
-
   const savedListings = (saved ?? [])
-    .map((row) => row.listings)
+    .map((row) => row.listings as any)
     .filter((listing) => listing !== null);
-
-  const { data: savedProfilesData } = await supabase
-    .from("saved_profiles")
-    .select("profile_id")
-    .eq("renter_id", user.id);
 
   const savedProfileIds = (savedProfilesData ?? []).map(r => r.profile_id);
 
@@ -95,11 +89,13 @@ export default async function RenterDashboardPage() {
   let savedArtisans: any[] = [];
 
   if (savedProfileIds.length > 0) {
-    const { data: agentData } = await supabase
-      .from("profiles")
-      .select("id, full_name, business_name, avatar_url, created_at")
-      .eq("role", "agent")
-      .in("id", savedProfileIds);
+    const [
+      { data: agentData },
+      { data: artisanData }
+    ] = await Promise.all([
+      supabase.from("profiles").select("id, full_name, business_name, avatar_url, created_at").eq("role", "agent").in("id", savedProfileIds),
+      supabase.from("artisan_profiles").select("*, profiles(full_name, avatar_url)").in("id", savedProfileIds)
+    ]);
 
     savedAgents = (agentData ?? []).map((row: any) => ({
       id: row.id,
@@ -112,11 +108,6 @@ export default async function RenterDashboardPage() {
       memberSince: new Date(row.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       isSaved: true,
     }));
-
-    const { data: artisanData } = await supabase
-      .from("artisan_profiles")
-      .select("*, profiles(full_name, avatar_url)")
-      .in("id", savedProfileIds);
 
     savedArtisans = (artisanData ?? []).map((row: any) => ({
       id: row.id,
@@ -132,13 +123,6 @@ export default async function RenterDashboardPage() {
       isSaved: true,
     }));
   }
-
-  const { data: recentReviews } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("reviewer_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(3);
 
   const listingIds = (recentReviews ?? []).filter((r) => r.target_type === "listing").map((r) => r.target_id);
   const artisanIds = (recentReviews ?? []).filter((r) => r.target_type === "artisan").map((r) => r.target_id);
@@ -181,38 +165,62 @@ export default async function RenterDashboardPage() {
   ].filter((d) => d.value);
 
   return (
-    <main className="max-w-6xl mx-auto w-full px-4 sm:px-6 pb-12 flex flex-col gap-12">
-      <Breadcrumbs items={[
-        { label: "Home", href: "/" },
-        { label: "Dashboard" }
-      ]} />
-      {/* Hero Header */}
-      <div className="flex flex-col items-center justify-center text-center gap-6">
-        <div className="w-32 h-32 rounded-full overflow-hidden bg-mint flex items-center justify-center text-primary font-bold text-4xl shadow-md border-4 border-white">
-          {profile?.avatar_url ? (
-            <img
-              src={profile.avatar_url}
-              alt={profile?.full_name ?? "Renter"}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            initials
-          )}
+    <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12 pt-5 flex flex-col lg:flex-row gap-12 lg:items-start">
+      {/* Left Sidebar */}
+      <div className="flex flex-col gap-8 lg:w-1/3 xl:w-1/4 lg:sticky lg:top-24">
+        {/* Profile Card */}
+      <div className="flex flex-col items-center gap-5">
+        <div className="bg-white rounded-3xl p-8 shadow-[0_12px_36px_rgba(0,0,0,0.12)] border border-border/50 flex flex-col items-center text-center w-full max-w-md">
+          {/* Avatar with pencil edit button */}
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile?.full_name ?? "Renter"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>{initials}</span>
+              )}
+            </div>
+            {/* Pencil edit icon */}
+            <Link
+              href="/renter/profile/edit"
+              className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-white border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
+              title="Edit profile"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-1.414a2 2 0 01.586-1.414z" />
+              </svg>
+            </Link>
+          </div>
+
+          <h1 className="text-3xl font-extrabold text-heading mt-5">{profile?.full_name ?? "Renter"}</h1>
+          <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1">
+            <span className="uppercase tracking-widest text-primary">Renter</span>
+          </div>
         </div>
-        <div className="flex flex-col gap-2 items-center">
-          <h1 className="text-3xl sm:text-4xl font-bold text-heading">
-            Welcome back{profile?.full_name ? `, ${profile.full_name}` : ""}
-          </h1>
-          <p className="text-base text-body/80">
-            Keep track of your favorite properties and find your next home.
-          </p>
-        </div>
-        <div className="flex gap-3 justify-center mt-2">
+
+        {/* Action buttons — outside the card */}
+        <div className="flex flex-wrap gap-3 justify-center w-full max-w-md">
           <Link
-            href="/renter/profile/edit"
+            href="/renter/bookings"
             className="flex items-center justify-center border border-border hover:border-heading/30 bg-card rounded-full px-5 py-2.5 text-sm font-semibold transition"
           >
-            Edit profile
+            My Bookings
+          </Link>
+          <Link
+            href="/renter/tours"
+            className="flex items-center justify-center border border-border hover:border-heading/30 bg-card rounded-full px-5 py-2.5 text-sm font-semibold transition"
+          >
+            My Tours
+          </Link>
+          <Link
+            href="/renter/alerts"
+            className="flex items-center justify-center border border-border hover:border-heading/30 bg-card rounded-full px-5 py-2.5 text-sm font-semibold transition"
+          >
+            Search Alerts
           </Link>
           <Link
             href="/listings"
@@ -223,16 +231,18 @@ export default async function RenterDashboardPage() {
         </div>
       </div>
 
+
       <ProfileCompletenessCard
         completenessPercent={completenessPercent}
         role="renter"
         className="max-w-2xl mx-auto w-full"
       />
+      </div>
 
-      <hr className="border-border" />
-
-      {/* Saved Section */}
-      <div className="flex flex-col gap-6">
+      {/* Main Content */}
+      <div className="flex flex-col gap-12 lg:w-2/3 xl:w-3/4">
+        {/* Saved Section */}
+        <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-heading">Saved</h2>
           {(savedListings.length > 0 || savedAgents.length > 0 || savedArtisans.length > 0) && (
@@ -268,12 +278,16 @@ export default async function RenterDashboardPage() {
                   href={`/listings/${listing.id}`}
                   className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
                 >
-                  <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-mint/50 border border-border">
-                    <img
-                      src={hasPhoto ? listing.photo_urls[0] : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600"}
-                      alt={listing.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                  <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center text-slate-300">
+                    {hasPhoto ? (
+                      <img
+                        src={listing.photo_urls[0]}
+                        alt={listing.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                    )}
                   </div>
 
                   <div className="flex flex-col flex-1 min-w-0">
@@ -301,12 +315,16 @@ export default async function RenterDashboardPage() {
                 href={`/renters/${agent.id}`}
                 className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
               >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-mint/50 border border-border">
-                  <img
-                    src={agent.avatarUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"}
-                    alt={agent.fullName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-border bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl">
+                  {agent.avatarUrl ? (
+                    <img
+                      src={agent.avatarUrl}
+                      alt={agent.fullName}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span>{agent.fullName.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col flex-1 min-w-0">
@@ -333,12 +351,16 @@ export default async function RenterDashboardPage() {
                 href={`/artisans/${artisan.id}`}
                 className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
               >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-mint/50 border border-border">
-                  <img
-                    src={artisan.photoUrl || "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=400"}
-                    alt={artisan.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-border bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl">
+                  {artisan.photoUrl ? (
+                    <img
+                      src={artisan.photoUrl}
+                      alt={artisan.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span>{artisan.name.charAt(0).toUpperCase()}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col flex-1 min-w-0">
@@ -363,6 +385,10 @@ export default async function RenterDashboardPage() {
       </div>
 
       <hr className="border-border" />
+
+      {/* Recently Viewed Section */}
+      <RecentlyViewedSection userId={user.id} />
+
 
       {/* Reviews Section */}
       <div className="flex flex-col gap-6">
@@ -444,11 +470,8 @@ export default async function RenterDashboardPage() {
           ))}
         </div>
 
-        <div className="pt-4 flex justify-start">
-          <SignOutButton className="px-4 py-3 rounded-2xl border border-border bg-red-700 text-heading font-semibold hover:bg-red-600 text-white transition-colors shadow-sm">
-            Sign out
-          </SignOutButton>
-        </div>
+
+      </div>
       </div>
     </main>
   );

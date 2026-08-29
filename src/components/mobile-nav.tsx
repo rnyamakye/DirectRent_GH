@@ -32,8 +32,8 @@ export function MobileNav() {
   }, []);
 
   const getProfileLink = () => {
-    if (role === "agent") return "/agent/dashboard";
-    if (role === "artisan") return "/artisan/dashboard";
+    if (role === "agent") return "/agent/profile";
+    if (role === "artisan") return "/artisan/profile";
     if (role === "renter") return "/renter/dashboard";
     return "/auth/login";
   };
@@ -76,16 +76,25 @@ export function MobileNav() {
     </svg>
   );
 
+  const messagesIcon = (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  );
+
   let navItems = [];
 
   if (role === "agent") {
     navItems = [
       { label: "My Listings", href: "/agent/listings", icon: listingsIcon },
+      { label: "Dashboard", href: "/agent/dashboard", icon: homeIcon, isMain: true },
+      { label: "Messages", href: "/agent/messages", icon: messagesIcon },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else if (role === "artisan") {
     navItems = [
-      { label: "Home", href: "/artisan/overview", icon: homeIcon },
+      { label: "Messages", href: "/artisan/messages", icon: messagesIcon },
+      { label: "Home", href: "/artisan/dashboard", icon: homeIcon, isMain: true },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else {
@@ -93,7 +102,7 @@ export function MobileNav() {
       { label: "Agents", href: "/agents", icon: agentsIcon },
       { label: "Artisans", href: "/artisans", icon: artisansIcon },
       { label: "Explore", href: "/", icon: homeIcon, isMain: true },
-      { label: "Saved", href: "/renter/saved", icon: savedIcon },
+      { label: "Messages", href: "/renter/messages", icon: messagesIcon },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   }
@@ -121,6 +130,10 @@ export function MobileNav() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (pathname?.includes("/messages")) {
+    return null;
+  }
 
   return (
     <>

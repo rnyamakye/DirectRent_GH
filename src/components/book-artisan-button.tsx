@@ -59,6 +59,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
 export function BookArtisanButton({ artisanId, artisanName, phone, existingBooking }: Props) {
   const [booking, setBooking] = useState<Booking | null>(existingBooking);
   const [modalOpen, setModalOpen] = useState(false);
+  const [messaging, setMessaging] = useState(false);
 
   // Form state
   const [date, setDate] = useState("");
@@ -234,39 +235,58 @@ export function BookArtisanButton({ artisanId, artisanName, phone, existingBooki
         </div>
 
         {/* Revealed contact info */}
-        {phone ? (
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-bold uppercase tracking-widest text-body/50">
-              Contact {artisanName.split(" ")[0]}
-            </p>
-            <a
-              href={`tel:${phone}`}
-              className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group"
-            >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">📞</div>
-              <div>
-                <p className="font-bold text-heading text-sm">Phone Call</p>
-                <p className="text-xs text-body">{phone}</p>
-              </div>
-            </a>
-            <a
-              href={`https://wa.me/${waPhone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-[#25D366]/50 hover:bg-[#25D366]/5 transition group"
-            >
-              <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center text-[#25D366] text-lg group-hover:scale-110 transition-transform">💬</div>
-              <div>
-                <p className="font-bold text-heading text-sm">WhatsApp</p>
-                <p className="text-xs text-body">Chat instantly</p>
-              </div>
-            </a>
-          </div>
-        ) : (
-          <p className="text-sm text-body/60 text-center">
-            No direct contact number on file. The artisan will reach out to you.
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-body/50">
+            Contact {artisanName.split(" ")[0]}
           </p>
-        )}
+          <button
+            onClick={async () => {
+              setMessaging(true);
+              const { createClient } = await import("@/lib/supabase/client");
+              const supabase = createClient();
+              const { data: { user } } = await supabase.auth.getUser();
+              if (user) {
+                // Check if conversation exists
+                let { data: conv } = await supabase
+                  .from("conversations")
+                  .select("id")
+                  .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
+                  .single();
+
+                if (!conv) {
+                  const { data: newConv } = await supabase
+                    .from("conversations")
+                    .insert({ participant_one_id: user.id, participant_two_id: artisanId })
+                    .select("id")
+                    .single();
+                  conv = newConv;
+                }
+                
+                if (conv) {
+                  window.location.href = `/renter/messages?conversationId=${conv.id}`;
+                }
+              }
+              setMessaging(false);
+            }}
+            disabled={messaging}
+            className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group text-left disabled:opacity-50"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">
+              {messaging ? (
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+              ) : (
+                "✉️"
+              )}
+            </div>
+            <div>
+              <p className="font-bold text-heading text-sm">In-App Message</p>
+              <p className="text-xs text-body">Chat securely on DirectRent</p>
+            </div>
+          </button>
+        </div>
 
         {/* Cancel */}
         <button

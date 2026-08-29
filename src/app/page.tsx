@@ -13,11 +13,13 @@ export default async function HomePage() {
     const [
       { count: usersCount },
       { count: listingsCount },
-      { count: artisansCount }
+      { count: artisansCount },
+      { data: blogPosts }
     ] = await Promise.all([
       supabase.from("profiles").select("*", { count: "exact", head: true }),
       supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "available"),
-      supabase.from("artisan_profiles").select("*", { count: "exact", head: true })
+      supabase.from("artisan_profiles").select("*", { count: "exact", head: true }),
+      supabase.from("blog_posts").select("id, title, excerpt, category, published_at, image").order("published_at", { ascending: false }).limit(3)
     ]);
 
     const stats = {
@@ -26,7 +28,7 @@ export default async function HomePage() {
       artisans: artisansCount ?? 0
     };
 
-    return <MarketingHome stats={stats} />;
+    return <MarketingHome stats={stats} blogs={blogPosts ?? []} />;
   }
 
   const { data: profile } = await supabase

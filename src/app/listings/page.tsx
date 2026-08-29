@@ -73,7 +73,7 @@ export default async function ListingsPage({
   })).filter(l => !isNaN(l.lat) && !isNaN(l.lng) && l.lat !== 0 && l.lng !== 0) || [];
 
   return (
-    <main className="min-h-screen bg-canvas flex flex-col">
+    <main className="min-h-screen bg-canvas flex flex-col max-w-7xl mx-auto">
       {/* Horizontal Filter Bar */}
       <div className="bg-canvas/95 backdrop-blur-sm pt-8 pb-4 border-b border-border relative top-0 z-20">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -128,7 +128,7 @@ export default async function ListingsPage({
           </div>
 
           {/* Map Container — hidden on mobile (shown inside filter dropdown instead) */}
-          <div className="hidden lg:block lg:w-2/5 xl:w-1/3 h-[400px] lg:h-[calc(100vh-140px)] lg:relative lg:top-[120px] rounded-2xl overflow-hidden shadow-sm z-10 border border-border bg-card">
+          <div className="hidden lg:block lg:w-2/5 xl:w-1/3 h-[400px] lg:h-[calc(100vh-140px)] lg:relative rounded-2xl overflow-hidden shadow-sm z-10 border border-border bg-card">
             <MapLoader listings={mapListings} />
           </div>
 

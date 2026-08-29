@@ -86,7 +86,7 @@ export default async function ArtisanProfilePage({
 
         {/* Left Column: Profile Card */}
         <div className="lg:col-span-1 top-28">
-          <div className="bg-white rounded-3xl p-8 shadow-[0_12px_36px_rgba(0,0,0,0.12)] border border-border/50 flex flex-col items-center text-center">
+          <div className=" rounded-3xl p-8  border border-border/50 flex flex-col items-center text-center">
             <div className="relative">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
                 {avatarUrl ? (

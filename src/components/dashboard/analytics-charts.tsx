@@ -29,23 +29,27 @@ export function AnalyticsCharts({ data }: { data: ChartDataPoint[] }) {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveTab("views")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            className={`px-3 py-2 sm:px-4 rounded-full text-sm font-semibold transition flex items-center gap-2 ${
               activeTab === "views"
                 ? "bg-primary text-white"
                 : "bg-card text-body hover:bg-border/50 border border-border"
             }`}
+            title="Profile Views"
           >
-            Profile Views
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span className="hidden sm:inline">Profile Views</span>
           </button>
           <button
             onClick={() => setActiveTab("earnings")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            className={`px-3 py-2 sm:px-4 rounded-full text-sm font-semibold transition flex items-center gap-2 ${
               activeTab === "earnings"
                 ? "bg-primary text-white"
                 : "bg-card text-body hover:bg-border/50 border border-border"
             }`}
+            title="Earnings"
           >
-            Earnings
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            <span className="hidden sm:inline">Earnings</span>
           </button>
         </div>
       </div>

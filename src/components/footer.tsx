@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 
 const socialLinks = [
   {
@@ -47,12 +48,15 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const supabase = createClient();
@@ -78,6 +82,11 @@ export function Footer() {
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  // Do not show footer on messaging pages
+  if (pathname?.includes("/messages")) {
+    return null;
+  }
 
   let footerLinks = [];
 

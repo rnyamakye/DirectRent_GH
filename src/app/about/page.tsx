@@ -35,7 +35,7 @@ export default async function AboutPage() {
         <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-canvas to-transparent" />
 
         <div className="relative z-10 text-center px-4 pt-26">
-          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-md">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-md mb-4">
             About DirectRent GH
           </h1>
           <p className="mt-4 text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-sm font-medium">

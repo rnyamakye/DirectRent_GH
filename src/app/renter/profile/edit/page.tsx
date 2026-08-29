@@ -156,7 +156,7 @@ export default function RenterProfileEditPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-10 w-full">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-10 w-full">
         {/* LEFT COLUMN: Avatar & About me */}
         <div className="flex flex-col gap-10 w-full">
           {/* Avatar section */}

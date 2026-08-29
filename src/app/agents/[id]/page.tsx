@@ -87,7 +87,7 @@ export default async function AgentProfilePage({
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-start mt-6">
                 {/* Left Column: Airbnb Style Host Card */}
                 <div className="lg:col-span-1 top-28">
-                    <div className="bg-white rounded-3xl p-8 shadow-[0_12px_36px_rgba(0,0,0,0.12)] border border-border/50 flex flex-col items-center text-center">
+                    <div className="flex flex-col items-center text-center">
                         <div className="relative">
                             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
                                 {agent.avatar_url ? (
@@ -223,9 +223,9 @@ export default async function AgentProfilePage({
                                     <Link
                                         key={listing.id}
                                         href={`/listings/${listing.id}`}
-                                        className="group rounded-2xl border border-border overflow-hidden bg-card hover:shadow-lg transition-all"
+                                        className="group flex flex-col gap-3 cursor-pointer"
                                     >
-                                        <div className="aspect-[4/3] overflow-hidden relative bg-slate-100 flex items-center justify-center text-slate-300">
+                                        <div className="aspect-[4/3] rounded-2xl overflow-hidden relative bg-slate-100 flex items-center justify-center text-slate-300">
                                             {listing.photo_urls && listing.photo_urls.length > 0 ? (
                                                 <Image
                                                     src={listing.photo_urls[0]}
@@ -237,12 +237,12 @@ export default async function AgentProfilePage({
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-12 h-12"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
                                             )}
                                         </div>
-                                        <div className="p-4">
+                                        <div className="flex flex-col">
                                             <p className="font-semibold text-heading truncate">{listing.title}</p>
                                             <p className="text-sm text-body mt-0.5">{listing.landmark}</p>
-                                            <p className="font-semibold text-primary mt-2">
+                                            <p className="font-semibold text-heading mt-1">
                                                 GHS {listing.price.toLocaleString()}
-                                                <span className="font-normal text-body text-sm"> / mo</span>
+                                                <span className="font-normal text-body"> / mo</span>
                                             </p>
                                         </div>
                                     </Link>

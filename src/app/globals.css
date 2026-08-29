@@ -38,18 +38,20 @@
   --font-supporting: var(--font-supporting), sans-serif;
 }
 
-body {
-  background: var(--color-canvas);
-  color: var(--color-body);
-}
+@layer base {
+  body {
+    background: var(--color-canvas);
+    color: var(--color-body);
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--color-heading);
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-heading);
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {

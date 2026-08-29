@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import {
   HomeIcon, ListingsIcon, ArtisansIcon, AgentsIcon,
-  SavedIcon, InfoIcon, ContactIcon, BlogIcon, HelpIcon
+  SavedIcon, InfoIcon, ContactIcon, BlogIcon, HelpIcon, MessageIcon
 } from "@/components/icons";
 import { NotificationBell } from "@/components/notification-bell";
 
@@ -110,14 +110,9 @@ export function Header({ className }: HeaderProps) {
 
   if (user) {
     if (role === "agent") {
-      desktopLinks = [
-        { label: "Listings", href: "/listings", icon: <ListingsIcon className="h-4 w-4" /> },
-        { label: "My Listings", href: "/agent/listings", icon: <ListingsIcon className="h-4 w-4" /> },
-      ];
+      desktopLinks = [];
     } else if (role === "artisan") {
-      desktopLinks = [
-        { label: "Home", href: "/artisan/overview", icon: <HomeIcon className="h-4 w-4" /> },
-      ];
+      desktopLinks = [];
     } else {
       desktopLinks = [
         { label: "Explore", href: "/", icon: <HomeIcon className="h-4 w-4" /> },
@@ -127,6 +122,10 @@ export function Header({ className }: HeaderProps) {
         { label: "Saved", href: "/renter/saved", icon: <SavedIcon className="h-4 w-4" /> },
       ];
     }
+  }
+
+  if (pathname?.includes("/messages")) {
+    return null;
   }
 
   return (
@@ -147,7 +146,7 @@ export function Header({ className }: HeaderProps) {
 
           {/* ── Left: Logo ── */}
           <div className="flex-1 flex items-center">
-            <Link href="/" className="font-bold text-xl text-primary flex items-center gap-2">
+            <Link href={role === "agent" ? "/agent/dashboard" : role === "artisan" ? "/artisan/dashboard" : "/"} className="font-bold text-xl text-primary flex items-center gap-2">
               <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" className="h-8 w-8 fill-current">
                 <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.011.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.644-.673-.645.672-.257.26c-2.152 2.128-4.485 3.387-6.708 3.387-3.48 0-6.357-2.416-6.357-6.478 0-.858.146-1.781.539-3.113l.113-.373.118-.336c.952-2.618 5.076-11.226 7.156-15.253l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.836c-.427 1.071-.573 1.655-.573 2.254 0 2.534 1.636 3.978 3.857 3.978 1.488 0 3.197-.847 4.966-2.502l.663-.637.382-.36.382.36.663.637c1.769 1.655 3.478 2.502 4.966 2.502 2.221 0 3.857-1.444 3.857-3.978 0-.46-.098-.999-.441-2.046l-.23-.687c-.886-2.548-4.996-11.134-6.903-14.887l-.523-1.008C18.053 3.539 17.239 3 16 3z"></path>
               </svg>
@@ -188,9 +187,25 @@ export function Header({ className }: HeaderProps) {
           )}>
             {user ? (
               <>
+                {role === "agent" && (
+                  <Link
+                    href="/agent/listings"
+                    className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-slate-100 text-body transition-colors relative"
+                    title="My Listings"
+                  >
+                    <ListingsIcon className="h-5 w-5" />
+                  </Link>
+                )}
+                <Link
+                  href={role ? `/${role}/messages` : "/messages"}
+                  className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-slate-100 text-body transition-colors relative"
+                  title="Messages"
+                >
+                  <MessageIcon className="h-5 w-5" />
+                </Link>
                 <NotificationBell userId={user.id} />
                 <Link
-                  href={role ? `/${role}/dashboard` : "/auth/select-role"}
+                  href={role ? (role === "renter" ? "/renter/dashboard" : `/${role}/profile`) : "/auth/select-role"}
                   className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-500 text-white text-sm font-semibold overflow-hidden border border-border hover:ring-2 hover:ring-primary/50 transition-all"
                 >
                   {avatarUrl ? (

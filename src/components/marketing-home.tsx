@@ -1,5 +1,14 @@
 import Link from "next/link";
-export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 } }: { stats?: { users: number, listings: number, artisans: number } }) {
+type BlogPost = {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  published_at: string;
+  image: string;
+};
+
+export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, blogs = [] }: { stats?: { users: number, listings: number, artisans: number }, blogs?: BlogPost[] }) {
     return (
         <div>
             <main className="min-h-screen bg-canvas text-body">
@@ -19,7 +28,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 } }
                             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-mint/90">
                                 Discover homes and trusted professionals
                             </p>
-                            <h1 className="text-5xl font-extrabold tracking-tight drop-shadow-sm md:text-6xl lg:text-7xl text-white bg-white/20 rounded-full px-4 py-2 inline-block">
+                            <h1 className="text-4xl font-extrabold tracking-tight drop-shadow-sm md:text-6xl lg:text-7xl text-white">
                                 Find Your Favorite Property
                             </h1>
                             <p className="mx-auto mt-6 max-w-2xl text-base text-white/80 md:text-lg">
@@ -171,46 +180,36 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 } }
                             </Link>
                         </div>
                         <div className="grid gap-6 md:grid-cols-3">
-                            {[
-                                { 
-                                  title: "How to Find the Perfect Room in Accra", 
-                                  excerpt: "Searching for a room in Accra can be daunting. Follow these simple tips to navigate the rental market like a pro.",
-                                  category: "Guides", 
-                                  date: "July 24, 2026",
-                                  image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"
-                                },
-                                { 
-                                  title: "Top 5 Questions to Ask Your Landlord", 
-                                  excerpt: "Before signing any lease, make sure you ask your potential landlord these critical questions.",
-                                  category: "Tips", 
-                                  date: "July 18, 2026",
-                                  image: "https://images.unsplash.com/photo-1556910103-1c02745a872e?w=800"
-                                },
-                                { 
-                                  title: "The Importance of Using Verified Artisans", 
-                                  excerpt: "Why it's crucial to hire verified artisans for your home repairs and maintenance tasks.",
-                                  category: "Maintenance", 
-                                  date: "July 10, 2026",
-                                  image: "https://images.unsplash.com/photo-1581141849291-1125c7b692b5?w=800"
-                                }
-                            ].map((post, idx) => (
-                                <article key={idx} className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:shadow-md hover:border-primary/30">
-                                    <div className="aspect-[16/9] w-full overflow-hidden bg-slate-100 relative">
-                                        <img src={post.image} alt={post.title} className="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
-                                    </div>
-                                    <div className="flex flex-col flex-1 p-6">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <span className="rounded-md bg-mint/50 px-2.5 py-1 text-xs font-semibold text-primary">{post.category}</span>
-                                            <span className="text-xs text-body/70">{post.date}</span>
+                            {blogs.map((post, idx) => {
+                                const formattedDate = post.published_at 
+                                    ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                                    : "Unknown Date";
+                                return (
+                                <article key={idx} className="relative flex-shrink-0 block w-full group">
+                                    <Link href={`/blog/${post.id}`} className="block">
+                                        <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center">
+                                            <img src={post.image} alt={post.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                         </div>
-                                        <h3 className="mb-2 text-xl font-bold text-heading leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
-                                        <p className="text-sm text-body line-clamp-3 mb-4">{post.excerpt}</p>
-                                        <div className="mt-auto">
-                                            <span className="inline-flex items-center text-sm font-bold text-primary">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg></span>
+                                    </Link>
+                                    <Link href={`/blog/${post.id}`} className="block mt-3">
+                                        <div className="flex items-start justify-between gap-2 mb-1">
+                                            <p className="text-xs font-semibold text-heading truncate">
+                                                {post.category}
+                                            </p>
+                                            <span className="flex items-center gap-0.5 text-[10px] sm:text-xs font-medium text-body flex-shrink-0">
+                                                {formattedDate}
+                                            </span>
                                         </div>
-                                    </div>
+                                        <p className="text-base text-heading font-semibold line-clamp-2 leading-snug">
+                                            {post.title}
+                                        </p>
+                                        <p className="text-sm text-body/80 line-clamp-2 mt-1">
+                                            {post.excerpt}
+                                        </p>
+                                    </Link>
                                 </article>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </section>

@@ -40,17 +40,11 @@ export default async function ContactPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 mt-4">
+      <div className="mt-4">
         <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
           <h3 className="font-semibold text-heading">Email Support</h3>
           <p className="font-supporting text-sm text-body mb-2">For general inquiries and support.</p>
           <a href="mailto:support@directrent.gh" className="text-sm font-medium text-primary hover:text-primary-hover">support@directrent.gh</a>
-        </div>
-        
-        <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <h3 className="font-semibold text-heading">Phone</h3>
-          <p className="font-supporting text-sm text-body mb-2">Available Mon-Fri, 9am - 5pm GMT.</p>
-          <a href="tel:+233123456789" className="text-sm font-medium text-primary hover:text-primary-hover">+233 (0) 123 456 789</a>
         </div>
       </div>
 

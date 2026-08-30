@@ -42,7 +42,6 @@ export default async function AgentToursPage() {
       ),
       profiles!tour_requests_renter_id_fkey (
         full_name,
-        phone,
         email
       )
     `)

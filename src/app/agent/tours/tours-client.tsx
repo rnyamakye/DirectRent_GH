@@ -100,13 +100,11 @@ export function AgentToursClient({ initialTours }: { initialTours: any[] }) {
         <tbody className="divide-y divide-border">
           {tours.map((tour) => {
             const renterName = tour.profiles?.full_name || "Unknown Renter";
-            const phone = tour.profiles?.phone || "No phone";
 
             return (
               <tr key={tour.id} className="hover:bg-slate-50/50 transition">
                 <td className="p-4">
                   <p className="font-semibold text-heading">{renterName}</p>
-                  <p className="text-xs text-body/70 mt-0.5">{phone}</p>
                 </td>
                 <td className="p-4 max-w-[200px]">
                   <p className="font-semibold text-heading truncate">{tour.listings?.title}</p>

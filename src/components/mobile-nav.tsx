@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { UnreadMessagesBadge } from "@/components/unread-messages-badge";
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -38,10 +39,17 @@ export function MobileNav() {
     return "/auth/login";
   };
 
-  const homeIcon = (
+  const exploreIcon = (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <circle cx="11" cy="11" r="8"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  );
+
+  const dashboardIcon = (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
     </svg>
   );
 
@@ -77,8 +85,17 @@ export function MobileNav() {
   );
 
   const messagesIcon = (
+    <div className="relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <UnreadMessagesBadge />
+    </div>
+  );
+
+  const bookingsIcon = (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
     </svg>
   );
 
@@ -86,22 +103,23 @@ export function MobileNav() {
 
   if (role === "agent") {
     navItems = [
+      { label: "Dashboard", href: "/agent/dashboard", icon: dashboardIcon },
       { label: "My Listings", href: "/agent/listings", icon: listingsIcon },
-      { label: "Dashboard", href: "/agent/dashboard", icon: homeIcon, isMain: true },
       { label: "Messages", href: "/agent/messages", icon: messagesIcon },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else if (role === "artisan") {
     navItems = [
+      { label: "Home", href: "/artisan/dashboard", icon: dashboardIcon },
+      { label: "Bookings", href: "/artisan/bookings", icon: bookingsIcon },
       { label: "Messages", href: "/artisan/messages", icon: messagesIcon },
-      { label: "Home", href: "/artisan/dashboard", icon: homeIcon, isMain: true },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
   } else {
     navItems = [
       { label: "Agents", href: "/agents", icon: agentsIcon },
       { label: "Artisans", href: "/artisans", icon: artisansIcon },
-      { label: "Explore", href: "/", icon: homeIcon, isMain: true },
+      { label: "Explore", href: "/", icon: exploreIcon, isMain: true },
       { label: "Messages", href: "/renter/messages", icon: messagesIcon },
       { label: "Profile", href: getProfileLink(), icon: profileIcon },
     ];
@@ -131,9 +149,6 @@ export function MobileNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (pathname?.includes("/messages")) {
-    return null;
-  }
 
   return (
     <>

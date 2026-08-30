@@ -24,7 +24,7 @@ export default async function ArtisanDashboardPage() {
     { data: reviewsData },
     { data: viewsData },
     { data: walletData },
-    { data: bookings },
+    { data: rawBookings },
   ] = await Promise.all([
     supabase.from("artisan_profiles").select("*").eq("id", user.id).single(),
     supabase.from("profile_views").select("*", { count: "exact", head: true }).eq("target_id", user.id),
@@ -38,13 +38,25 @@ export default async function ArtisanDashboardPage() {
       booking_time,
       location,
       status,
-      created_at,
-      profiles!bookings_renter_id_fkey (
-        full_name,
-        avatar_url
-      )
+      created_at
     `).eq("artisan_id", user.id).order("created_at", { ascending: false }).limit(4)
   ]);
+
+  let bookings = rawBookings || [];
+  if (bookings.length > 0) {
+    const renterIds = [...new Set(bookings.map((b) => b.renter_id))];
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, full_name, avatar_url")
+      .in("id", renterIds);
+
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+    
+    // Attach profile to each booking to match expected shape
+    for (const booking of bookings) {
+      (booking as any).profiles = profileMap.get(booking.renter_id) || null;
+    }
+  }
 
   const profileViewsCount = viewsError ? 0 : (count ?? 0);
 

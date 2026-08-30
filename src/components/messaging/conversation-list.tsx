@@ -21,6 +21,7 @@ interface Conversation {
     created_at: string;
     sender_id: string;
   };
+  unread_count?: number;
 }
 
 interface ConversationListProps {
@@ -75,10 +76,18 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
         .limit(1)
         .single();
 
+      const { count: unreadCount } = await supabase
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .eq("conversation_id", c.id)
+        .neq("sender_id", currentUserId)
+        .is("read_at", null);
+
       enhancedConvs.push({
         ...c,
         other_participant: profile || { id: otherId, full_name: "Unknown User", avatar_url: null, role: "user" },
-        last_message: lastMsg || undefined
+        last_message: lastMsg || undefined,
+        unread_count: unreadCount || 0
       });
     }
 
@@ -94,13 +103,22 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
 
     // Subscribe to new messages to re-fetch/update the list
     const channel = supabase
-      .channel("messages-list-watch")
+      .channel(`messages-list-watch-${Date.now()}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         () => {
-          // A new message arrived in any conversation. Refetch the list to update last_message and ordering.
           fetchConversations();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "messages" },
+        (payload) => {
+          // If a message was marked as read, refresh to update unread_count
+          if (payload.new && (payload.new as any).read_at !== (payload.old as any).read_at) {
+            fetchConversations();
+          }
         }
       )
       .subscribe();
@@ -149,7 +167,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
           <div className="flex flex-col divide-y divide-border/50">
             {conversations.map((conv) => {
               const isActive = activeConversationId === conv.id;
-              const hasUnread = false; // Could be calculated if we tracked read_at deeply
+              const hasUnread = (conv.unread_count || 0) > 0;
               
               return (
                 <button
@@ -169,13 +187,15 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
                       )}
                     </div>
                     {hasUnread && (
-                      <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
+                      <span className="absolute top-0 right-0 flex items-center justify-center min-w-4 h-4 px-1 bg-red-500 border-2 border-white rounded-full text-[9px] font-bold text-white shadow-sm">
+                        {conv.unread_count}
+                      </span>
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div className="flex items-center justify-between gap-1">
-                      <p className={twMerge("text-sm font-semibold truncate", isActive ? "text-primary" : "text-heading")}>
+                      <p className={twMerge("text-sm truncate", isActive ? "text-primary font-bold" : hasUnread ? "font-bold text-heading" : "font-semibold text-heading")}>
                         {conv.other_participant.full_name}
                       </p>
                       {conv.last_message_at && (
@@ -186,8 +206,16 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
                     </div>
                     
                     <div className="flex items-center gap-1 mt-0.5">
-                      <p className="text-xs text-body/70 truncate flex-1">
-                        {conv.last_message?.content || "Started a conversation"}
+                      <p className={twMerge("text-xs truncate flex-1", hasUnread && !isActive ? "text-heading font-medium" : "text-body/70")}>
+                        {(() => {
+                          if (!conv.last_message?.content) return "Started a conversation";
+                          let text = conv.last_message.content;
+                          if (text.includes('__LISTING_CONTEXT_START__') && text.includes('__LISTING_CONTEXT_END__')) {
+                            const endIdx = text.indexOf('__LISTING_CONTEXT_END__') + '__LISTING_CONTEXT_END__'.length;
+                            text = text.substring(endIdx).trim();
+                          }
+                          return text || "Replying to listing";
+                        })()}
                       </p>
                     </div>
                   </div>

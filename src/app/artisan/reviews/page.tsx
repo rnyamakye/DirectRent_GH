@@ -32,14 +32,15 @@ export default async function ArtisanReviewsPage() {
   }));
 
   return (
-    <div className="flex flex-col gap-8 max-w-md">
-      <div>
-        <h1 className="text-xl font-bold">My reviews</h1>
+    <div className="flex flex-col gap-8 max-w-md w-full px-4 sm:px-6 py-12">
+      <div className="flex flex-col gap-4">
+        <div>
+          <h1 className="text-xl font-bold">My reviews</h1>
         <p className="font-supporting text-sm text-body">
           {reviews.length === 0 ? "No reviews yet" : `${average.toFixed(1)} average · ${reviews.length} reviews`}
         </p>
       </div>
-
+      </div>
       {reviews.length > 0 && (
         <div className="flex flex-col gap-1">
           {breakdown.map(({ stars, count }) => (

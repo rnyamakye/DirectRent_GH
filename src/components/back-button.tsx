@@ -9,8 +9,8 @@ export function BackButton() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Hide on dashboard/overview pages as they are the root of their respective portals
-    if (pathname?.match(/\/(agent|renter|artisan)\/(dashboard|overview)$/)) {
+    // Hide on dashboard/overview/messages/bookings pages as they are root-level or have their own custom back buttons
+    if (pathname?.match(/\/(agent|renter|artisan)\/(dashboard|overview|messages|bookings)$/)) {
       setIsVisible(false);
       return;
     }
@@ -32,7 +32,7 @@ export function BackButton() {
           router.push("/");
         }
       }}
-      className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-body hover:text-heading transition mb-4 self-start"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-body hover:text-heading transition mb-4 self-start"
     >
       <svg
         viewBox="0 0 24 24"

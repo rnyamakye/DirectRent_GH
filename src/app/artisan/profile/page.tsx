@@ -2,9 +2,17 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
-import { VerificationCard } from "@/components/dashboard/verification-card";
-
 const SETTINGS_SECTIONS = [
+  {
+    href: "/artisan/profile/verification",
+    title: "Identity verification",
+    description: "Upload identity documents to earn a verified badge.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+      </svg>
+    ),
+  },
   {
     href: "/artisan/profile/personal",
     title: "Personal information",
@@ -149,12 +157,6 @@ export default async function ArtisanProfilePage() {
             completenessPercent={completenessPercent}
             role="artisan"
             isArtisanLayout={true}
-          />
-
-          <VerificationCard
-            isVerified={profile?.is_verified ?? false}
-            kycStatus={kycRequest?.status ?? null}
-            kycNotes={kycRequest?.notes ?? null}
           />
         </div>
 

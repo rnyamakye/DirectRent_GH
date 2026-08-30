@@ -22,7 +22,6 @@ export type Booking = {
 type Props = {
   artisanId: string;
   artisanName: string;
-  phone: string | null;
   existingBooking: Booking | null;
 };
 
@@ -56,7 +55,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
   }
 }
 
-export function BookArtisanButton({ artisanId, artisanName, phone, existingBooking }: Props) {
+export function BookArtisanButton({ artisanId, artisanName, existingBooking }: Props) {
   const [booking, setBooking] = useState<Booking | null>(existingBooking);
   const [modalOpen, setModalOpen] = useState(false);
   const [messaging, setMessaging] = useState(false);
@@ -82,7 +81,6 @@ export function BookArtisanButton({ artisanId, artisanName, phone, existingBooki
   const [showDropdown, setShowDropdown] = useState(false);
   const searchTimeout = useState<ReturnType<typeof setTimeout> | null>(null);
 
-  const waPhone = phone ? phone.replace(/[^0-9]/g, "") : "";
   const todayStr = new Date().toISOString().split("T")[0];
 
   // Reverse geocode whenever the user pins a new location
@@ -235,58 +233,60 @@ export function BookArtisanButton({ artisanId, artisanName, phone, existingBooki
         </div>
 
         {/* Revealed contact info */}
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-bold uppercase tracking-widest text-body/50">
-            Contact {artisanName.split(" ")[0]}
-          </p>
-          <button
-            onClick={async () => {
-              setMessaging(true);
-              const { createClient } = await import("@/lib/supabase/client");
-              const supabase = createClient();
-              const { data: { user } } = await supabase.auth.getUser();
-              if (user) {
-                // Check if conversation exists
-                let { data: conv } = await supabase
-                  .from("conversations")
-                  .select("id")
-                  .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
-                  .single();
-
-                if (!conv) {
-                  const { data: newConv } = await supabase
+        {booking.status === "confirmed" && (
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-bold uppercase tracking-widest text-body/50">
+              Contact {artisanName.split(" ")[0]}
+            </p>
+            <button
+              onClick={async () => {
+                setMessaging(true);
+                const { createClient } = await import("@/lib/supabase/client");
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                  // Check if conversation exists
+                  let { data: conv } = await supabase
                     .from("conversations")
-                    .insert({ participant_one_id: user.id, participant_two_id: artisanId })
                     .select("id")
+                    .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
                     .single();
-                  conv = newConv;
+
+                  if (!conv) {
+                    const { data: newConv } = await supabase
+                      .from("conversations")
+                      .insert({ participant_one_id: user.id, participant_two_id: artisanId })
+                      .select("id")
+                      .single();
+                    conv = newConv;
+                  }
+
+                  if (conv) {
+                    window.location.href = `/renter/messages?conversationId=${conv.id}`;
+                  }
                 }
-                
-                if (conv) {
-                  window.location.href = `/renter/messages?conversationId=${conv.id}`;
-                }
-              }
-              setMessaging(false);
-            }}
-            disabled={messaging}
-            className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group text-left disabled:opacity-50"
-          >
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">
-              {messaging ? (
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-              ) : (
-                "✉️"
-              )}
-            </div>
-            <div>
-              <p className="font-bold text-heading text-sm">In-App Message</p>
-              <p className="text-xs text-body">Chat securely on DirectRent</p>
-            </div>
-          </button>
-        </div>
+                setMessaging(false);
+              }}
+              disabled={messaging}
+              className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group text-left disabled:opacity-50"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">
+                {messaging ? (
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                ) : (
+                  "✉️"
+                )}
+              </div>
+              <div>
+                <p className="font-bold text-heading text-sm">Message</p>
+                <p className="text-xs text-body">Chat securely on DirectRent</p>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Cancel */}
         <button

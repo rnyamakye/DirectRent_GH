@@ -21,7 +21,7 @@ export default async function AgentProfilePage({
     // 1. Fetch Agent Profile
     const { data: agent, error } = await supabase
         .from("profiles")
-        .select("full_name, business_name, avatar_url, created_at, bio, location, languages, fun_fact, phone, email, is_verified")
+        .select("full_name, business_name, avatar_url, created_at, bio, location, languages, fun_fact, email, is_verified")
         .eq("id", id)
         .eq("role", "agent")
         .single();
@@ -110,8 +110,7 @@ export default async function AgentProfilePage({
                         <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-2">
                             🏆 <span className="uppercase tracking-widest text-[#E61E4D]">Superagent</span>
                         </div>
-
-                        <ContactAgentButton agentId={id} phone={agent.phone} email={agent.email} />
+                        <ContactAgentButton agentId={id} email={agent.email} />
 
                         <div className="flex w-full divide-x divide-border border-t border-border pt-6">
                             <div className="flex-1 flex flex-col items-center">

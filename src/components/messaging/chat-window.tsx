@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
 
 interface Message {
   id: string;
@@ -11,6 +12,7 @@ interface Message {
   content: string | null;
   photo_url: string | null;
   created_at: string;
+  read_at?: string | null;
 }
 
 interface ChatWindowProps {
@@ -23,6 +25,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
   const supabase = createClient();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [contextListing, setContextListing] = useState<{ id: string; title: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [otherParticipant, setOtherParticipant] = useState<{ full_name: string; avatar_url: string | null; role: string } | null>(null);
@@ -67,13 +70,25 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       if (msgs && !error) {
         setMessages(msgs);
         setTimeout(scrollToBottom, 100);
+        
+        // 2.5 Mark unread messages as read
+        const hasUnread = msgs.some(m => m.sender_id !== currentUserId && !m.read_at);
+        if (hasUnread) {
+          supabase
+            .from("messages")
+            .update({ read_at: new Date().toISOString() })
+            .eq("conversation_id", conversationId)
+            .neq("sender_id", currentUserId)
+            .is("read_at", null)
+            .then();
+        }
       }
       
       setIsLoading(false);
 
       // 3. Subscribe to new messages for this conversation
       channel = supabase
-        .channel(`chat-${conversationId}`)
+        .channel(`chat-${conversationId}-${Date.now()}`)
         .on(
           "postgres_changes",
           {
@@ -84,8 +99,20 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
           },
           (payload) => {
             const newMsg = payload.new as Message;
-            setMessages((prev) => [...prev, newMsg]);
+            setMessages((prev) => {
+              if (prev.some(m => m.id === newMsg.id)) return prev;
+              return [...prev, newMsg];
+            });
             setTimeout(scrollToBottom, 100);
+            
+            // Mark new incoming messages as read since we are viewing the chat
+            if (newMsg.sender_id !== currentUserId && !newMsg.read_at) {
+              supabase
+                .from("messages")
+                .update({ read_at: new Date().toISOString() })
+                .eq("id", newMsg.id)
+                .then();
+            }
           }
         )
         .subscribe();
@@ -98,6 +125,21 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
     };
   }, [conversationId, currentUserId]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const listingId = params.get("listingId");
+      const listingTitle = params.get("listingTitle");
+      if (listingId && listingTitle) {
+        setContextListing({ id: listingId, title: listingTitle });
+        
+        // Remove the parameter from URL so it doesn't stay there
+        const newUrl = window.location.pathname + "?conversationId=" + conversationId;
+        window.history.replaceState({}, document.title, newUrl);
+      }
+    }
+  }, [conversationId]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || isSending) return;
@@ -106,19 +148,47 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
     const content = newMessage.trim();
     setNewMessage(""); // Optimistic clear
 
-    const { error } = await supabase
+    let finalContent = content;
+    if (contextListing) {
+      finalContent = `__LISTING_CONTEXT_START__${contextListing.id}::${contextListing.title}__LISTING_CONTEXT_END__\n` + content;
+      setContextListing(null);
+    }
+
+    const tempId = "temp-" + Date.now();
+    const optimisticMsg = {
+      id: tempId,
+      conversation_id: conversationId,
+      sender_id: currentUserId,
+      content: finalContent,
+      photo_url: null,
+      created_at: new Date().toISOString(),
+      read_at: null
+    };
+
+    setMessages((prev) => [...prev, optimisticMsg as any]);
+    setTimeout(scrollToBottom, 100);
+
+    const { data, error } = await supabase
       .from("messages")
       .insert({
         conversation_id: conversationId,
         sender_id: currentUserId,
-        content: content
-      });
+        content: finalContent
+      })
+      .select("*")
+      .single();
 
     if (error) {
       console.error("Error sending message:", error);
+      alert("Failed to send message: " + (error.message || JSON.stringify(error)));
       // Revert if failed
+      setMessages((prev) => prev.filter(m => m.id !== tempId));
       setNewMessage(content);
+    } else if (data) {
+      // Update with the real ID from DB
+      setMessages((prev) => prev.map(m => m.id === tempId ? data : m));
     }
+    
     setIsSending(false);
   };
 
@@ -176,6 +246,19 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
             const prevMsg = index > 0 ? messages[index - 1] : null;
             const isConsecutive = prevMsg && prevMsg.sender_id === msg.sender_id;
             
+            let actualContent = msg.content || "";
+            let parsedListingId = null;
+            let parsedListingTitle = null;
+            
+            if (actualContent) {
+               const match = actualContent.match(/^__LISTING_CONTEXT_START__(.*?)::(.*?)__LISTING_CONTEXT_END__\n([\s\S]*)$/);
+               if (match) {
+                 parsedListingId = match[1];
+                 parsedListingTitle = match[2];
+                 actualContent = match[3];
+               }
+            }
+
             return (
               <div 
                 key={msg.id} 
@@ -187,14 +270,23 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
               >
                 <div 
                   className={twMerge(
-                    "px-4 py-2.5 rounded-2xl text-[15px] shadow-sm",
+                    "px-4 py-2.5 rounded-2xl text-[15px] shadow-sm flex flex-col gap-1.5",
                     isMe 
                       ? "bg-primary text-white rounded-tr-sm" 
                       : "bg-white border border-border text-heading rounded-tl-sm"
                   )}
                   style={{ wordBreak: 'break-word' }}
                 >
-                  {msg.content}
+                  {parsedListingTitle && (
+                    <Link href={`/listings/${parsedListingId}`} className={twMerge(
+                      "block px-3 py-2 rounded-lg border-l-4 text-sm opacity-90 hover:opacity-100 transition-opacity",
+                      isMe ? "bg-black/20 border-white/40 text-white" : "bg-slate-50 border-primary text-heading"
+                    )}>
+                      <div className="font-semibold text-[10px] uppercase tracking-wide opacity-70 mb-0.5">Inquiry about</div>
+                      <div className="font-bold truncate">{parsedListingTitle}</div>
+                    </Link>
+                  )}
+                  <div className="whitespace-pre-wrap">{actualContent}</div>
                 </div>
                 {!isConsecutive && (
                   <span className="text-[10px] text-body/50 mt-1 px-1">
@@ -209,7 +301,19 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white border-t border-border">
+      <div className="p-4 bg-white border-t border-border flex flex-col gap-2">
+        {contextListing && (
+          <div className="bg-slate-50 border border-border rounded-lg px-4 py-3 flex items-center justify-between shadow-sm relative overflow-hidden">
+             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+             <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-body/70">Replying to Listing</p>
+                <p className="font-semibold text-heading text-sm truncate">{contextListing.title}</p>
+             </div>
+             <button onClick={() => setContextListing(null)} className="text-body hover:text-heading p-1">
+               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
+             </button>
+          </div>
+        )}
         <form onSubmit={handleSendMessage} className="flex items-center gap-2 relative">
           <input
             type="text"

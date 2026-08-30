@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function ContactArtisanButton({
-    artisanId,
-    phone
+    artisanId
 }: {
     artisanId: string;
-    phone: string | null;
 }) {
     const [messaging, setMessaging] = useState(false);
+    const router = useRouter();
 
     return (
         <button
@@ -38,11 +38,11 @@ export function ContactArtisanButton({
                     if (conv) {
                         const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
                         const role = profile?.role || "renter";
-                        window.location.href = `/${role}/messages?conversationId=${conv.id}`;
+                        router.push(`/${role}/messages?conversationId=${conv.id}`);
                     }
                 } else {
                     // Not logged in, redirect to login
-                    window.location.href = `/auth/login?returnTo=/messages`;
+                    router.push(`/auth/login?returnTo=/messages`);
                 }
                 setMessaging(false);
             }}

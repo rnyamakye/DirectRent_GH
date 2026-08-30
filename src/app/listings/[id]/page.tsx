@@ -26,7 +26,7 @@ export default async function ListingDetailPage({
 
   const { data: listing, error } = await supabase
     .from("listings")
-    .select("*, profiles!listings_agent_id_fkey(full_name, phone, email, avatar_url)")
+    .select("*, profiles!listings_agent_id_fkey(full_name, email, avatar_url)")
     .eq("id", id)
     .single();
 
@@ -100,32 +100,56 @@ export default async function ListingDetailPage({
 
       {/* Photo Grid */}
       {hasPhotos ? (
-        <div className="relative grid grid-cols-4 grid-rows-2 gap-2 h-[400px] sm:h-[500px] md:h-[60vh] min-h-[400px] rounded-2xl overflow-hidden group">
-          <div className="col-span-4 sm:col-span-2 row-span-2 relative">
-            <Image
-              src={displayPhotos[0]}
-              alt={listing.title}
-              fill
-              className="object-cover hover:opacity-90 transition cursor-pointer"
-            />
+        <>
+          {/* Mobile Slider View */}
+          <div className="sm:hidden relative w-full h-[300px] rounded-2xl overflow-hidden group">
+            <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar h-full w-full">
+              {photos.map((photo: string, i: number) => (
+                <div key={i} className="flex-none w-full h-full snap-center relative">
+                  <Image
+                    src={photo}
+                    alt={`${listing.title} - Image ${i + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+            {photos.length > 1 && (
+              <div className="absolute bottom-3 right-3 pointer-events-none bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-md tracking-wider">
+                1 of {photos.length} • Swipe
+              </div>
+            )}
           </div>
-          <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <Image src={displayPhotos[1]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+
+          {/* Desktop Grid View */}
+          <div className="hidden sm:grid relative grid-cols-4 grid-rows-2 gap-2 h-[400px] sm:h-[500px] md:h-[60vh] min-h-[400px] rounded-2xl overflow-hidden group">
+            <div className="col-span-2 row-span-2 relative">
+              <Image
+                src={displayPhotos[0]}
+                alt={listing.title}
+                fill
+                className="object-cover hover:opacity-90 transition cursor-pointer"
+              />
+            </div>
+            <div className="col-span-1 row-span-1 relative">
+              <Image src={displayPhotos[1]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+            </div>
+            <div className="col-span-1 row-span-1 relative">
+              <Image src={displayPhotos[2]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+            </div>
+            <div className="col-span-1 row-span-1 relative">
+              <Image src={displayPhotos[3]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+            </div>
+            <div className="col-span-1 row-span-1 relative">
+              <Image src={displayPhotos[4]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+              <button className="absolute bottom-4 right-4 bg-white border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
+                <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
+                Show all photos
+              </button>
+            </div>
           </div>
-          <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <Image src={displayPhotos[2]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
-          </div>
-          <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <Image src={displayPhotos[3]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
-          </div>
-          <div className="hidden sm:block col-span-1 row-span-1 relative">
-            <Image src={displayPhotos[4]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
-            <button className="absolute bottom-4 right-4 bg-white border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
-              <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
-              Show all photos
-            </button>
-          </div>
-        </div>
+        </>
       ) : (
         <div className="h-[40vh] sm:h-[500px] md:h-[60vh] min-h-[300px] rounded-2xl overflow-hidden group border border-border bg-slate-100 flex items-center justify-center text-slate-300">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-24 h-24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
@@ -288,8 +312,9 @@ export default async function ListingDetailPage({
 
             <ContactAgentButton
               agentId={listing.agent_id}
-              phone={listing.profiles?.phone ?? null}
               email={listing.profiles?.email ?? null}
+              listingId={listing.id}
+              listingTitle={listing.title}
             />
             <RequestTourButton
               listingId={listing.id}

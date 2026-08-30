@@ -18,7 +18,6 @@ type Booking = {
     trade: string;
     profiles: {
       full_name: string;
-      phone: string;
       avatar_url: string;
     };
   };
@@ -29,6 +28,41 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
   const [reviewTarget, setReviewTarget] = useState<{ id: string; name: string } | null>(null);
+  const [messagingId, setMessagingId] = useState<string | null>(null);
+
+  const handleMessageArtisan = async (artisanId: string) => {
+    setMessagingId(artisanId);
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        let { data: conv } = await supabase
+          .from("conversations")
+          .select("id")
+          .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
+          .single();
+
+        if (!conv) {
+          const { data: newConv } = await supabase
+            .from("conversations")
+            .insert({ participant_one_id: user.id, participant_two_id: artisanId })
+            .select("id")
+            .single();
+          conv = newConv;
+        }
+
+        if (conv) {
+          window.location.href = `/renter/messages?conversationId=${conv.id}`;
+        }
+      }
+    } catch (err: any) {
+      toast.error("Could not start conversation");
+    } finally {
+      setMessagingId(null);
+    }
+  };
 
   const handleCancel = async () => {
     if (!bookingToCancel) return;
@@ -75,7 +109,6 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
     <div className="flex flex-col">
       {bookings.map((booking, index) => {
         const artisanName = booking.artisan_profiles?.profiles?.full_name || "Unknown Artisan";
-        const artisanPhone = booking.artisan_profiles?.profiles?.phone || "No phone";
         const trade = booking.artisan_profiles?.trade || "Artisan";
         const avatarUrl = booking.artisan_profiles?.profiles?.avatar_url;
         const initials = artisanName.charAt(0).toUpperCase();
@@ -96,7 +129,7 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
               </div>
               <div>
                 <h3 className="font-bold text-heading text-lg">{artisanName}</h3>
-                <p className="text-sm text-body/80">{trade} &bull; {artisanPhone}</p>
+                <p className="text-sm text-body/80">{trade}</p>
               </div>
             </div>
 
@@ -130,12 +163,29 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
                 </button>
               )}
               {booking.status === "confirmed" && (
-                <button
-                  onClick={() => setReviewTarget({ id: booking.artisan_id, name: artisanName })}
-                  className="text-sm text-primary hover:underline font-semibold transition"
-                >
-                  Leave a Review
-                </button>
+                <div className="flex flex-col gap-3 w-full mt-2">
+                  <button
+                    onClick={() => handleMessageArtisan(booking.artisan_id)}
+                    disabled={messagingId === booking.artisan_id}
+                    className="w-full px-4 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {messagingId === booking.artisan_id ? (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                    ) : (
+                      "✉️"
+                    )}
+                    Message
+                  </button>
+                  <button
+                    onClick={() => setReviewTarget({ id: booking.artisan_id, name: artisanName })}
+                    className="text-sm text-primary hover:underline font-semibold transition text-center"
+                  >
+                    Leave a Review
+                  </button>
+                </div>
               )}
             </div>
           </div>

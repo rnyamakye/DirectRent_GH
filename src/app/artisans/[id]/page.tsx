@@ -112,7 +112,6 @@ export default async function ArtisanProfilePage({
             <BookArtisanButton
               artisanId={id}
               artisanName={artisanName}
-              phone={artisan.phone}
               existingBooking={existingBooking}
             />
 

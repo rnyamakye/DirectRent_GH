@@ -230,10 +230,6 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                         <h3 className="font-semibold text-mint">Email Support</h3>
                                         <a href="mailto:support@directrent.gh" className="text-white hover:underline">support@directrent.gh</a>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-mint">Phone</h3>
-                                        <a href="tel:+233123456789" className="text-white hover:underline">+233 (0) 123 456 789</a>
-                                    </div>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4 sm:flex-row lg:flex-col">

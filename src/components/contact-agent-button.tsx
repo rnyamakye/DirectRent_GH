@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function ContactAgentButton({
     agentId,
-    phone,
-    email
+    email,
+    listingId,
+    listingTitle
 }: {
     agentId: string;
-    phone: string | null;
     email?: string | null;
+    listingId?: string | number;
+    listingTitle?: string;
 }) {
     const [messaging, setMessaging] = useState(false);
+    const router = useRouter();
 
     return (
         <button
@@ -40,11 +44,15 @@ export function ContactAgentButton({
                     if (conv) {
                         const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
                         const role = profile?.role || "renter";
-                        window.location.href = `/${role}/messages?conversationId=${conv.id}`;
+                        let url = `/${role}/messages?conversationId=${conv.id}`;
+                        if (listingId && listingTitle) {
+                            url += `&listingId=${listingId}&listingTitle=${encodeURIComponent(listingTitle)}`;
+                        }
+                        router.push(url);
                     }
                 } else {
                     // Not logged in, redirect to login
-                    window.location.href = `/auth/login?returnTo=/messages`;
+                    router.push(`/auth/login?returnTo=/messages`);
                 }
                 setMessaging(false);
             }}

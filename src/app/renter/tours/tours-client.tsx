@@ -20,7 +20,6 @@ type Tour = {
   };
   profiles: {
     full_name: string;
-    phone: string;
     email: string;
   };
 };
@@ -107,7 +106,6 @@ export function RenterToursClient({ initialTours }: { initialTours: any[] }) {
         <tbody className="divide-y divide-border">
           {tours.map((tour) => {
             const agentName = tour.profiles?.full_name || "Unknown Agent";
-            const phone = tour.profiles?.phone || "No phone";
 
             return (
               <tr key={tour.id} className="hover:bg-slate-50/50 transition">
@@ -117,7 +115,6 @@ export function RenterToursClient({ initialTours }: { initialTours: any[] }) {
                 </td>
                 <td className="p-4">
                   <p className="font-semibold text-heading">{agentName}</p>
-                  <p className="text-xs text-body/70 mt-0.5">{phone}</p>
                 </td>
                 <td className="p-4">
                   <p className="font-medium text-heading">{formatDate(tour.tour_date)}</p>

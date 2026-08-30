@@ -118,7 +118,7 @@ function MessagesPageContent() {
         const supabase = createClient();
 
         const channel = supabase
-            .channel("messages-realtime")
+            .channel(`messages-realtime-${Date.now()}`)
             .on(
                 "postgres_changes",
                 { event: "INSERT", schema: "public", table: "messages" },

@@ -11,6 +11,7 @@ import {
   SavedIcon, InfoIcon, ContactIcon, BlogIcon, HelpIcon, MessageIcon
 } from "@/components/icons";
 import { NotificationBell } from "@/components/notification-bell";
+import { UnreadMessagesBadge } from "@/components/unread-messages-badge";
 
 interface HeaderProps {
   className?: string;
@@ -202,6 +203,7 @@ export function Header({ className }: HeaderProps) {
                   title="Messages"
                 >
                   <MessageIcon className="h-5 w-5" />
+                  <UnreadMessagesBadge />
                 </Link>
                 <NotificationBell userId={user.id} />
                 <Link

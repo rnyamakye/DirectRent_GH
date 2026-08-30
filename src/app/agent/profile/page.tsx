@@ -2,9 +2,17 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
-import { VerificationCard } from "@/components/dashboard/verification-card";
-
 const SETTINGS_SECTIONS = [
+  {
+    href: "/agent/profile/verification",
+    title: "Identity verification",
+    description: "Upload identity documents to earn a verified badge.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+      </svg>
+    ),
+  },
   {
     href: "/agent/profile/personal",
     title: "Personal information",
@@ -151,11 +159,7 @@ export default async function AgentProfilePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
-            <VerificationCard
-              isVerified={profile?.is_verified ?? false}
-              kycStatus={kycRequest?.status ?? null}
-              kycNotes={kycRequest?.notes ?? null}
-            /> {SETTINGS_SECTIONS.map((section) => (
+            {SETTINGS_SECTIONS.map((section) => (
               <Link
                 key={section.href}
                 href={section.href}

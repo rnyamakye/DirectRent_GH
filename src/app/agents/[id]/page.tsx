@@ -5,6 +5,8 @@ import { BackButton } from "@/components/back-button";
 import { createClient } from "@/lib/supabase/server";
 import { ContactAgentButton } from "@/components/contact-agent-button";
 
+export const fetchCache = "force-no-store";
+
 export default async function AgentProfilePage({
     params,
 }: {

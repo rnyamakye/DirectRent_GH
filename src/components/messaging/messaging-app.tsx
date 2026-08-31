@@ -24,7 +24,8 @@ export function MessagingApp({ currentUserId, initialConversationId, className }
         setViewportHeight(`${window.visualViewport!.height}px`);
         window.scrollTo(0, 0); // Prevent iOS from scrolling the body up
       } else {
-        setViewportHeight('100%');
+        // On desktop, give it a fixed height relative to viewport to enable internal scrolling
+        setViewportHeight('calc(100vh - 12rem)');
       }
     };
 
@@ -49,14 +50,10 @@ export function MessagingApp({ currentUserId, initialConversationId, className }
         "flex w-full bg-card overflow-hidden shadow-sm",
         activeConversationId 
           ? "fixed top-0 left-0 z-[60] pb-0 md:relative md:inset-auto md:z-auto md:pb-0 md:rounded-3xl md:border md:border-border"
-          : "fixed top-0 left-0 z-40 pb-16 md:relative md:inset-auto md:z-auto md:pb-0 md:rounded-3xl md:border md:border-border",
+          : "fixed top-0 left-0 z-40 pb-0 md:relative md:inset-auto md:z-auto md:pb-0 md:rounded-3xl md:border md:border-border",
         className
       )}
-      style={{ 
-        height: typeof window !== 'undefined' && window.innerWidth < 768 ? viewportHeight : '100%',
-        // On desktop, we want a reasonable fixed height if it's placed inside a layout
-        maxHeight: typeof window !== 'undefined' && window.innerWidth >= 768 ? 'calc(100vh - 8rem)' : undefined
-      }}
+      style={{ height: viewportHeight }}
     >
       {/* Left Pane: Conversation List */}
       <div

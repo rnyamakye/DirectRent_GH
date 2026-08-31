@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
       {
+        protocol: "https",
+        hostname: "randomuser.me",
+      },
+      {
         protocol: "http",
         hostname: "127.0.0.1",
       },

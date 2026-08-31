@@ -24,15 +24,48 @@ export default async function AgentDashboardPage() {
     { data: reviewsData },
     { data: viewsData },
     { data: walletData },
+    { data: recentTours },
   ] = await Promise.all([
     supabase.from("listings").select("*").eq("agent_id", user.id).order("created_at", { ascending: false }),
     supabase.from("profile_views").select("*", { count: "exact", head: true }).eq("target_id", user.id),
     supabase.from("reviews").select("rating").eq("target_type", "agent").eq("target_id", user.id),
     supabase.from("profile_views").select("created_at").eq("target_id", user.id).gte("created_at", thirtyDaysAgoISO),
     supabase.from("wallets").select("id").eq("user_id", user.id).single(),
+    supabase.from("tour_requests")
+      .select(`
+        id,
+        tour_date,
+        tour_time,
+        tour_type,
+        status,
+        created_at,
+        renter_id
+      `)
+      .eq("agent_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(3),
   ]);
 
   const profileViewsCount = viewsError ? 0 : (count ?? 0);
+
+  const tours = recentTours || [];
+  if (tours.length > 0) {
+    const renterIds = [...new Set(tours.map((t) => t.renter_id))];
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, full_name, avatar_url")
+      .in("id", renterIds);
+
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+    
+    // Attach profile to each tour
+    for (const tour of tours) {
+      (tour as any).renter = profileMap.get(tour.renter_id) || {
+        full_name: "Unknown User",
+        avatar_url: null
+      };
+    }
+  }
 
   const myListings = listings ?? [];
   const activeBoosts = myListings.filter(
@@ -54,13 +87,13 @@ export default async function AgentDashboardPage() {
       .eq("wallet_id", walletData.id)
       .eq("type", "credit")
       .gte("created_at", thirtyDaysAgoISO);
-    
+
     txData = txs ?? [];
   }
 
   // Aggregate into daily buckets
   const chartDataMap = new Map<string, { views: number; earnings: number }>();
-  
+
   // Pre-fill last 30 days
   for (let i = 29; i >= 0; i--) {
     const d = new Date();
@@ -208,6 +241,82 @@ export default async function AgentDashboardPage() {
                       Boost
                     </Link>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Requested Tours Summary Section */}
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-semibold text-heading">Recent Tours</h2>
+            {tours.length > 0 && (
+              <span className="flex items-center justify-center bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full">
+                {tours.length}
+              </span>
+            )}
+          </div>
+          <Link prefetch={false}
+            href="/agent/tours"
+            className="text-sm font-semibold text-primary hover:text-primary-hover transition"
+          >
+            Manage →
+          </Link>
+        </div>
+
+        {tours.length === 0 ? (
+          <div className="rounded-3xl border border-border bg-card p-12 text-center flex flex-col items-center justify-center gap-4">
+            <div className="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+            <p className="text-lg font-semibold text-heading mt-2">No tour requests yet</p>
+            <p className="text-body/70 max-w-sm text-sm">
+              When renters request to view your properties, they'll appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {tours.map((tour: any) => {
+              const dateObj = new Date(`${tour.tour_date}T${tour.tour_time}`);
+              const formatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "numeric" });
+              return (
+                <div key={tour.id} className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-border flex-shrink-0">
+                      {tour.renter.avatar_url ? (
+                        <img src={tour.renter.avatar_url} alt={tour.renter.full_name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
+                          {tour.renter.full_name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-heading text-sm truncate">{tour.renter.full_name}</p>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${tour.status === "pending" ? "bg-amber-100 text-amber-800" :
+                            tour.status === "confirmed" ? "bg-emerald-100 text-emerald-800" :
+                              "bg-slate-100 text-slate-500"
+                          }`}>
+                          {tour.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-body font-medium mt-1">
+                        {tour.tour_type} tour on {formatter.format(dateObj)}
+                      </p>
+                    </div>
+                  </div>
+                  <Link prefetch={false} href="/agent/tours" className="flex-shrink-0 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-full transition">
+                    View
+                  </Link>
                 </div>
               );
             })}

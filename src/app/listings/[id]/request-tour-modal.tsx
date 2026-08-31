@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -19,7 +19,15 @@ export function RequestTourModal({
   const [tourType, setTourType] = useState<"physical" | "virtual">("physical");
   const [tourDate, setTourDate] = useState("");
   const [tourTime, setTourTime] = useState("");
+  const [minDate, setMinDate] = useState<string | undefined>(undefined);
   const router = useRouter();
+
+  useEffect(() => {
+    // Get tomorrow's date for the min date attribute on the client
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    setMinDate(tomorrow.toISOString().split("T")[0]);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -54,11 +62,6 @@ export function RequestTourModal({
       setLoading(false);
     }
   };
-
-  // Get tomorrow's date for the min date attribute
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

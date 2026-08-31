@@ -43,7 +43,8 @@ export default async function RenterToursPage() {
       ),
       profiles!tour_requests_agent_id_fkey (
         full_name,
-        email
+        email,
+        phone
       )
     `)
     .eq("renter_id", user.id)

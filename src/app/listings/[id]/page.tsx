@@ -11,6 +11,8 @@ import { RequestTourButton } from "./request-tour-button";
 import { ShareButton } from "@/components/share-button";
 import { TrackListingView } from "@/components/track-listing-view";
 
+export const fetchCache = "force-no-store";
+
 export default async function ListingDetailPage({
   params,
 }: {
@@ -21,7 +23,7 @@ export default async function ListingDetailPage({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/auth/login?returnTo=/listings/${id}`);
+    // redirect(`/auth/login?returnTo=/listings/${id}`);
   }
 
   const { data: listing, error } = await supabase

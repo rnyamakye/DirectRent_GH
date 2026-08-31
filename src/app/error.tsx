@@ -3,6 +3,7 @@
 import Link from "next/dist/client/link";
 
 export default function ErrorPage({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -16,6 +17,11 @@ export default function ErrorPage({
         An unexpected error occurred on our end. It&apos;s not you — try again
         in a moment.
       </p>
+      <div className="bg-red-50 text-red-800 p-4 rounded-lg text-left overflow-auto max-w-2xl w-full text-xs">
+        <p className="font-bold">{error.name}: {error.message}</p>
+        <pre className="mt-2">{error.stack}</pre>
+        <p className="mt-2 text-slate-500">Digest: {error.digest}</p>
+      </div>
       <div className="flex gap-3 pt-2">
         <button
           onClick={reset}

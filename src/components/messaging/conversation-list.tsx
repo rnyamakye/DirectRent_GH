@@ -137,7 +137,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full">
       <div className="p-4 sm:p-5 border-b border-border bg-white flex items-center sticky top-0 z-10 gap-3">
         <button
           onClick={() => {

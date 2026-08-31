@@ -125,9 +125,6 @@ export function Header({ className }: HeaderProps) {
     }
   }
 
-  if (pathname?.includes("/messages")) {
-    return null;
-  }
 
   return (
     <div className={twMerge(
@@ -139,11 +136,11 @@ export function Header({ className }: HeaderProps) {
           "transition-all duration-300 border-border bg-card/95 backdrop-blur-md",
           isScrolled
             ? "mt-5 mx-auto max-w-6xl border rounded-full shadow-sm px-2"
-            : "mt-6 mx-auto max-w-7xl border-b rounded-full shadow-lg",
+            : "mt-6 mx-auto max-w-6xl border-b rounded-full shadow-lg",
           className
         )}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
 
           {/* ── Left: Logo ── */}
           <div className="flex-1 flex items-center">
@@ -151,12 +148,12 @@ export function Header({ className }: HeaderProps) {
               <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" className="h-8 w-8 fill-current">
                 <path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.011.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.644-.673-.645.672-.257.26c-2.152 2.128-4.485 3.387-6.708 3.387-3.48 0-6.357-2.416-6.357-6.478 0-.858.146-1.781.539-3.113l.113-.373.118-.336c.952-2.618 5.076-11.226 7.156-15.253l.533-1.025C12.537 1.963 13.992 1 16 1zm0 2c-1.239 0-2.053.539-2.987 2.21l-.523 1.008c-1.926 3.776-6.06 12.43-7.031 14.692l-.345.836c-.427 1.071-.573 1.655-.573 2.254 0 2.534 1.636 3.978 3.857 3.978 1.488 0 3.197-.847 4.966-2.502l.663-.637.382-.36.382.36.663.637c1.769 1.655 3.478 2.502 4.966 2.502 2.221 0 3.857-1.444 3.857-3.978 0-.46-.098-.999-.441-2.046l-.23-.687c-.886-2.548-4.996-11.134-6.903-14.887l-.523-1.008C18.053 3.539 17.239 3 16 3z"></path>
               </svg>
-              <span className="hidden md:block">DirectRent GH</span>
+              <span className="hidden lg:block">DirectRent GH</span>
             </Link>
           </div>
 
           {/* ── Center: Desktop Nav ── */}
-          <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
+          <nav className="hidden md:flex flex-1 items-center justify-center gap-4">
             {desktopLinks.map((link) => {
               const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
@@ -164,7 +161,7 @@ export function Header({ className }: HeaderProps) {
                   key={link.label}
                   href={link.href}
                   className={twMerge(
-                    "relative group py-1 text-sm font-medium transition-colors hover:text-heading flex items-center gap-1.5",
+                    "relative group py-1 text-xs font-medium transition-colors hover:text-heading flex items-center gap-1.5",
                     isActive ? "text-heading" : "text-body"
                   )}
                 >

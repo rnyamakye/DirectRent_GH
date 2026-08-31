@@ -91,7 +91,7 @@ export default async function ListingsPage({
                 <p className="text-lg font-semibold text-heading">No listings match your search.</p>
                 <p className="mt-1 text-sm text-body/60">Try a different area or price range.</p>
                 {(area || minPrice || maxPrice) && (
-                  <Link href="/listings" className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover">
+                  <Link prefetch={false} href="/listings" className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white transition hover:bg-primary-hover">
                     Reset filters
                   </Link>
                 )}

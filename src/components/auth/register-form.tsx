@@ -124,7 +124,7 @@ function RegisterFormInner() {
 
   return (
     <div className="w-full">
-      <Link href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
+      <Link prefetch={false} href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
         DirectRent<span className="text-primary"> GH</span>
       </Link>
 
@@ -204,7 +204,7 @@ function RegisterFormInner() {
 
           <p className="mt-8 text-center text-sm text-body/60">
             Already have an account?{" "}
-            <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-hover transition" replace>
+            <Link prefetch={false} href="/auth/login" className="font-semibold text-primary hover:text-primary-hover transition" replace>
               Log in
             </Link>
           </p>
@@ -365,11 +365,11 @@ function RegisterFormInner() {
               </div>
               <span className="text-sm text-body/70 leading-5">
                 I agree to the{" "}
-                <Link href="/terms" className="text-primary hover:text-primary-hover transition font-medium">
+                <Link prefetch={false} href="/terms" className="text-primary hover:text-primary-hover transition font-medium">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy-policy" className="text-primary hover:text-primary-hover transition font-medium">
+                <Link prefetch={false} href="/privacy-policy" className="text-primary hover:text-primary-hover transition font-medium">
                   Privacy Policy
                 </Link>
               </span>
@@ -391,7 +391,7 @@ function RegisterFormInner() {
 
           <p className="mt-8 text-center text-sm text-body/60">
             Already have an account?{" "}
-            <Link href="/auth/login" className="font-semibold text-primary hover:text-primary-hover transition" replace>
+            <Link prefetch={false} href="/auth/login" className="font-semibold text-primary hover:text-primary-hover transition" replace>
               Log in
             </Link>
           </p>

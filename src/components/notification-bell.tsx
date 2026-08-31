@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import { playNotificationAlert } from "@/lib/audio";
 
 type InAppNotification = {
   id: string;
@@ -55,6 +56,7 @@ export function NotificationBell({ userId }: { userId: string }) {
             const newNotif = payload.new as InAppNotification;
             setNotifications((prev) => [newNotif, ...prev].slice(0, 20));
             setUnreadCount((count) => count + 1);
+            playNotificationAlert();
           } else if (payload.eventType === "UPDATE") {
             const updated = payload.new as InAppNotification;
             setNotifications((prev) =>
@@ -193,7 +195,7 @@ export function NotificationBell({ userId }: { userId: string }) {
                   );
 
                   return notif.link ? (
-                    <Link 
+                    <Link prefetch={false} 
                       key={notif.id} 
                       href={notif.link}
                       onClick={() => {
@@ -217,7 +219,7 @@ export function NotificationBell({ userId }: { userId: string }) {
             )}
           </div>
           <div className="p-3 border-t border-border bg-slate-50 text-center">
-            <Link 
+            <Link prefetch={false} 
               href="/profile/notifications" 
               onClick={() => setIsOpen(false)}
               className="text-xs font-bold text-primary hover:text-primary-hover uppercase tracking-widest"

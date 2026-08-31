@@ -122,7 +122,7 @@ export default async function ArtisanProfilePage() {
                   <span>{(profile?.full_name ?? "A").charAt(0).toUpperCase()}</span>
                 )}
               </div>
-              <Link
+              <Link prefetch={false}
                 href="/artisan/profile/edit"
                 className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-white border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
                 title="Edit profile"
@@ -144,7 +144,7 @@ export default async function ArtisanProfilePage() {
               </div>
             </div>
             <div className="flex gap-3 justify-center mt-2 w-full max-w-md">
-              <Link
+              <Link prefetch={false}
                 href="/artisan/boost"
                 className="flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full px-5 py-2.5 text-sm font-bold transition"
               >
@@ -168,7 +168,7 @@ export default async function ArtisanProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
             {SETTINGS_SECTIONS.map((section) => (
-              <Link
+              <Link prefetch={false}
                 key={section.href}
                 href={section.href}
                 className="group rounded-3xl border border-border bg-card p-6 flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-heading/20 transition-all duration-200"

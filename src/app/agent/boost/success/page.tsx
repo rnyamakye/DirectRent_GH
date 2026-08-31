@@ -15,13 +15,13 @@ export default async function BoostSuccessPage({
         next {days ?? "—"} days and will show at the top of the feed.
       </p>
       <div className="flex gap-3 pt-2">
-        <Link
+        <Link prefetch={false}
           href="/listings"
           className="border border-border rounded-lg px-4 py-2 text-sm font-semibold"
         >
           View listing
         </Link>
-        <Link
+        <Link prefetch={false}
           href="/agent/dashboard"
           className="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 text-sm font-semibold"
         >

@@ -20,7 +20,7 @@ export default async function RenterMessagesPage({
   const conversationId = resolvedSearchParams.conversationId as string | undefined;
 
   return (
-    <main className="h-[100dvh] w-full">
+    <main className="flex-1 flex flex-col w-full">
       <MessagingApp currentUserId={user.id} initialConversationId={conversationId} />
     </main>
   );

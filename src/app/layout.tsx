@@ -4,6 +4,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { MobileNav } from "@/components/mobile-nav";
 import { Toaster } from "react-hot-toast";
+import { PageTransition } from "@/components/page-transition";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -37,9 +38,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-canvas text-body font-sans pb-16 md:pb-0">
         <Header className="" />
-        <div className="flex-1 flex flex-col min-h-screen w-full">
-          {children}
-          {modal}
+        <div className="flex-1 flex flex-col min-h-screen w-full relative">
+          <PageTransition>
+            {children}
+            {modal}
+          </PageTransition>
         </div>
         <Footer />
         <MobileNav />

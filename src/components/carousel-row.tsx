@@ -90,7 +90,7 @@ function ListingCard({ listing }: { listing: Listing }) {
 function ArtisanCard({ artisan }: { artisan: Artisan }) {
     return (
         <div className="relative flex-shrink-0 w-40 sm:w-56 md:w-full block">
-            <Link href={`/artisans/${artisan.id}`} className="block">
+            <Link prefetch={false} href={`/artisans/${artisan.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-3xl">
                   {artisan.photoUrl ? (
                     <img
@@ -115,7 +115,7 @@ function ArtisanCard({ artisan }: { artisan: Artisan }) {
 
             <HeartSaveButton targetId={artisan.id} saveType="profile" initialSaved={artisan.isSaved} isLoggedIn={true} />
 
-            <Link href={`/artisans/${artisan.id}`} className="block mt-2">
+            <Link prefetch={false} href={`/artisans/${artisan.id}`} className="block mt-2">
                 <div className="flex items-start justify-between gap-2">
                     <p className="text-xs sm:text-sm font-semibold text-heading truncate">{artisan.name}</p>
                     {artisan.rating !== null && (
@@ -155,7 +155,7 @@ export function CarouselRow(props: CarouselRowProps) {
                 <h2 className="text-lg sm:text-xl font-bold text-heading">{props.title}</h2>
                 <div className="flex items-center gap-2">
                     {props.viewAllHref && (
-                        <Link href={props.viewAllHref} className="flex items-center justify-center text-primary hover:text-primary/70 transition-colors sm:mr-2" aria-label="View more">
+                        <Link prefetch={false} href={props.viewAllHref} className="flex items-center justify-center text-primary hover:text-primary/70 transition-colors sm:mr-2" aria-label="View more">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                             </svg>

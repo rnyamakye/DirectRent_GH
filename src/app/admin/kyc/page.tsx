@@ -53,7 +53,7 @@ export default async function AdminKycPage() {
                       <td className="px-6 py-4 text-body">
                         <div className="font-medium text-heading">{profile.full_name || "Unknown"}</div>
                         <div className="text-xs opacity-70">{profile.email || "N/A"}</div>
-                        <Link 
+                        <Link prefetch={false} 
                           href={profile.role === 'listing' ? `/listings/${req.user_id}` : profile.role === 'agent' ? `/agents/${req.user_id}` : `/artisans/${req.user_id}`} 
                           className="text-[10px] uppercase font-bold text-primary hover:underline"
                         >

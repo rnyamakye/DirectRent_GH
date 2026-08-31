@@ -132,13 +132,13 @@ export default async function AboutPage() {
               Whether you are looking for your next home, or you're a professional looking to expand your reach, DirectRent GH is the place for you.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
+              <Link prefetch={false}
                 href="/auth/register?type=renter"
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-primary text-white font-bold hover:bg-primary/90 transition shadow-lg hover:shadow-primary/30"
               >
                 Join as a Renter
               </Link>
-              <Link
+              <Link prefetch={false}
                 href="/auth/register?type=professional"
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-heading font-bold hover:bg-slate-50 transition shadow-lg"
               >

@@ -39,7 +39,7 @@ export function AuthGuardLink({
   };
 
   return (
-    <Link href={href} onClick={handleClick} className={className}>
+    <Link prefetch={false} href={href} onClick={handleClick} className={className}>
       {children}
     </Link>
   );

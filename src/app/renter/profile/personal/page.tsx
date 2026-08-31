@@ -167,7 +167,7 @@ export default function PersonalInformationPage() {
           >
             {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
           </button>
-          <Link href="/renter/profile" className="rounded-full border border-border bg-card hover:bg-slate-50 text-heading px-8 py-3 text-sm font-bold transition">
+          <Link prefetch={false} href="/renter/profile" className="rounded-full border border-border bg-card hover:bg-slate-50 text-heading px-8 py-3 text-sm font-bold transition">
             Cancel
           </Link>
         </div>

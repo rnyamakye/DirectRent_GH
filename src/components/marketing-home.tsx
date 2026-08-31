@@ -38,13 +38,13 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                         </div>
 
                         <div className="mx-auto mt-10 flex justify-center gap-4">
-                            <Link
+                            <Link prefetch={false}
                                 href="/auth/register"
                                 className="inline-flex items-center justify-center rounded-2xl bg-primary px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-white transition hover:bg-primary-hover shadow-xl"
                             >
                                 Sign Up
                             </Link>
-                            <Link
+                            <Link prefetch={false}
                                 href="/auth/login"
                                 className="inline-flex items-center justify-center rounded-2xl bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-gray-50 shadow-xl"
                             >
@@ -103,7 +103,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                 DirectRent GH is Ghana's premier platform for connecting renters with verified landlords, dedicated agents, and highly skilled artisans. We streamline the entire property lifecycle—from finding the perfect home to ensuring it's beautifully maintained.
                             </p>
                             <div className="mt-8">
-                                <Link
+                                <Link prefetch={false}
                                     href="/about"
                                     className="group inline-flex items-center text-sm font-bold text-primary transition-colors hover:text-primary/80"
                                 >
@@ -150,7 +150,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                             </div>
                         </div>
                         <div className="mt-10">
-                            <Link
+                            <Link prefetch={false}
                                 href="/help"
                                 className="group inline-flex items-center text-sm font-bold text-primary transition-colors hover:text-primary/80"
                             >
@@ -171,7 +171,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                     Latest from the Blog
                                 </h2>
                             </div>
-                            <Link
+                            <Link prefetch={false}
                                 href="/blog"
                                 className="group inline-flex items-center text-sm font-bold text-primary transition-colors hover:text-primary/80 whitespace-nowrap"
                             >
@@ -186,12 +186,12 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                     : "Unknown Date";
                                 return (
                                 <article key={idx} className="relative flex-shrink-0 block w-full group">
-                                    <Link href={`/blog/${post.id}`} className="block">
+                                    <Link prefetch={false} href={`/blog/${post.id}`} className="block">
                                         <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center">
                                             <img src={post.image} alt={post.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                         </div>
                                     </Link>
-                                    <Link href={`/blog/${post.id}`} className="block mt-3">
+                                    <Link prefetch={false} href={`/blog/${post.id}`} className="block mt-3">
                                         <div className="flex items-start justify-between gap-2 mb-1">
                                             <p className="text-xs font-semibold text-heading truncate">
                                                 {post.category}
@@ -233,7 +233,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4 sm:flex-row lg:flex-col">
-                                <Link
+                                <Link prefetch={false}
                                     className="group inline-flex items-center text-sm font-bold text-white transition-colors hover:text-mint whitespace-nowrap"
                                     href="/contact"
                                 >

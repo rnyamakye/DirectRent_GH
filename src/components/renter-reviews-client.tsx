@@ -62,7 +62,7 @@ export function RenterReviewsClient({ initialReviews }: { initialReviews: Review
                 <div className="flex flex-col gap-6">
                     {reviews.map((review) => (
                         <div key={review.id} className="rounded-3xl border border-border bg-card p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all">
-                            <Link
+                            <Link prefetch={false}
                                 href={
                                     review.targetType === "listing"
                                         ? `/listings/${review.targetId}`

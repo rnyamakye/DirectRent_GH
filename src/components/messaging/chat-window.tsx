@@ -29,7 +29,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [otherParticipant, setOtherParticipant] = useState<{ full_name: string; avatar_url: string | null; role: string } | null>(null);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -48,7 +48,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
         .select("participant_one_id, participant_two_id")
         .eq("id", conversationId)
         .single();
-        
+
       if (conv) {
         const otherId = conv.participant_one_id === currentUserId ? conv.participant_two_id : conv.participant_one_id;
         const { data: profile } = await supabase
@@ -56,7 +56,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
           .select("full_name, avatar_url, role")
           .eq("id", otherId)
           .single();
-        
+
         if (profile) setOtherParticipant(profile);
       }
 
@@ -70,7 +70,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       if (msgs && !error) {
         setMessages(msgs);
         setTimeout(scrollToBottom, 100);
-        
+
         // 2.5 Mark unread messages as read
         const hasUnread = msgs.some(m => m.sender_id !== currentUserId && !m.read_at);
         if (hasUnread) {
@@ -83,7 +83,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
             .then();
         }
       }
-      
+
       setIsLoading(false);
 
       // 3. Subscribe to new messages for this conversation
@@ -104,7 +104,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
               return [...prev, newMsg];
             });
             setTimeout(scrollToBottom, 100);
-            
+
             // Mark new incoming messages as read since we are viewing the chat
             if (newMsg.sender_id !== currentUserId && !newMsg.read_at) {
               supabase
@@ -132,7 +132,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       const listingTitle = params.get("listingTitle");
       if (listingId && listingTitle) {
         setContextListing({ id: listingId, title: listingTitle });
-        
+
         // Remove the parameter from URL so it doesn't stay there
         const newUrl = window.location.pathname + "?conversationId=" + conversationId;
         window.history.replaceState({}, document.title, newUrl);
@@ -188,7 +188,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       // Update with the real ID from DB
       setMessages((prev) => prev.map(m => m.id === tempId ? data : m));
     }
-    
+
     setIsSending(false);
   };
 
@@ -197,15 +197,15 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-border bg-white flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={onBack}
             className="md:hidden p-2 -ml-2 rounded-full hover:bg-slate-100 text-body transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
+              <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          
+
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-500 font-bold">
               {otherParticipant?.avatar_url ? (
@@ -241,44 +241,44 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
         ) : (
           messages.map((msg, index) => {
             const isMe = msg.sender_id === currentUserId;
-            
+
             // Basic grouping logic for UI cleanliness
             const prevMsg = index > 0 ? messages[index - 1] : null;
             const isConsecutive = prevMsg && prevMsg.sender_id === msg.sender_id;
-            
+
             let actualContent = msg.content || "";
             let parsedListingId = null;
             let parsedListingTitle = null;
-            
+
             if (actualContent) {
-               const match = actualContent.match(/^__LISTING_CONTEXT_START__(.*?)::(.*?)__LISTING_CONTEXT_END__\n([\s\S]*)$/);
-               if (match) {
-                 parsedListingId = match[1];
-                 parsedListingTitle = match[2];
-                 actualContent = match[3];
-               }
+              const match = actualContent.match(/^__LISTING_CONTEXT_START__(.*?)::(.*?)__LISTING_CONTEXT_END__\n([\s\S]*)$/);
+              if (match) {
+                parsedListingId = match[1];
+                parsedListingTitle = match[2];
+                actualContent = match[3];
+              }
             }
 
             return (
-              <div 
-                key={msg.id} 
+              <div
+                key={msg.id}
                 className={twMerge(
                   "flex flex-col max-w-[85%] sm:max-w-[75%]",
                   isMe ? "self-end items-end" : "self-start items-start",
                   isConsecutive ? "mt-1" : "mt-4"
                 )}
               >
-                <div 
+                <div
                   className={twMerge(
                     "px-4 py-2.5 rounded-2xl text-[15px] shadow-sm flex flex-col gap-1.5",
-                    isMe 
-                      ? "bg-primary text-white rounded-tr-sm" 
+                    isMe
+                      ? "bg-primary text-white rounded-tr-sm"
                       : "bg-white border border-border text-heading rounded-tl-sm"
                   )}
                   style={{ wordBreak: 'break-word' }}
                 >
                   {parsedListingTitle && (
-                    <Link href={`/listings/${parsedListingId}`} className={twMerge(
+                    <Link prefetch={false} href={`/listings/${parsedListingId}`} className={twMerge(
                       "block px-3 py-2 rounded-lg border-l-4 text-sm opacity-90 hover:opacity-100 transition-opacity",
                       isMe ? "bg-black/20 border-white/40 text-white" : "bg-slate-50 border-primary text-heading"
                     )}>
@@ -304,14 +304,14 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       <div className="p-4 bg-white border-t border-border flex flex-col gap-2">
         {contextListing && (
           <div className="bg-slate-50 border border-border rounded-lg px-4 py-3 flex items-center justify-between shadow-sm relative overflow-hidden">
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-             <div>
-                <p className="text-[10px] uppercase tracking-widest font-bold text-body/70">Replying to Listing</p>
-                <p className="font-semibold text-heading text-sm truncate">{contextListing.title}</p>
-             </div>
-             <button onClick={() => setContextListing(null)} className="text-body hover:text-heading p-1">
-               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
-             </button>
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+            <div>
+              <p className="text-[10px] uppercase tracking-widest font-bold text-body/70">Replying to Listing</p>
+              <p className="font-semibold text-heading text-sm truncate">{contextListing.title}</p>
+            </div>
+            <button onClick={() => setContextListing(null)} className="text-body hover:text-heading p-1">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
           </div>
         )}
         <form onSubmit={handleSendMessage} className="flex items-center gap-2 relative">

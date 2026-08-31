@@ -23,7 +23,7 @@ export default function ErrorPage({
         >
           Try again
         </button>
-        <Link
+        <Link prefetch={false}
           href="/"
           className="border border-border text-heading rounded-lg px-5 py-2.5 font-semibold"
         >

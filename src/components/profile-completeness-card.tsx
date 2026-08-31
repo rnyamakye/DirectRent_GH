@@ -61,7 +61,7 @@ export function ProfileCompletenessCard({ completenessPercent, role, className, 
         <p className="text-sm text-body/70 mb-4">
           A complete profile gets more views and builds trust with potential clients.
         </p>
-        <Link
+        <Link prefetch={false}
           href={`/${role}/profile/edit`}
           className="inline-block bg-heading hover:bg-black text-white rounded-full px-5 py-2 text-sm font-bold transition"
         >

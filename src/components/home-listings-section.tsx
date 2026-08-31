@@ -137,7 +137,7 @@ export function HomeListingsSection({ listings }: { listings: Listing[] }) {
             )}
 
             <div className="mt-12 text-center">
-                <Link
+                <Link prefetch={false}
                     href="/listings"
                     className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-8 py-3 text-sm font-semibold text-heading shadow-sm transition hover:border-primary hover:text-primary hover:shadow-md"
                 >

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendNotification } from "@/lib/notifications";
 
 export async function PATCH(
   req: Request,
@@ -42,14 +43,44 @@ export async function PATCH(
         .eq('id', id);
         
       if (error) throw error;
+
+      await sendNotification({
+        userId: id,
+        type: "account_updates",
+        title: isSuspended ? "Account Suspended" : "Account Reinstated",
+        message: isSuspended 
+          ? "Your account has been suspended by an administrator. Please contact support for more details." 
+          : "Your account has been reinstated. You can now access all features.",
+        link: "/help",
+      });
     } else if (type === 'listing') {
       const status = action === 'suspend' ? 'unavailable' : 'available';
+      
+      // Need agent_id to notify them
+      const { data: listing } = await supabase
+        .from('listings')
+        .select('agent_id, title')
+        .eq('id', id)
+        .single();
+        
       const { error } = await supabase
         .from('listings')
         .update({ status })
         .eq('id', id);
         
       if (error) throw error;
+      
+      if (listing) {
+        await sendNotification({
+          userId: listing.agent_id,
+          type: "account_updates",
+          title: status === 'unavailable' ? "Listing Suspended" : "Listing Reinstated",
+          message: status === 'unavailable'
+            ? `Your listing "${listing.title}" has been suspended and made unavailable by an admin.`
+            : `Your listing "${listing.title}" has been reinstated and is now available.`,
+          link: `/agent/listings`,
+        });
+      }
     }
 
     return NextResponse.json({ success: true }, { status: 200 });

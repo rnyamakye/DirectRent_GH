@@ -9,7 +9,7 @@ export default function NotFound() {
         The page you&apos;re looking for doesn&apos;t exist or may have moved.
       </p>
       <div className="flex gap-3 pt-2">
-        <Link
+        <Link prefetch={false}
           href="/"
           className="bg-primary hover:bg-primary-hover text-white rounded-lg px-5 py-2.5 font-semibold"
         >

@@ -244,7 +244,7 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-[2fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div>
-            <Link
+            <Link prefetch={false}
               href="/"
               className="inline-block text-xl font-extrabold tracking-tight text-white transition hover:text-[#4ade80]"
             >
@@ -279,7 +279,7 @@ export function Footer() {
               <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link
+                    <Link prefetch={false}
                       href={link.href}
                       className="text-sm text-white/60 transition hover:text-white"
                     >
@@ -307,7 +307,7 @@ export function Footer() {
               { label: "Cookie Policy", href: "/cookies" },
               { label: "Sitemap", href: "/sitemap.xml" },
             ].map((item) => (
-              <Link
+              <Link prefetch={false}
                 key={item.label}
                 href={item.href}
                 className="text-xs text-white/40 transition hover:text-white/80"

@@ -164,7 +164,7 @@ export function MobileNav() {
           
           if (item.isMain) {
             return (
-              <Link
+              <Link prefetch={false}
                 key={item.label}
                 href={item.href}
                 className="flex flex-col items-center justify-end w-full h-full pb-2 relative z-10"
@@ -178,7 +178,7 @@ export function MobileNav() {
           }
 
           return (
-            <Link
+            <Link prefetch={false}
               key={item.label}
               href={item.href}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${isActive ? "text-primary" : "text-body/50 hover:text-body"

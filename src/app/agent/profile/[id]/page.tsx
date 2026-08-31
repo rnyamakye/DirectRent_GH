@@ -97,7 +97,7 @@ export default async function AgentProfilePage({
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {listings.map((listing) => (
-              <Link
+              <Link prefetch={false}
                 key={listing.id}
                 href={`/listings/${listing.id}`}
                 className="group rounded-2xl border border-border overflow-hidden bg-card hover:shadow-lg transition-all"
@@ -144,7 +144,7 @@ export default async function AgentProfilePage({
       </div>
 
       <div>
-        <Link href="/auth/login" className="text-sm font-supporting text-body underline">
+        <Link prefetch={false} href="/auth/login" className="text-sm font-supporting text-body underline">
           Report this agent
         </Link>
       </div>

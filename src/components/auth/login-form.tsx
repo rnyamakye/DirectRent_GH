@@ -81,7 +81,7 @@ function LoginFormInner() {
   return (
     <div className="w-full">
       <div className="mb-8">
-        <Link href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
+        <Link prefetch={false} href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
           DirectRent<span className="text-primary"> GH</span>
         </Link>
         <h1 className="text-3xl font-bold text-heading">Welcome back</h1>
@@ -133,7 +133,7 @@ function LoginFormInner() {
             <label htmlFor="login-password" className="text-xs font-semibold uppercase tracking-[0.18em] text-body/60">
               Password
             </label>
-            <Link
+            <Link prefetch={false}
               href="/auth/forgot-password"
               className="text-xs text-primary hover:text-primary-hover transition font-medium"
               replace
@@ -209,7 +209,7 @@ function LoginFormInner() {
 
       <p className="mt-8 text-center text-sm text-body/60">
         Don&apos;t have an account?{" "}
-        <Link href="/auth/register" className="font-semibold text-primary hover:text-primary-hover transition" replace>
+        <Link prefetch={false} href="/auth/register" className="font-semibold text-primary hover:text-primary-hover transition" replace>
           Create one free
         </Link>
       </p>

@@ -147,7 +147,7 @@ export default async function ArtisanDashboardPage() {
           <p className="text-3xl font-bold text-heading">{avgRatingStr}</p>
           <p className="text-sm font-medium text-body/70">Avg Rating</p>
         </div>
-        <Link href="/artisan/reviews" className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-primary/50 transition cursor-pointer group">
+        <Link prefetch={false} href="/artisan/reviews" className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col gap-1 hover:shadow-md hover:border-primary/50 transition cursor-pointer group">
           <div className="flex items-center justify-between">
             <p className="text-3xl font-bold text-heading group-hover:text-primary transition-colors">{reviewsData?.length ?? 0}</p>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-body/30 group-hover:text-primary transition-colors"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -161,7 +161,7 @@ export default async function ArtisanDashboardPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-heading">Recent Bookings</h2>
           {bookings && bookings.length > 0 && (
-            <Link href="/artisan/bookings" className="text-sm font-semibold text-primary hover:text-primary-hover transition">
+            <Link prefetch={false} href="/artisan/bookings" className="text-sm font-semibold text-primary hover:text-primary-hover transition">
               View all →
             </Link>
           )}
@@ -188,7 +188,7 @@ export default async function ArtisanDashboardPage() {
               const badgeColor = statusColors[booking.status as keyof typeof statusColors] || "bg-slate-100 text-slate-800 border-slate-200";
 
               return (
-                <Link key={booking.id} href={`/artisan/bookings`} className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-4 hover:shadow-md transition">
+                <Link prefetch={false} key={booking.id} href={`/artisan/bookings`} className="bg-card rounded-2xl border border-border p-5 flex flex-col gap-4 hover:shadow-md transition">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border border-border/50">

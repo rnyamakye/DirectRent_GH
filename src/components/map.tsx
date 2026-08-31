@@ -68,7 +68,7 @@ export default function Map({ listings, center = [5.6037, -0.1870], zoom = 12 }:
                 )}
                 <div className="font-semibold text-heading truncate">{listing.title}</div>
                 <div className="font-bold text-primary">GHS {listing.price}/mo</div>
-                <Link
+                <Link prefetch={false}
                   href={`/listings/${listing.id}`}
                   className="mt-2 text-center bg-primary hover:bg-primary-hover text-white rounded-lg py-1.5 text-xs font-semibold"
                 >

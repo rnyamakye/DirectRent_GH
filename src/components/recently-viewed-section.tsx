@@ -48,7 +48,7 @@ export async function RecentlyViewedSection({ userId }: { userId: string }) {
           const l = listing as any;
           const hasPhoto = l.photo_urls && l.photo_urls.length > 0;
           return (
-            <Link
+            <Link prefetch={false}
               key={l.id}
               href={`/listings/${l.id}`}
               className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"

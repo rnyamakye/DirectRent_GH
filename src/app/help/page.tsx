@@ -77,7 +77,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                     <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
                         <ul className="space-y-4 flex flex-col items-start">
                             <li>
-                              <Link 
+                              <Link prefetch={false} 
                                 href="/help" 
                                 className={`transition-colors ${!categoryFilter ? 'text-primary font-bold hover:underline' : 'text-body font-medium hover:text-primary'}`}
                               >
@@ -85,7 +85,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                               </Link>
                             </li>
                             <li>
-                              <Link 
+                              <Link prefetch={false} 
                                 href="/help?category=general" 
                                 className={`transition-colors ${categoryFilter === 'general' ? 'text-primary font-bold hover:underline' : 'text-body font-medium hover:text-primary'}`}
                               >
@@ -93,7 +93,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                               </Link>
                             </li>
                             <li>
-                              <Link 
+                              <Link prefetch={false} 
                                 href="/help?category=safety" 
                                 className={`transition-colors ${categoryFilter === 'safety' ? 'text-primary font-bold hover:underline' : 'text-body font-medium hover:text-primary'}`}
                               >
@@ -101,7 +101,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                               </Link>
                             </li>
                             <li>
-                              <Link 
+                              <Link prefetch={false} 
                                 href="/help?category=renters" 
                                 className={`transition-colors ${categoryFilter === 'renters' ? 'text-primary font-bold hover:underline' : 'text-body font-medium hover:text-primary'}`}
                               >
@@ -109,7 +109,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                               </Link>
                             </li>
                             <li>
-                              <Link 
+                              <Link prefetch={false} 
                                 href="/help?category=agents" 
                                 className={`transition-colors ${categoryFilter === 'agents' ? 'text-primary font-bold hover:underline' : 'text-body font-medium hover:text-primary'}`}
                               >
@@ -128,7 +128,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                         <p className="text-body text-sm font-supporting leading-relaxed">
                             Can't find the answer you're looking for? Our dedicated support team is here to help you resolve any issues.
                         </p>
-                        <Link 
+                        <Link prefetch={false} 
                             href="/contact" 
                             className="mt-2 w-full text-center bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-bold transition shadow-sm"
                         >
@@ -146,7 +146,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                 {query ? "Search Results" : categoryFilter ? `${categoryFilter} Questions` : "Frequently Asked Questions"}
               </h2>
               {(query || categoryFilter) && (
-                <Link href="/help" className="text-sm font-semibold text-primary hover:underline">
+                <Link prefetch={false} href="/help" className="text-sm font-semibold text-primary hover:underline">
                   Clear filter
                 </Link>
               )}

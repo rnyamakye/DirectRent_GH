@@ -202,7 +202,7 @@ export default async function RenterDashboardPage() {
                 )}
               </div>
               {/* Pencil edit icon */}
-              <Link
+              <Link prefetch={false}
                 href="/renter/profile/edit"
                 className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-white border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
                 title="Edit profile"
@@ -221,19 +221,19 @@ export default async function RenterDashboardPage() {
 
           {/* Action buttons — outside the card */}
           <div className="flex flex-wrap gap-3 justify-center w-full max-w-md">
-            <Link
+            <Link prefetch={false}
               href="/renter/tours"
               className="flex items-center justify-center border border-border hover:border-heading/30 bg-card rounded-full px-5 py-2.5 text-sm font-semibold transition"
             >
               My Tours
             </Link>
-            <Link
+            <Link prefetch={false}
               href="/renter/alerts"
               className="flex items-center justify-center border border-border hover:border-heading/30 bg-card rounded-full px-5 py-2.5 text-sm font-semibold transition"
             >
               Search Alerts
             </Link>
-            <Link
+            <Link prefetch={false}
               href="/listings"
               className="flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
             >
@@ -257,7 +257,7 @@ export default async function RenterDashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-heading">Recent Bookings</h2>
             {bookings && bookings.length > 0 && (
-              <Link href="/renter/bookings" className="text-sm font-semibold text-primary hover:text-primary-hover transition">
+              <Link prefetch={false} href="/renter/bookings" className="text-sm font-semibold text-primary hover:text-primary-hover transition">
                 View all →
               </Link>
             )}
@@ -267,7 +267,7 @@ export default async function RenterDashboardPage() {
             <div className="rounded-3xl border border-border bg-card p-12 text-center flex flex-col items-center justify-center gap-4">
               <p className="text-lg font-semibold text-heading">No bookings yet</p>
               <p className="text-body/70 max-w-sm text-sm">When you request a service from an artisan, you can track it here.</p>
-              <Link href="/artisans" className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition">
+              <Link prefetch={false} href="/artisans" className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition">
                 Find an Artisan
               </Link>
             </div>
@@ -332,7 +332,7 @@ export default async function RenterDashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-heading">Saved</h2>
             {(savedListings.length > 0 || savedAgents.length > 0 || savedArtisans.length > 0) && (
-              <Link
+              <Link prefetch={false}
                 href="/renter/saved"
                 className="text-sm font-semibold text-primary hover:text-primary-hover transition"
               >
@@ -347,7 +347,7 @@ export default async function RenterDashboardPage() {
               <p className="text-body/70 max-w-sm text-sm">
                 When you see a property, agent, or artisan you like, click the heart icon to save it here for easy access later.
               </p>
-              <Link
+              <Link prefetch={false}
                 href="/listings"
                 className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
               >
@@ -359,7 +359,7 @@ export default async function RenterDashboardPage() {
               {savedListings.map((listing) => {
                 const hasPhoto = listing.photo_urls && listing.photo_urls.length > 0;
                 return (
-                  <Link
+                  <Link prefetch={false}
                     key={listing.id}
                     href={`/listings/${listing.id}`}
                     className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
@@ -396,7 +396,7 @@ export default async function RenterDashboardPage() {
               })}
 
               {savedAgents.slice(0, 4).map(agent => (
-                <Link
+                <Link prefetch={false}
                   key={agent.id}
                   href={`/renters/${agent.id}`}
                   className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
@@ -432,7 +432,7 @@ export default async function RenterDashboardPage() {
               ))}
 
               {savedArtisans.slice(0, 4).map(artisan => (
-                <Link
+                <Link prefetch={false}
                   key={artisan.id}
                   href={`/artisans/${artisan.id}`}
                   className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
@@ -481,7 +481,7 @@ export default async function RenterDashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-heading">Recent Reviews</h2>
             {enrichedRecentReviews.length > 0 && (
-              <Link
+              <Link prefetch={false}
                 href="/renter/reviews"
                 className="text-sm font-semibold text-primary hover:text-primary-hover transition"
               >
@@ -513,7 +513,7 @@ export default async function RenterDashboardPage() {
                   <p className="text-sm text-body/80 line-clamp-3 italic">
                     "{review.comment}"
                   </p>
-                  <Link
+                  <Link prefetch={false}
                     href={`/${review.targetType === 'listing' ? 'listings' : review.targetType + 's'}/${review.targetId}`}
                     className="mt-auto text-sm font-semibold text-primary hover:underline"
                   >
@@ -536,7 +536,7 @@ export default async function RenterDashboardPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {SETTINGS_SECTIONS.map((section) => (
-              <Link
+              <Link prefetch={false}
                 key={section.href}
                 href={section.href}
                 className="group rounded-3xl border border-border bg-card p-6 flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-heading/20 transition-all duration-200"

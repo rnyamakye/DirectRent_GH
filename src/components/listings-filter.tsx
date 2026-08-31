@@ -160,7 +160,7 @@ export function ListingsFilter({
           </button>
           {hasActiveFilters && (
             <>
-              <Link
+              <Link prefetch={false}
                 href="/listings"
                 className="text-xs font-semibold text-primary hover:text-primary-hover transition text-center sm:text-left"
               >

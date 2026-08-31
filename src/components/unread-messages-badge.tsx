@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { playNotificationAlert } from "@/lib/audio";
 
 export function UnreadMessagesBadge() {
   const [unreadCount, setUnreadCount] = useState(0);
@@ -34,24 +35,22 @@ export function UnreadMessagesBadge() {
         .channel(`unread-messages-${Date.now()}`)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'messages' },
+          { event: '*', schema: 'public', table: 'messages' },
           (payload) => {
-            const newMsg = payload.new as any;
-            // If someone else sent a message and it's unread
-            if (newMsg.sender_id !== user.id && !newMsg.read_at) {
-              setUnreadCount((prev) => prev + 1);
-            }
-          }
-        )
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'messages' },
-          (payload) => {
-            const oldMsg = payload.old as any;
-            const newMsg = payload.new as any;
-            // If it changed from unread to read
-            if (newMsg.sender_id !== user.id && !oldMsg.read_at && newMsg.read_at) {
-              setUnreadCount((prev) => Math.max(0, prev - 1));
+            if (payload.eventType === 'INSERT') {
+              const newMsg = payload.new as any;
+              // If someone else sent a message and it's unread
+              if (newMsg.sender_id !== user.id && !newMsg.read_at) {
+                setUnreadCount((prev) => prev + 1);
+                playNotificationAlert();
+              }
+            } else if (payload.eventType === 'UPDATE') {
+              const oldMsg = payload.old as any;
+              const newMsg = payload.new as any;
+              // If it changed from unread to read
+              if (newMsg.sender_id !== user.id && !oldMsg.read_at && newMsg.read_at) {
+                setUnreadCount((prev) => Math.max(0, prev - 1));
+              }
             }
           }
         )

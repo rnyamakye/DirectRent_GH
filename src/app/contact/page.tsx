@@ -14,13 +14,13 @@ export default async function ContactPage() {
           To ensure the best support experience and prevent spam, please log in or create an account before contacting our team.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-          <Link 
+          <Link prefetch={false} 
             href="/auth/login"
             className="rounded-full bg-primary px-8 py-3 text-sm font-bold text-white transition hover:bg-primary-hover shadow-sm w-full sm:w-auto"
           >
             Log In
           </Link>
-          <Link 
+          <Link prefetch={false} 
             href="/auth/register"
             className="rounded-full bg-card border border-border px-8 py-3 text-sm font-bold text-heading transition hover:bg-slate-50 shadow-sm w-full sm:w-auto"
           >

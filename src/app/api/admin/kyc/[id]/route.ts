@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendNotification } from "@/lib/notifications";
 
 export async function PATCH(
   req: NextRequest,
@@ -41,6 +42,14 @@ export async function PATCH(
 
       if (profileError) {
         console.error("Failed to update profile verification status:", profileError);
+      } else {
+        await sendNotification({
+          userId: request.user_id,
+          type: "account_updates",
+          title: "KYC Verification Approved",
+          message: "Congratulations! Your identity verification request has been approved. Your profile is now verified.",
+          link: "/profile",
+        });
       }
     } else if (status === "rejected") {
       // Set to false if rejected
@@ -48,6 +57,14 @@ export async function PATCH(
         .from("profiles")
         .update({ is_verified: false })
         .eq("id", request.user_id);
+        
+      await sendNotification({
+        userId: request.user_id,
+        type: "account_updates",
+        title: "KYC Verification Rejected",
+        message: `Your identity verification request was rejected. ${notes ? `Reason: ${notes}` : "Please review our guidelines and try submitting clearer documents."}`,
+        link: "/profile/verification",
+      });
     }
 
     return NextResponse.json({ request }, { status: 200 });

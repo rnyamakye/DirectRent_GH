@@ -43,7 +43,7 @@ export default async function AdminListingsPage() {
                 <td className="p-4">
                   <div className="font-bold text-heading truncate max-w-[250px]">{listing.title}</div>
                   <div className="text-xs text-body mt-0.5">{listing.area} • GHS {listing.price}</div>
-                  <Link href={`/listings/${listing.id}`} target="_blank" className="text-xs text-primary hover:underline mt-1 inline-block">
+                  <Link prefetch={false} href={`/listings/${listing.id}`} target="_blank" className="text-xs text-primary hover:underline mt-1 inline-block">
                     View public page ↗
                   </Link>
                 </td>

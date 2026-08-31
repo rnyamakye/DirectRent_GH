@@ -21,7 +21,7 @@ export type Artisan = {
 export function ArtisanCard({ artisan }: { artisan: Artisan }) {
     return (
         <div className="relative flex-shrink-0 w-full group cursor-pointer">
-            <Link href={`/artisans/${artisan.id}`} className="block">
+            <Link prefetch={false} href={`/artisans/${artisan.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-mint">
                     {artisan.photoUrl ? (
                         <img
@@ -52,7 +52,7 @@ export function ArtisanCard({ artisan }: { artisan: Artisan }) {
 
             <HeartSaveButton targetId={artisan.id} saveType="profile" initialSaved={artisan.isSaved} isLoggedIn={true} />
 
-            <Link href={`/artisans/${artisan.id}`} className="block mt-3">
+            <Link prefetch={false} href={`/artisans/${artisan.id}`} className="block mt-3">
                 <div className="flex items-start justify-between gap-2">
                     <p className="font-semibold text-heading text-sm truncate">{artisan.name}</p>
                     {artisan.averageRating !== null && (

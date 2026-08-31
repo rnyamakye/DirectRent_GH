@@ -91,7 +91,7 @@ export function DashboardSidebar({
             const finalActive = isHub ? pathname === link.href : isActive;
 
             return (
-              <Link
+              <Link prefetch={false}
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}

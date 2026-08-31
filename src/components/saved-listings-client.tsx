@@ -66,7 +66,7 @@ export function SavedListingsClient({
                     <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {savedListings.map((listing) => (
                             <div key={listing.id} className="relative group">
-                                <Link href={`/listings/${listing.id}`} className="block">
+                                <Link prefetch={false} href={`/listings/${listing.id}`} className="block">
                                     <ListingCard 
                                         listing={{
                                             ...listing,
@@ -132,7 +132,7 @@ function EmptyState({ type, href }: { type: string, href: string }) {
             <p className="text-body/70 max-w-sm text-sm">
                 Keep track of {type} you love by saving them while browsing.
             </p>
-            <Link
+            <Link prefetch={false}
                 href={href}
                 className="mt-2 inline-flex bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
             >

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 type Profile = { id: string; full_name: string; business_name: string | null; role: string };
@@ -17,6 +17,7 @@ type Message = {
 
 function MessagesPageContent() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const withUserId = searchParams.get("with");
     const autoStartedRef = useRef(false);
 
@@ -149,7 +150,7 @@ function MessagesPageContent() {
         return () => {
             supabase.removeChannel(channel);
         };
-         
+
     }, [myId, selectedConvId, conversations]);
 
     useEffect(() => {
@@ -295,7 +296,7 @@ function MessagesPageContent() {
         : null;
 
     return (
-        <div className="max-w-6xl mx-auto h-[calc(100vh-104px)] flex border border-border rounded-2xl overflow-hidden bg-card my-6">
+        <div className="flex-1 w-full sm:max-w-6xl sm:mx-auto sm:h-[calc(100vh-120px)] sm:flex-none flex sm:border border-border sm:rounded-2xl overflow-hidden bg-card sm:my-6">
             {/* Conversation list — hidden on mobile once a thread is open */}
             <div
                 className={`${selectedConvId ? "hidden sm:flex" : "flex"
@@ -403,8 +404,8 @@ function MessagesPageContent() {
                                     <div
                                         key={m.id}
                                         className={`max-w-xs rounded-2xl px-4 py-2.5 ${isMine
-                                                ? "self-end bg-primary text-white"
-                                                : "self-start bg-mint/40 text-heading"
+                                            ? "self-end bg-primary text-white"
+                                            : "self-start bg-mint/40 text-heading"
                                             }`}
                                     >
                                         {m.photo_url && (
@@ -418,7 +419,7 @@ function MessagesPageContent() {
 
                         <form onSubmit={handleSend} className="p-4 border-t border-border flex items-center gap-2">
                             <label className="cursor-pointer text-body/60 hover:text-primary transition">
-                                📎
+
                                 <input
                                     type="file"
                                     accept="image/*"

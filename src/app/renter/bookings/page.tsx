@@ -44,7 +44,7 @@ export default async function RenterBookingsPage() {
   const allBookings = bookings || [];
 
   return (
-    <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 flex flex-col gap-8">
+    <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 pb-12 flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold text-heading">My Bookings</h1>
         <p className="text-body">Track and manage your requested services.</p>
@@ -56,7 +56,7 @@ export default async function RenterBookingsPage() {
             <span className="text-4xl mb-4">📅</span>
             <h3 className="text-lg font-bold text-heading">No bookings yet</h3>
             <p className="text-body mt-1 max-w-sm">When you request a service from an artisan, you can track it here.</p>
-            <Link href="/artisans" className="mt-6 bg-primary text-white rounded-full px-6 py-2.5 font-bold transition hover:bg-primary-hover">
+            <Link prefetch={false} href="/artisans" className="mt-6 bg-primary text-white rounded-full px-6 py-2.5 font-bold transition hover:bg-primary-hover">
               Find an Artisan
             </Link>
           </div>

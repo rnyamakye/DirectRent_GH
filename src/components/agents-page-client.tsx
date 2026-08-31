@@ -22,7 +22,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
 
     return (
         <div className="relative flex-shrink-0 w-full group cursor-pointer">
-            <Link href={`/agents/${agent.id}`} className="block">
+            <Link prefetch={false} href={`/agents/${agent.id}`} className="block">
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-mint flex items-center justify-center">
                     {agent.avatarUrl ? (
                         <img
@@ -46,7 +46,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
 
             <HeartSaveButton targetId={agent.id} saveType="profile" initialSaved={agent.isSaved} isLoggedIn={true} />
 
-            <Link href={`/agents/${agent.id}`} className="block mt-3">
+            <Link prefetch={false} href={`/agents/${agent.id}`} className="block mt-3">
                 <div className="flex items-start justify-between gap-2">
                     <p className="font-semibold text-heading text-sm truncate">{displayName}</p>
                     {agent.averageRating !== null && (

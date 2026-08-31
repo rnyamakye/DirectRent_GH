@@ -96,7 +96,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
             {query ? "Search Results" : "Latest Articles"}
           </h2>
           {query && (
-            <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">
+            <Link prefetch={false} href="/blog" className="text-sm font-semibold text-primary hover:underline">
               Clear search
             </Link>
           )}
@@ -106,12 +106,12 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {displayPosts.map((post, idx) => (
           <article key={idx} className="relative flex-shrink-0 block w-full group">
-              <Link href={`/blog/${post.id}`} className="block">
+              <Link prefetch={false} href={`/blog/${post.id}`} className="block">
                   <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center">
                       <img src={post.image ?? ""} alt={post.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </div>
               </Link>
-              <Link href={`/blog/${post.id}`} className="block mt-3">
+              <Link prefetch={false} href={`/blog/${post.id}`} className="block mt-3">
                   <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-xs font-semibold text-heading truncate">
                           {post.category}

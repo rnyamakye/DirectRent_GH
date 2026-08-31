@@ -219,7 +219,7 @@ export default async function AgentProfilePage({
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 {listings.map((listing) => (
-                                    <Link
+                                    <Link prefetch={false}
                                         key={listing.id}
                                         href={`/listings/${listing.id}`}
                                         className="group flex flex-col gap-3 cursor-pointer"

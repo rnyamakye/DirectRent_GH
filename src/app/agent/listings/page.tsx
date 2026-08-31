@@ -27,7 +27,7 @@ export default async function AgentListingsPage() {
           <h1 className="text-3xl font-bold text-heading">My Listings</h1>
           <p className="text-body/80 mt-1">Manage and track your property listings.</p>
         </div>
-        <Link
+        <Link prefetch={false}
           href="/agent/listings/new"
           className="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2.5 text-sm font-bold transition whitespace-nowrap"
         >
@@ -43,7 +43,7 @@ export default async function AgentListingsPage() {
           <p className="text-body/70 max-w-sm text-sm">
             Start by creating your first property listing to reach potential renters across Ghana.
           </p>
-          <Link
+          <Link prefetch={false}
             href="/agent/listings/new"
             className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
           >
@@ -85,7 +85,7 @@ export default async function AgentListingsPage() {
                 </div>
 
                 <div className="flex flex-col flex-1 min-w-0 md:mt-3">
-                  <Link href={`/listings/${listing.id}`} target="_blank" className="font-semibold text-heading truncate group-hover:text-primary transition-colors md:text-sm">
+                  <Link prefetch={false} href={`/listings/${listing.id}`} target="_blank" className="font-semibold text-heading truncate group-hover:text-primary transition-colors md:text-sm">
                     {listing.title}
                   </Link>
                   <p className="text-sm md:text-xs text-body/70 mt-1 md:mt-0.5 truncate">{listing.landmark || "No landmark specified"}</p>
@@ -95,13 +95,13 @@ export default async function AgentListingsPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row md:flex-row gap-2 pr-2 sm:pr-4 md:pr-0 md:mt-3">
-                  <Link
+                  <Link prefetch={false}
                     href={`/agent/listings/${listing.id}/edit`}
                     className="flex-1 flex items-center justify-center border border-border md:border-border/50 hover:border-heading/30 rounded-xl px-4 py-2 md:py-1.5 text-xs font-semibold transition whitespace-nowrap"
                   >
                     Edit
                   </Link>
-                  <Link
+                  <Link prefetch={false}
                     href={`/agent/listings/${listing.id}/boost`}
                     className="flex-1 flex items-center justify-center bg-primary/10 hover:bg-primary/20 text-primary rounded-xl px-4 py-2 md:py-1.5 text-xs font-semibold transition whitespace-nowrap"
                   >

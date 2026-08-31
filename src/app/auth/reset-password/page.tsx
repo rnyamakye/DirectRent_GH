@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md bg-canvas rounded-2xl shadow-xl border border-border p-6 md:p-8">
         <div className="mb-8">
-          <Link href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
+          <Link prefetch={false} href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
             DirectRent<span className="text-primary"> GH</span>
           </Link>
           <h1 className="text-3xl font-bold text-heading">Reset password</h1>

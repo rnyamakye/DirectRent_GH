@@ -9,8 +9,8 @@ export function BackButton() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Hide on dashboard/overview/messages/bookings pages as they are root-level or have their own custom back buttons
-    if (pathname?.match(/\/(agent|renter|artisan)\/(dashboard|overview|messages|bookings)$/)) {
+    // Hide on dashboard/overview/messages pages as they are root-level or have their own custom back buttons
+    if (pathname?.match(/\/(agent|renter|artisan)\/(dashboard|overview|messages)$/)) {
       setIsVisible(false);
       return;
     }

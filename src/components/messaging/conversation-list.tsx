@@ -58,16 +58,16 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
     // Now we need the profile of the *other* participant
     // For a complex query we might use a view, but doing it in a few queries is fine for now
     const enhancedConvs: Conversation[] = [];
-    
+
     for (const c of convs) {
       const otherId = c.participant_one_id === currentUserId ? c.participant_two_id : c.participant_one_id;
-      
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("id, full_name, avatar_url, role")
         .eq("id", otherId)
         .single();
-        
+
       const { data: lastMsg } = await supabase
         .from("messages")
         .select("content, created_at, sender_id")
@@ -93,7 +93,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
 
     // Re-sort just in case
     enhancedConvs.sort((a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime());
-    
+
     setConversations(enhancedConvs);
     setIsLoading(false);
   };
@@ -137,7 +137,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       <div className="p-4 sm:p-5 border-b border-border bg-white flex items-center sticky top-0 z-10 gap-3">
         <button
           onClick={() => {
@@ -168,7 +168,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
             {conversations.map((conv) => {
               const isActive = activeConversationId === conv.id;
               const hasUnread = (conv.unread_count || 0) > 0;
-              
+
               return (
                 <button
                   key={conv.id}
@@ -204,7 +204,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center gap-1 mt-0.5">
                       <p className={twMerge("text-xs truncate flex-1", hasUnread && !isActive ? "text-heading font-medium" : "text-body/70")}>
                         {(() => {

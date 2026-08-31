@@ -104,7 +104,7 @@ export default async function AdminReportsPage() {
                         <span className="text-xs font-bold uppercase tracking-widest text-primary/80">
                           {report.target_type}
                         </span>
-                        <Link 
+                        <Link prefetch={false} 
                           href={report.target_type === 'listing' ? `/listings/${report.target_id}` : `/artisans/${report.target_id}`} 
                           className="font-medium text-heading hover:text-primary transition underline decoration-border underline-offset-2"
                         >

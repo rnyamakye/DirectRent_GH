@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendNotification } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -110,6 +111,43 @@ export async function POST(req: NextRequest) {
         { error: "Failed to save review." },
         { status: 500 }
       );
+    }
+
+    // Determine target user to notify
+    let notifyUserId = null;
+    let targetName = "";
+    
+    if (target_type === "agent" || target_type === "artisan") {
+      notifyUserId = target_id;
+    } else if (target_type === "listing") {
+      const { data: listing } = await supabase
+        .from("listings")
+        .select("agent_id, title")
+        .eq("id", target_id)
+        .single();
+        
+      if (listing) {
+        notifyUserId = listing.agent_id;
+        targetName = listing.title;
+      }
+    }
+
+    if (notifyUserId) {
+      const { data: reviewerProfile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+        
+      const reviewerName = reviewerProfile?.full_name || "A user";
+      
+      await sendNotification({
+        userId: notifyUserId,
+        type: "review_notifications",
+        title: "New Review Received",
+        message: `${reviewerName} just left a ${rating}-star review ${target_type === "listing" && targetName ? `on your listing "${targetName}"` : "on your profile"}.`,
+        link: target_type === "listing" ? `/listings/${target_id}` : `/profile/reviews`,
+      });
     }
 
     return NextResponse.json({ review }, { status: 201 });

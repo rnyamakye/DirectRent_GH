@@ -172,7 +172,7 @@ export default async function ListingDetailPage({
           <hr className="border-border" />
 
           {/* Hosted By — now a real link to the agent's public profile */}
-          <Link
+          <Link prefetch={false}
             href={`/agents/${listing.agent_id}`}
             className="flex items-center gap-4 hover:opacity-80 transition"
           >

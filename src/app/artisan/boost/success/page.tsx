@@ -15,13 +15,13 @@ export default async function ArtisanBoostSuccessPage({
         show at the top of the artisans feed.
       </p>
       <div className="flex gap-3 pt-2">
-        <Link
+        <Link prefetch={false}
           href="/artisans"
           className="border border-border rounded-lg px-4 py-2 text-sm font-semibold"
         >
           View public profile
         </Link>
-        <Link
+        <Link prefetch={false}
           href="/artisan/dashboard"
           className="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 text-sm font-semibold"
         >

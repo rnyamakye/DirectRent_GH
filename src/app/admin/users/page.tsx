@@ -23,7 +23,7 @@ export default async function AdminUsersPage() {
         <p className="text-body font-supporting">Manage platform users, verify artisans, and enforce platform rules.</p>
       </div>
 
-      <div className="bg-white border border-border/60 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden overflow-x-auto">
+      <div className="bg-card border border-border/60 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden overflow-x-auto">
         <table className="w-full text-left border-collapse whitespace-nowrap">
           <thead>
             <tr className="bg-slate-50/80 border-b border-border/80 text-xs font-bold uppercase tracking-widest text-slate-500">

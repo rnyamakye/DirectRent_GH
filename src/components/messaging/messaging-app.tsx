@@ -72,7 +72,7 @@ export function MessagingApp({ currentUserId, initialConversationId, className }
       {/* Right Pane: Chat Window */}
       <div
         className={twMerge(
-          "flex-1 flex flex-col bg-white transition-all duration-300",
+          "flex-1 flex flex-col bg-card transition-all duration-300",
           !activeConversationId ? "hidden md:flex" : "flex"
         )}
       >

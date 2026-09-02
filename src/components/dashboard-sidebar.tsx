@@ -41,7 +41,7 @@ export function DashboardSidebar({
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Open sidebar"
-        className="sm:hidden fixed right-0 top-16 -translate-y-1/2 z-[45] flex items-center justify-center bg-white border border-r-0 border-border rounded-l-xl w-8 h-12 shadow-md"
+        className="sm:hidden fixed right-0 top-16 -translate-y-1/2 z-[45] flex items-center justify-center bg-card border border-r-0 border-border rounded-l-xl w-8 h-12 shadow-md"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-body">
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -58,7 +58,7 @@ export function DashboardSidebar({
 
       {/* Sidebar Content */}
       <aside className={`
-        fixed inset-y-0 right-0 sm:left-0 z-[60] w-[280px] bg-white sm:bg-transparent border-l sm:border-l-0 sm:border-r border-border p-6 sm:p-0 
+        fixed inset-y-0 right-0 sm:left-0 z-[60] w-[280px] bg-card sm:bg-transparent border-l sm:border-l-0 sm:border-r border-border p-6 sm:p-0 
         transform transition-transform duration-300 ease-in-out shadow-2xl sm:shadow-none
         sm:relative sm:transform-none sm:w-[280px] sm:flex-shrink-0 sm:pr-8 sm:min-h-[calc(100vh-100px)]
         ${isOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'}

@@ -27,7 +27,7 @@ export function AdHorizontalBanner() {
 
   return (
     <div className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6">
-      <div className="w-full h-auto min-h-[90px] md:min-h-[120px] rounded-2xl overflow-hidden shadow-sm relative">
+      <div className="w-full h-auto min-h-[90px] md:min-h-[120px] rounded-none overflow-hidden shadow-sm relative">
         <AdUnit slot="5555555555" format="auto" className="w-full h-[90px] md:h-[120px]" />
       </div>
     </div>

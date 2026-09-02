@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
 :root {
   /* Primary — Green family */
   --color-primary: #0f5c3a;

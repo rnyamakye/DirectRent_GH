@@ -131,7 +131,7 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
         const renterName = profiles?.full_name || "Unknown Renter";
 
         return (
-          <div key={booking.id} className="bg-white border border-border rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 justify-between shadow-sm hover:shadow-md transition">
+          <div key={booking.id} className="bg-card border border-border rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 justify-between shadow-sm hover:shadow-md transition">
             <div className="flex flex-col gap-4">
               {/* Renter Info */}
               <Link href={`/renters/${booking.renter_id}`} className="flex items-center gap-3 group">
@@ -183,7 +183,7 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
                   <button
                     onClick={() => setBookingToDecline(booking.id)}
                     disabled={processingId === booking.id}
-                    className="flex-1 sm:flex-none px-5 py-2.5 bg-white border border-border hover:bg-red-50 hover:border-red-200 text-red-600 text-sm font-bold rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    className="flex-1 sm:flex-none px-5 py-2.5 bg-card border border-border hover:bg-red-50 hover:border-red-200 text-red-600 text-sm font-bold rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />

@@ -340,7 +340,7 @@ export function BookArtisanButton({ artisanId, artisanName, artisanPhone, existi
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95dvh]"
+            className="bg-card w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -463,7 +463,7 @@ export function BookArtisanButton({ artisanId, artisanName, artisanPhone, existi
                     </button>
                   </div>
                   {showDropdown && searchResults.length > 0 && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white border border-border rounded-xl shadow-lg overflow-hidden">
+                    <ul className="absolute z-10 mt-1 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden">
                       {searchResults.map((result, i) => (
                         <li key={i}>
                           <button

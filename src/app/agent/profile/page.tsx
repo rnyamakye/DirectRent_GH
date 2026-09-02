@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
+import { ThemePreferenceCard } from "@/components/theme-preference-card";
 const SETTINGS_SECTIONS = [
   {
     href: "/agent/profile/verification",
@@ -122,7 +122,7 @@ export default async function AgentProfilePage() {
               </div>
               <Link prefetch={false}
                 href="/agent/profile/edit"
-                className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-white border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
+                className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-card border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
                 title="Edit profile"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
@@ -159,6 +159,7 @@ export default async function AgentProfilePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+            <ThemePreferenceCard />
             {SETTINGS_SECTIONS.map((section) => (
               <Link prefetch={false}
                 key={section.href}

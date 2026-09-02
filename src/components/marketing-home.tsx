@@ -46,7 +46,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                             </Link>
                             <Link prefetch={false}
                                 href="/auth/login"
-                                className="inline-flex items-center justify-center rounded-2xl bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-gray-50 shadow-xl"
+                                className="inline-flex items-center justify-center rounded-2xl bg-card px-8 py-4 text-sm font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-gray-50 shadow-xl"
                             >
                                 Sign In
                             </Link>
@@ -79,7 +79,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                                 ["Connect", "Message agents or book an artisan directly from their profile."],
                                 ["Move forward", "Save listings, leave reviews, and track your shortlist."],
                             ].map(([title, description], index) => (
-                                <div key={title} className="rounded-3xl border border-border bg-white p-6 text-left shadow-sm">
+                                <div key={title} className="rounded-3xl border border-border bg-card p-6 text-left shadow-sm">
                                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-mint text-primary font-bold">
                                         0{index + 1}
                                     </div>
@@ -92,7 +92,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                 </section>
 
                 {/* About Section */}
-                <section className="bg-white py-20 border-y border-border">
+                <section className="bg-card py-20 border-y border-border">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid gap-12 md:grid-cols-2 items-center">
                         <div>
                             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">About Us</p>
@@ -140,11 +140,11 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                             Find answers to common questions about finding listings, verifying agents, and booking artisans.
                         </p>
                         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:gap-10 text-left max-w-4xl mx-auto">
-                            <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+                            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                                 <h3 className="text-lg font-bold text-heading mb-2">How do I find a listing?</h3>
                                 <p className="font-supporting text-sm text-body leading-relaxed">You can browse all available listings on the Listings page. Use the filters to narrow down by price, bedrooms, and property type to find your perfect match.</p>
                             </div>
-                            <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+                            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                                 <h3 className="text-lg font-bold text-heading mb-2">Are the agents verified?</h3>
                                 <p className="font-supporting text-sm text-body leading-relaxed">We strive to vet agents on our platform. Always remember to view the property in person before making any payments or deposits.</p>
                             </div>
@@ -162,7 +162,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
                 </section>
 
                 {/* Blog Section */}
-                <section className="bg-white py-20 border-t border-border">
+                <section className="bg-card py-20 border-t border-border">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                             <div>

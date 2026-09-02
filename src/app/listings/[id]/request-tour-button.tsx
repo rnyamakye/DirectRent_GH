@@ -52,14 +52,14 @@ export function RequestTourButton({
         <button
           onClick={() => setIsCancelModalOpen(true)}
           disabled={loading}
-          className="w-full mt-3 bg-white border border-red-500 text-red-500 hover:bg-red-50 rounded-full px-6 py-3.5 text-sm font-bold transition flex justify-center items-center gap-2 disabled:opacity-50"
+          className="w-full mt-3 bg-card border border-red-500 text-red-500 hover:bg-red-50 rounded-full px-6 py-3.5 text-sm font-bold transition flex justify-center items-center gap-2 disabled:opacity-50"
         >
           Cancel Tour Request
         </button>
       ) : (
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full mt-3 bg-white border border-primary text-primary hover:bg-primary/5 rounded-full px-6 py-3.5 text-sm font-bold transition flex justify-center items-center gap-2"
+          className="w-full mt-3 bg-card border border-primary text-primary hover:bg-primary/5 rounded-full px-6 py-3.5 text-sm font-bold transition flex justify-center items-center gap-2"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

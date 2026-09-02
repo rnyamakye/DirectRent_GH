@@ -63,7 +63,7 @@ export function ProfileCompletenessCard({ completenessPercent, role, className, 
         </p>
         <Link prefetch={false}
           href={`/${role}/profile/edit`}
-          className="inline-block bg-heading hover:bg-black text-white rounded-full px-5 py-2 text-sm font-bold transition"
+          className="inline-block bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full px-5 py-2 text-sm font-bold transition"
         >
           Complete your profile
         </Link>

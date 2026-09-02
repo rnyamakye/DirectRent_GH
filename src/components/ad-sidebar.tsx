@@ -25,11 +25,34 @@ export function AdSidebar({ side }: { side: "left" | "right" }) {
   const isAdFreePage = isMarketingPage || pathname === "/about" || pathname === "/contact" || pathname?.startsWith("/blog") || pathname?.startsWith("/auth");
   if (isAdFreePage) return null;
 
+  const leftAdMedia = (
+    <video 
+      src="/Brown and White Minimalist Shadow Natural Skincare YouTube Vertical Ad.mp4" 
+      autoPlay 
+      loop 
+      muted 
+      playsInline
+      className="w-full h-full object-cover" 
+    />
+  );
+
+  const rightAdMedia = (
+    <img 
+      src="/White Gold Elegant Business Card Vertical.png" 
+      alt="Demo Vertical Ad" 
+      className="w-full h-full object-cover" 
+    />
+  );
+
   return (
     <div className="hidden 2xl:block w-[280px] shrink-0 bg-slate-50/30">
       <div className="h-full w-full py-24 px-4 flex flex-col items-center">
-        <div className="sticky top-24 w-full h-[600px] overflow-hidden rounded-2xl shadow-sm">
-          <AdUnit slot={side === 'left' ? "1234567890" : "0987654321"} className="w-full h-full" />
+        <div className="sticky top-24 w-full h-[600px] overflow-hidden rounded-none shadow-sm">
+          <AdUnit 
+            slot={side === 'left' ? "1234567890" : "0987654321"} 
+            className="w-full h-full" 
+            fallback={side === 'left' ? leftAdMedia : rightAdMedia}
+          />
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ export default async function AdminNewsletterPage() {
         </div>
 
         {/* Right Column: Subscribers List */}
-        <div className="bg-white border border-border/60 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col max-h-[700px]">
+        <div className="bg-card border border-border/60 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col max-h-[700px]">
           <div className="p-6 border-b border-border/60 bg-slate-50/50 flex justify-between items-center">
             <h2 className="text-lg font-bold text-heading">Subscribers</h2>
             <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">

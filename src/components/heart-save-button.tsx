@@ -83,7 +83,7 @@ export function HeartSaveButton({
     <button
       onClick={toggleSave}
       aria-label={saved ? "Unsave" : "Save"}
-      className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/80 text-heading backdrop-blur transition hover:scale-110 z-10"
+      className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-card/80 text-heading backdrop-blur transition hover:scale-110 z-10"
     >
       <svg
         className={`h-4 w-4 transition ${

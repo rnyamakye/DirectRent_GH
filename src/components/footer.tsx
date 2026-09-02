@@ -207,7 +207,7 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 rounded-xl border border-white/15 bg-white/[0.08] px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#4ade80]/60 focus:ring-2 focus:ring-[#4ade80]/20 disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-white/15 bg-card/[0.08] px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#4ade80]/60 focus:ring-2 focus:ring-[#4ade80]/20 disabled:opacity-50"
                   disabled={loading}
                 />
                 <button
@@ -252,7 +252,7 @@ export function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 text-white/60 transition hover:border-[#4ade80]/40 hover:bg-[#4ade80]/10 hover:text-[#4ade80]"
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-card/5 text-white/60 transition hover:border-[#4ade80]/40 hover:bg-[#4ade80]/10 hover:text-[#4ade80]"
                 >
                   {s.icon}
                 </a>

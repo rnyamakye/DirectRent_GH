@@ -210,7 +210,7 @@ export default function EditArtisanProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 w-9 h-9 bg-heading hover:bg-black text-white rounded-full flex items-center justify-center shadow-md transition"
+                className="absolute -bottom-1 -right-1 w-9 h-9 bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full flex items-center justify-center shadow-md transition"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />

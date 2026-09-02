@@ -83,7 +83,7 @@ export function SavedListingsClient({
                                 </Link>
                                 <button
                                     onClick={() => handleUnsaveListing(listing.id)}
-                                    className="absolute -top-3 -right-3 z-10 w-8 h-8 flex items-center justify-center bg-white border border-border rounded-full text-body hover:text-red-500 hover:border-red-500 shadow-sm transition-colors"
+                                    className="absolute -top-3 -right-3 z-10 w-8 h-8 flex items-center justify-center bg-card border border-border rounded-full text-body hover:text-red-500 hover:border-red-500 shadow-sm transition-colors"
                                     aria-label="Remove from saved"
                                 >
                                     ✕
@@ -134,7 +134,7 @@ function EmptyState({ type, href }: { type: string, href: string }) {
             </p>
             <Link prefetch={false}
                 href={href}
-                className="mt-2 inline-flex bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
+                className="mt-2 inline-flex bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full px-6 py-2.5 text-sm font-bold transition"
             >
                 Browse {type}
             </Link>

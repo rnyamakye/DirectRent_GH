@@ -129,6 +129,7 @@ export function LoggedInHome({
                             {type}
                         </button>
                     ))}
+                    </div>
                 </div>
 
                 {filteredNewListings.length > 0 && (

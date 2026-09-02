@@ -102,7 +102,7 @@ export default async function PublicRenterProfilePage({
               {profile.interests.map((interest: string) => (
                 <span
                   key={interest}
-                  className="px-4 py-2 rounded-full text-sm font-semibold bg-heading text-white"
+                  className="px-4 py-2 rounded-full text-sm font-semibold bg-heading text-white dark:text-slate-900"
                 >
                   {interest}
                 </span>

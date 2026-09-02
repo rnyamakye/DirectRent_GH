@@ -64,7 +64,7 @@ export default async function AboutPage() {
       </section>
 
       {/* 3. Fast Facts */}
-      <section className="bg-white py-16 border-y border-border">
+      <section className="bg-card py-16 border-y border-border">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center text-heading mb-10">Fast Facts</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -120,7 +120,7 @@ export default async function AboutPage() {
 
       {/* 5. Join Us Banner */}
       <section className="max-w-5xl mx-auto px-6 mb-12">
-        <div className="relative overflow-hidden rounded-3xl bg-heading text-white shadow-xl">
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 dark:bg-slate-800 text-white shadow-xl">
           <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-transparent pointer-events-none" />
           <div className="relative z-10 px-8 py-16 md:p-20 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Experience Better Real Estate?</h2>
@@ -136,7 +136,7 @@ export default async function AboutPage() {
               </Link>
               <Link prefetch={false}
                 href="/auth/register?type=professional"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-heading font-bold hover:bg-slate-50 transition shadow-lg"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-slate-900 font-bold hover:bg-slate-100 transition shadow-lg"
               >
                 Join as a Professional
               </Link>

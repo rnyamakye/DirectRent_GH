@@ -131,21 +131,22 @@ export default async function ListingDetailPage({
                 src={displayPhotos[0]}
                 alt={listing.title}
                 fill
+                sizes="(max-width: 640px) 100vw, 50vw"
                 className="object-cover hover:opacity-90 transition cursor-pointer"
               />
             </div>
             <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[1]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+              <Image src={displayPhotos[1]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
             </div>
             <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[2]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+              <Image src={displayPhotos[2]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
             </div>
             <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[3]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
+              <Image src={displayPhotos[3]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
             </div>
             <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[4]} alt="" fill className="object-cover hover:opacity-90 transition cursor-pointer" />
-              <button className="absolute bottom-4 right-4 bg-white border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
+              <Image src={displayPhotos[4]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
+              <button className="absolute bottom-4 right-4 bg-card border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
                 <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
                 Show all photos
               </button>
@@ -180,7 +181,7 @@ export default async function ListingDetailPage({
           >
             <div className="relative w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-border flex items-center justify-center text-heading font-bold text-lg">
               {listing.profiles?.avatar_url ? (
-                <Image src={listing.profiles.avatar_url} alt={listing.profiles?.full_name ?? "Agent"} fill className="object-cover" />
+                <Image src={listing.profiles.avatar_url} alt={listing.profiles?.full_name ?? "Agent"} fill sizes="48px" className="object-cover" />
               ) : (
                 <span>{(listing.profiles?.full_name ?? "Agent").charAt(0).toUpperCase()}</span>
               )}
@@ -264,7 +265,7 @@ export default async function ListingDetailPage({
         </div>
 
         <div className="relative">
-          <div className="relative border border-border rounded-2xl p-6 shadow-xl bg-white flex flex-col gap-6">
+          <div className="relative border border-border rounded-2xl p-6 shadow-xl bg-card flex flex-col gap-6">
             <h3 className="text-2xl font-bold text-heading">
               GHS {listing.price.toLocaleString()} <span className="text-base font-normal text-body">/ mo</span>
             </h3>

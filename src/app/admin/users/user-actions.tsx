@@ -62,7 +62,7 @@ export default function UserActions({
           <button 
             onClick={() => setIsVerificationModalOpen(true)} 
             disabled={loading}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold border shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 ${isVerified ? 'bg-white text-orange-700 border-orange-200 hover:bg-orange-50 hover:border-orange-300' : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold border shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 ${isVerified ? 'bg-card text-orange-700 border-orange-200 hover:bg-orange-50 hover:border-orange-300' : 'bg-card text-emerald-700 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300'}`}
           >
             {isVerified ? "Revoke Verification" : (
               <>
@@ -89,7 +89,7 @@ export default function UserActions({
         <button 
           onClick={() => setIsSuspensionModalOpen(true)} 
           disabled={loading}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold border shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${isSuspended ? 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300' : 'bg-white text-red-700 border-red-200 hover:bg-red-50 hover:border-red-300'}`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold border shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${isSuspended ? 'bg-card text-emerald-700 border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300' : 'bg-card text-red-700 border-red-200 hover:bg-red-50 hover:border-red-300'}`}
         >
           {isSuspended ? "Un-Suspend" : "Suspend"}
         </button>

@@ -11,9 +11,12 @@ export function AdMobileBanner() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const pathname = usePathname();
 
+  const [isEagerlyHidden, setIsEagerlyHidden] = useState(false);
+
   useEffect(() => {
     setIsCollapsedManually(false);
     setShowOnScroll(true);
+    setIsEagerlyHidden(false);
 
     if (pathname === "/") {
       const checkAuth = async () => {
@@ -25,6 +28,24 @@ export function AdMobileBanner() {
       checkAuth();
     }
   }, [pathname]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a');
+      if (target && target.href) {
+        try {
+          const url = new URL(target.href);
+          const p = url.pathname;
+          const isTargetAdFree = p === "/about" || p === "/contact" || p.startsWith("/blog") || p.startsWith("/auth") || p.startsWith("/admin") || p.includes("/messages");
+          if (isTargetAdFree) {
+            setIsEagerlyHidden(true);
+          }
+        } catch(err) {}
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -48,15 +69,15 @@ export function AdMobileBanner() {
   if (pathname?.startsWith("/admin")) return null;
 
   const isMarketingPage = pathname === "/" && isAuthenticated !== true;
-  const isAdFreePage = isMarketingPage || pathname === "/about" || pathname === "/contact" || pathname?.startsWith("/blog") || pathname?.startsWith("/auth");
+  const isAdFreePage = isMarketingPage || pathname === "/about" || pathname === "/contact" || pathname?.startsWith("/blog") || pathname?.startsWith("/auth") || pathname?.includes("/messages");
   
-  if (isAdFreePage) return null;
+  if (isAdFreePage || isEagerlyHidden) return null;
 
   const isExpanded = !isCollapsedManually && showOnScroll;
 
   return (
     <div className={`w-full bg-slate-50 md:hidden sticky top-0 z-40 transition-all duration-300 ${isExpanded ? 'translate-y-0' : '-translate-y-full'} ${isCollapsedManually ? 'h-0 border-b-0' : 'h-[96px] border-b'} border-border/50 shadow-sm`}>
-      <div className={`w-full relative flex items-start p-2 h-full overflow-hidden`}>
+      <div className={`w-full relative flex items-start h-full overflow-hidden transition-opacity duration-300 ${isCollapsedManually ? 'p-0 opacity-0' : 'p-2 opacity-100'}`}>
         <div className="flex-1 w-full h-[80px]">
           <AdUnit slot="1111111111" format="auto" className="w-full h-full" />
         </div>

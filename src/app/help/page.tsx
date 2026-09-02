@@ -54,7 +54,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                 name="q"
                 defaultValue={resolvedParams.q || ""}
                 placeholder="Search for answers (e.g. How to list a property)" 
-                className="w-full pl-12 pr-24 py-4 rounded-full border-none bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg text-heading placeholder:text-body/50"
+                className="w-full pl-12 pr-24 py-4 rounded-full border-none bg-card shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg text-heading placeholder:text-body/50"
             />
             <div className="absolute inset-y-0 right-2 flex items-center">
                 <button type="submit" className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-primary-hover transition">Search</button>
@@ -74,7 +74,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                 
                 <div className="space-y-6">
                     {/* Categories Filter */}
-                    <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
+                    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
                         <ul className="space-y-4 flex flex-col items-start">
                             <li>
                               <Link prefetch={false} 
@@ -121,7 +121,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
 
                     {/* Contact Card */}
                     <div className="bg-mint/30 rounded-2xl border border-primary/20 p-6 flex flex-col items-start gap-4">
-                        <div className="p-3 bg-white rounded-xl shadow-sm text-primary">
+                        <div className="p-3 bg-card rounded-xl shadow-sm text-primary">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                         </div>
                         <h3 className="text-xl font-bold text-heading">Still need help?</h3>
@@ -157,7 +157,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                 {displayFaqs.map((faq) => (
                     <details 
                         key={faq.id} 
-                        className="group bg-white rounded-2xl border border-border overflow-hidden [&_summary::-webkit-details-marker]:hidden"
+                        className="group bg-card rounded-2xl border border-border overflow-hidden [&_summary::-webkit-details-marker]:hidden"
                     >
                         <summary className="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-heading transition hover:bg-slate-50">
                             {faq.question}
@@ -172,7 +172,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
                 ))}
                 </div>
             ) : (
-                <div className="text-center py-20 bg-white rounded-2xl border border-border">
+                <div className="text-center py-20 bg-card rounded-2xl border border-border">
                     <p className="text-body font-medium">
                         {query ? `No FAQs found matching "${query}".` : "No frequently asked questions available right now."}
                     </p>

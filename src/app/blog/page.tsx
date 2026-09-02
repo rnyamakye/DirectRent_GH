@@ -80,7 +80,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
                 name="q"
                 defaultValue={resolvedParams.q || ""}
                 placeholder="Search articles (e.g. rent tips, Accra)" 
-                className="w-full pl-12 pr-24 py-4 rounded-full border-none bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg text-heading placeholder:text-body/50"
+                className="w-full pl-12 pr-24 py-4 rounded-full border-none bg-card shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg text-heading placeholder:text-body/50"
             />
             <div className="absolute inset-y-0 right-2 flex items-center">
                 <button type="submit" className="bg-primary text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-primary-hover transition">Search</button>
@@ -131,7 +131,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
         ))}
             </div>
         ) : (
-            <div className="text-center py-20 bg-white rounded-2xl border border-border">
+            <div className="text-center py-20 bg-card rounded-2xl border border-border">
                 <p className="text-body font-medium">
                     {query ? `No articles found matching "${query}".` : "No articles available right now."}
                 </p>

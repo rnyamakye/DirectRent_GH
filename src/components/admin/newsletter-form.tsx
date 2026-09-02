@@ -40,7 +40,7 @@ export function NewsletterForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+    <div className="max-w-2xl mx-auto p-6 bg-card rounded-xl shadow-sm border border-gray-100">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Send Newsletter</h2>
       
       {message && (

@@ -65,22 +65,9 @@ export function AdUnit({
   if (!clientId) {
     // Development mode fallback when no Client ID is provided
     return (
-      <div className={`flex flex-col items-center justify-center border-2 border-dashed border-border/60 bg-slate-50 text-center ${className}`}>
+      <div className={`flex flex-col items-center justify-center bg-slate-100 overflow-hidden ${className}`}>
         {fallback || (
-          <>
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2 block">
-              Advertisement
-            </span>
-            <div className="w-12 h-12 rounded-full bg-slate-200 mb-2 flex items-center justify-center">
-              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h4 className="text-sm font-bold text-heading">Your Ad Here</h4>
-            <p className="text-[10px] text-body/80 mt-1 max-w-[200px]">
-              Set NEXT_PUBLIC_ADSENSE_CLIENT_ID in .env.local to enable real ads.
-            </p>
-          </>
+          <img src="/demo-banner-ad.png" alt="Demo Ad" className="w-full h-full object-cover" />
         )}
       </div>
     );

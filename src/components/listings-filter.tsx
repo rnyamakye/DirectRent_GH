@@ -66,7 +66,7 @@ export function ListingsFilter({
       <div className="sm:hidden mb-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between bg-white border border-border rounded-[16px] px-5 py-3 shadow-sm"
+          className="w-full flex items-center justify-between bg-card border border-border rounded-[16px] px-5 py-3 shadow-sm"
         >
           <span className="font-semibold text-heading text-sm flex items-center gap-2">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-primary">

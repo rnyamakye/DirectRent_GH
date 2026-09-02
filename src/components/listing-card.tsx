@@ -61,7 +61,7 @@ export function ListingCard({
             </span>
           )}
           {!listing.isUnavailable && listing.isNew && (
-            <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-heading shadow">
+            <span className="rounded-full bg-card px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-heading shadow">
               New
             </span>
           )}

@@ -138,7 +138,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 sm:p-5 border-b border-border bg-white flex items-center sticky top-0 z-10 gap-3">
+      <div className="p-4 sm:p-5 border-b border-border bg-card flex items-center sticky top-0 z-10 gap-3">
         <button
           onClick={() => {
             if (window.history.length > 2) {
@@ -175,7 +175,7 @@ export function ConversationList({ currentUserId, activeConversationId, onSelect
                   onClick={() => onSelectConversation(conv.id)}
                   className={twMerge(
                     "w-full text-left p-4 flex items-center gap-3 transition-colors hover:bg-slate-100/80",
-                    isActive ? "bg-white relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-primary" : "bg-transparent"
+                    isActive ? "bg-card relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-primary" : "bg-transparent"
                   )}
                 >
                   <div className="relative">

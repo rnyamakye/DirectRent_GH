@@ -99,7 +99,7 @@ export function HomeListingsSection({ listings }: { listings: Listing[] }) {
                         key={g.id}
                         onClick={() => setActiveGroup(g.id)}
                         className={`px-4 py-2 rounded-full text-sm font-semibold transition border ${activeGroup === g.id
-                            ? "bg-heading text-white border-heading"
+                            ? "bg-heading text-white dark:text-slate-900 border-heading"
                             : "bg-card text-body border-border hover:border-primary/40 hover:text-heading"
                             }`}
                     >

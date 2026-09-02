@@ -172,7 +172,7 @@ export default function RenterProfileEditPage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-1 right-1 lg:bottom-3 lg:right-3 w-10 h-10 lg:w-12 lg:h-12 bg-heading hover:bg-black text-white rounded-full flex items-center justify-center shadow-lg transition hover:scale-105"
+                className="absolute bottom-1 right-1 lg:bottom-3 lg:right-3 w-10 h-10 lg:w-12 lg:h-12 bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full flex items-center justify-center shadow-lg transition hover:scale-105"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lg:w-5 lg:h-5">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
@@ -310,7 +310,7 @@ export default function RenterProfileEditPage() {
                     type="button"
                     onClick={() => toggleInterest(interest)}
                     className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${active
-                      ? "bg-heading text-white border-heading shadow-md scale-105"
+                      ? "bg-heading text-white dark:text-slate-900 border-heading shadow-md scale-105"
                       : "bg-card text-body border-border hover:border-heading/40 hover:text-heading"
                       }`}
                   >

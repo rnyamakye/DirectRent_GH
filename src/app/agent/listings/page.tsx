@@ -45,7 +45,7 @@ export default async function AgentListingsPage() {
           </p>
           <Link prefetch={false}
             href="/agent/listings/new"
-            className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
+            className="mt-2 bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full px-6 py-2.5 text-sm font-bold transition"
           >
             Add your first listing
           </Link>
@@ -78,7 +78,7 @@ export default async function AgentListingsPage() {
                       Boosted
                     </span>
                   )}
-                  <span className={`absolute top-2 right-2 md:top-3 md:right-3 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${listing.status === "available" ? "bg-emerald-100 text-emerald-800" : "bg-white/90 text-body"
+                  <span className={`absolute top-2 right-2 md:top-3 md:right-3 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${listing.status === "available" ? "bg-emerald-100 text-emerald-800" : "bg-card/90 text-body"
                     }`}>
                     {listing.status}
                   </span>

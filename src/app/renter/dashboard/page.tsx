@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 import { ProfileCompletenessCard } from "@/components/profile-completeness-card";
 import { RecentlyViewedSection } from "@/components/recently-viewed-section";
+import { ThemePreferenceCard } from "@/components/theme-preference-card";
 
 const SETTINGS_SECTIONS = [
   {
@@ -187,7 +188,7 @@ export default async function RenterDashboardPage() {
       <div className="flex flex-col gap-8 lg:w-1/3 xl:w-1/4  lg:top-24">
         {/* Profile Card */}
         <div className="flex flex-col items-center gap-5">
-          <div className="bg-white rounded-3xl p-8 border border-border/50 flex flex-col items-center text-center w-full max-w-md">
+          <div className="bg-card rounded-3xl p-8 border border-border/50 flex flex-col items-center text-center w-full max-w-md">
             {/* Avatar with pencil edit button */}
             <div className="relative">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
@@ -204,7 +205,7 @@ export default async function RenterDashboardPage() {
               {/* Pencil edit icon */}
               <Link prefetch={false}
                 href="/renter/profile/edit"
-                className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-white border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
+                className="absolute bottom-0.5 right-0.5 w-8 h-8 bg-card border border-border rounded-full shadow-md flex items-center justify-center text-heading hover:bg-primary hover:text-white hover:border-primary transition"
                 title="Edit profile"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
@@ -267,7 +268,7 @@ export default async function RenterDashboardPage() {
             <div className="rounded-3xl border border-border bg-card p-12 text-center flex flex-col items-center justify-center gap-4">
               <p className="text-lg font-semibold text-heading">No bookings yet</p>
               <p className="text-body/70 max-w-sm text-sm">When you request a service from an artisan, you can track it here.</p>
-              <Link prefetch={false} href="/artisans" className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition">
+              <Link prefetch={false} href="/artisans" className="mt-2 bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full px-6 py-2.5 text-sm font-bold transition">
                 Find an Artisan
               </Link>
             </div>
@@ -349,7 +350,7 @@ export default async function RenterDashboardPage() {
               </p>
               <Link prefetch={false}
                 href="/listings"
-                className="mt-2 bg-heading hover:bg-black text-white rounded-full px-6 py-2.5 text-sm font-bold transition"
+                className="mt-2 bg-heading hover:bg-black dark:hover:bg-slate-300 text-white dark:text-slate-900 rounded-full px-6 py-2.5 text-sm font-bold transition"
               >
                 Start browsing
               </Link>
@@ -387,7 +388,7 @@ export default async function RenterDashboardPage() {
                     </div>
 
                     <div className="hidden sm:flex pr-4">
-                      <span className="bg-white p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
+                      <span className="bg-card p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
                         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'currentColor', height: '16px', width: '16px' }}><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94C20.45 4.06 18 6 16 8c-2-2-4.45-3.94-7-3.94A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path></svg>
                       </span>
                     </div>
@@ -424,7 +425,7 @@ export default async function RenterDashboardPage() {
                   </div>
 
                   <div className="hidden sm:flex pr-4">
-                    <span className="bg-white p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
+                    <span className="bg-card p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
                       <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'currentColor', height: '16px', width: '16px' }}><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94C20.45 4.06 18 6 16 8c-2-2-4.45-3.94-7-3.94A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path></svg>
                     </span>
                   </div>
@@ -460,7 +461,7 @@ export default async function RenterDashboardPage() {
                   </div>
 
                   <div className="hidden sm:flex pr-4">
-                    <span className="bg-white p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
+                    <span className="bg-card p-2 border border-border rounded-full shadow-sm text-accent group-hover:bg-accent/10 transition">
                       <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'currentColor', height: '16px', width: '16px' }}><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94C20.45 4.06 18 6 16 8c-2-2-4.45-3.94-7-3.94A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path></svg>
                     </span>
                   </div>
@@ -535,6 +536,7 @@ export default async function RenterDashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <ThemePreferenceCard />
             {SETTINGS_SECTIONS.map((section) => (
               <Link prefetch={false}
                 key={section.href}

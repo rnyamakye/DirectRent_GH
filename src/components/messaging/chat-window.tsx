@@ -195,7 +195,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
   return (
     <div className="flex flex-col h-full bg-slate-50/30">
       {/* Header */}
-      <div className="p-4 sm:p-5 border-b border-border bg-white flex items-center justify-between sticky top-0 z-10 shadow-sm">
+      <div className="p-4 sm:p-5 border-b border-border bg-card flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -281,7 +281,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
                     "px-4 py-2.5 rounded-2xl text-[15px] shadow-sm flex flex-col gap-1.5",
                     isMe
                       ? "bg-primary text-white rounded-tr-sm"
-                      : "bg-white border border-border text-heading rounded-tl-sm"
+                      : "bg-card border border-border text-heading rounded-tl-sm"
                   )}
                   style={{ wordBreak: 'break-word' }}
                 >
@@ -309,7 +309,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white border-t border-border flex flex-col gap-2">
+      <div className="p-4 bg-card border-t border-border flex flex-col gap-2">
         {contextListing && (
           <div className="bg-slate-50 border border-border rounded-lg px-4 py-3 flex items-center justify-between shadow-sm relative overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>

@@ -88,9 +88,9 @@ export default async function ArtisanProfilePage({
         <div className="lg:col-span-1 top-28">
           <div className=" rounded-3xl p-8  border border-border/50 flex flex-col items-center text-center">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
+              <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt={artisanName} fill className="object-cover rounded-full" />
+                  <Image src={avatarUrl} alt={artisanName} fill sizes="128px" className="object-cover rounded-full" />
                 ) : (
                   <span>{initials}</span>
                 )}
@@ -195,7 +195,7 @@ export default async function ArtisanProfilePage({
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {photos.slice(0, 6).map((url, i) => (
                     <div key={i} className="aspect-square relative rounded-2xl overflow-hidden bg-mint">
-                      <Image src={url} alt="" fill className="object-cover hover:scale-105 transition-transform duration-300" />
+                      <Image src={url} alt="" fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover hover:scale-105 transition-transform duration-300" />
                     </div>
                   ))}
                 </div>

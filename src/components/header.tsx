@@ -11,6 +11,7 @@ import {
   SavedIcon, InfoIcon, ContactIcon, BlogIcon, HelpIcon, MessageIcon
 } from "@/components/icons";
 import { NotificationBell } from "@/components/notification-bell";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { UnreadMessagesBadge } from "@/components/unread-messages-badge";
 
 interface HeaderProps {
@@ -187,6 +188,7 @@ export function Header({ className }: HeaderProps) {
             "flex-1 items-center justify-end gap-3",
             user ? "hidden md:flex" : "flex"
           )}>
+            <ThemeToggle />
             {user ? (
               <>
                 {role === "agent" && (

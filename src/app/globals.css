@@ -19,6 +19,25 @@
   --color-border: #e0ddd5;
 }
 
+.dark {
+  /* Primary — Green family (kept same for brand consistency, or tweaked for contrast) */
+  --color-primary: #10b981; /* emerald-500 */
+  --color-primary-hover: #34d399; /* emerald-400 */
+  --color-mint: #064e3b; /* emerald-900 */
+
+  /* Accent — Terracotta family */
+  --color-accent: #f97316; /* orange-500 */
+  --color-pale-clay: #7c2d12; /* orange-900 */
+  --color-saffron: #fbbf24; /* amber-400 */
+
+  /* Neutrals */
+  --color-heading: #fafafa; /* zinc-50 */
+  --color-body: #a1a1aa; /* zinc-400 */
+  --color-canvas: #09090b; /* zinc-950 */
+  --color-card: #18181b; /* zinc-900 */
+  --color-border: #27272a; /* zinc-800 */
+}
+
 /* @theme registers these as real Tailwind utilities — this is the
    whole config step in Tailwind v4, no tailwind.config.js needed. */
 @theme inline {

@@ -11,6 +11,7 @@ import { AdSidebar } from "@/components/ad-sidebar";
 import { AdMobileBanner } from "@/components/ad-mobile-banner";
 import { AdHorizontalBanner } from "@/components/ad-horizontal-banner";
 import { AdSenseScript } from "@/components/ad-unit";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -47,25 +48,26 @@ export default function RootLayout({
         <AdSenseScript />
       </head>
       <body className="min-h-full flex flex-col bg-canvas text-body font-sans pb-16 md:pb-0" suppressHydrationWarning>
-        <Header className="" />
-        <AdMobileBanner />
-        <div className="flex-1 flex flex-row justify-center w-full max-w-[1920px] mx-auto relative">
-          <AdSidebar side="left" />
-          <div className="flex-1 flex flex-col min-h-screen relative max-w-full">
-
-            <PageTransition>
-              {children}
-              {modal}
-            </PageTransition>
+        <ThemeProvider>
+          <Header className="" />
+          <AdMobileBanner />
+          <div className="flex-1 flex flex-row justify-center w-full max-w-[1920px] mx-auto relative">
+            <AdSidebar side="left" />
+            <div className="flex-1 flex flex-col min-h-screen relative max-w-full">
+              <PageTransition>
+                {children}
+                {modal}
+              </PageTransition>
+            </div>
+            <AdSidebar side="right" />
           </div>
-          <AdSidebar side="right" />
-        </div>
-        <AdHorizontalBanner />
-        <Footer />
-        <MobileNav />
-        <NavigationLoader />
-        <CookieConsent />
-        <Toaster position="bottom-center" />
+          <AdHorizontalBanner />
+          <Footer />
+          <MobileNav />
+          <NavigationLoader />
+          <CookieConsent />
+          <Toaster position="bottom-center" />
+        </ThemeProvider>
       </body>
     </html>
   );

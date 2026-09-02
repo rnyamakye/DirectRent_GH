@@ -95,26 +95,22 @@ export default async function AboutPage() {
         </div>
 
         <div className="flex flex-col gap-10">
-          {/* Founder 1 */}
           <div className="group flex flex-col md:flex-row gap-10 items-center md:items-start text-left">
-            <div className="relative shrink-0 w-[400px] h-[480px] overflow-hidden rounded-2xl shadow-lg transition-transform duration-300 group-hover:scale-100">
+            <div className="relative shrink-0 w-[400px] h-[480px] overflow-hidden rounded-2xl shadow-lg transition-transform duration-300 group-hover:scale-100 bg-slate-100">
               <Image
-                src="/about/founder_1.png"
-                alt="Kwame Mensah - CEO & Co-Founder"
+                src="/about/photo_2026-09-02_09-35-50.jpg"
+                alt="Richard Nyamekye - Founder & CEO"
                 fill
                 className="object-cover"
               />
             </div>
             
             <div className="flex flex-col justify-center md:pt-10 max-w-2xl">
-              <h3 className="text-3xl font-bold text-heading mb-2">Kwame Mensah</h3>
-              <p className="text-xl text-primary font-medium mb-6">CEO & Co-Founder</p>
+              <h3 className="text-3xl font-bold text-heading mb-2">Richard Nyamekye</h3>
+              <p className="text-xl text-primary font-medium mb-6">Founder & CEO</p>
               <div className="space-y-4 text-lg text-body leading-relaxed font-supporting">
                 <p>
-                  Kwame is a visionary entrepreneur with over 15 years of experience in the African real estate and technology sectors. Before founding DirectRent GH, he led the digital transformation of several major property firms across West Africa.
-                </p>
-                <p>
-                  His passion for eliminating friction in property renting comes from his own experiences finding reliable housing in Accra. He brings a wealth of expertise in product development, strategic growth, and operations.
+                  Dedicated to simplifying the rental and service industry across Ghana.
                 </p>
               </div>
             </div>

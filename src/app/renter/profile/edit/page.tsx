@@ -131,8 +131,8 @@ export default function RenterProfileEditPage() {
       return;
     }
 
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    toast.success("Profile updated successfully");
+    router.push("/renter/profile");
   }
 
   const displayAvatar = avatarPreview ?? avatarUrl;
@@ -329,7 +329,7 @@ export default function RenterProfileEditPage() {
             )}
             <div className="flex items-center gap-4 w-full sm:w-auto order-1 sm:order-2 sm:ml-auto">
               <button
-                onClick={() => router.push("/renter/dashboard")}
+                onClick={() => router.push("/renter/profile")}
                 className="flex-1 sm:flex-none rounded-full border border-border bg-card hover:bg-slate-50 text-heading px-8 py-3 text-sm font-bold transition"
               >
                 Cancel

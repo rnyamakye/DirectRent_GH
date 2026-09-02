@@ -100,6 +100,8 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
         return <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wide">Confirmed</span>;
       case "cancelled":
         return <span className="px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wide">Cancelled</span>;
+      case "completed":
+        return <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wide">Completed</span>;
       default:
         return <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wide">{status}</span>;
     }
@@ -162,7 +164,7 @@ export function RenterBookingsClient({ initialBookings }: { initialBookings: any
                   {processingId === booking.id ? "Cancelling..." : "Cancel Request"}
                 </button>
               )}
-              {booking.status === "confirmed" && (
+              {(booking.status === "confirmed" || booking.status === "completed") && (
                 <div className="flex flex-col gap-3 w-full mt-2">
                   <button
                     onClick={() => handleMessageArtisan(booking.artisan_id)}

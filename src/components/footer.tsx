@@ -8,25 +8,17 @@ import { usePathname } from "next/navigation";
 const socialLinks = [
   {
     label: "Facebook",
-    href: "#",
+    href: "https://www.facebook.com/richard.nyamekyeboakye/",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
       </svg>
     ),
   },
-  {
-    label: "Twitter / X",
-    href: "#",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    ),
-  },
+
   {
     label: "Instagram",
-    href: "#",
+    href: "https://www.instagram.com/nyamekyer53/",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
         <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -37,7 +29,7 @@ const socialLinks = [
   },
   {
     label: "LinkedIn",
-    href: "#",
+    href: "https://www.linkedin.com/in/richard-nyamekye-7b1380246/",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
@@ -83,8 +75,8 @@ export function Footer() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // Do not show footer on messaging pages
-  if (pathname?.includes("/messages")) {
+  // Do not show footer on messaging pages or admin pages
+  if (pathname?.includes("/messages") || pathname?.startsWith("/admin")) {
     return null;
   }
 
@@ -98,7 +90,6 @@ export function Footer() {
           { label: "About Us", href: "/about" },
           { label: "Contact", href: "/contact" },
           { label: "Blog", href: "/blog" },
-          { label: "Careers", href: "/careers" },
         ],
       },
     ];
@@ -129,7 +120,6 @@ export function Footer() {
           { label: "About Us", href: "/about" },
           { label: "Contact", href: "/contact" },
           { label: "Blog", href: "/blog" },
-          { label: "Careers", href: "/careers" },
         ],
       },
     ];

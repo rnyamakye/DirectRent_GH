@@ -177,7 +177,8 @@ export default function EditArtisanProfilePage() {
       setError(upsertError.message);
       return;
     }
-    router.push("/artisan/dashboard");
+    toast.success("Profile updated successfully");
+    router.push("/artisan/profile");
   }
 
   if (loading) {

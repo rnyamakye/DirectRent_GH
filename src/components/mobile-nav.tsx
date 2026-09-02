@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { UnreadMessagesBadge } from "@/components/unread-messages-badge";
+import { UnreadNotificationsBadge } from "@/components/unread-notifications-badge";
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -32,6 +33,7 @@ export function MobileNav() {
     loadRole();
   }, []);
 
+
   const getProfileLink = () => {
     if (role === "agent") return "/agent/profile";
     if (role === "artisan") return "/artisan/profile";
@@ -47,10 +49,13 @@ export function MobileNav() {
   );
 
   const dashboardIcon = (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      <polyline points="9 22 9 12 15 12 15 22"></polyline>
-    </svg>
+    <div className="relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <UnreadNotificationsBadge />
+    </div>
   );
 
   const listingsIcon = (
@@ -164,6 +169,8 @@ export function MobileNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <>

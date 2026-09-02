@@ -32,7 +32,7 @@ export function UnreadMessagesBadge() {
 
       // Subscribe to changes in messages table
       channel = supabase
-        .channel(`unread-messages-${Date.now()}`)
+        .channel(`unread-messages-${Math.random().toString(36).substring(2)}`)
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'messages' },

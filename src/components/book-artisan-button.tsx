@@ -22,6 +22,7 @@ export type Booking = {
 type Props = {
   artisanId: string;
   artisanName: string;
+  artisanPhone?: string | null;
   existingBooking: Booking | null;
 };
 
@@ -55,7 +56,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
   }
 }
 
-export function BookArtisanButton({ artisanId, artisanName, existingBooking }: Props) {
+export function BookArtisanButton({ artisanId, artisanName, artisanPhone, existingBooking }: Props) {
   const [booking, setBooking] = useState<Booking | null>(existingBooking);
   const [modalOpen, setModalOpen] = useState(false);
   const [messaging, setMessaging] = useState(false);
@@ -238,64 +239,83 @@ export function BookArtisanButton({ artisanId, artisanName, existingBooking }: P
             <p className="text-xs font-bold uppercase tracking-widest text-body/50">
               Contact {artisanName.split(" ")[0]}
             </p>
-            <button
-              onClick={async () => {
-                setMessaging(true);
-                const { createClient } = await import("@/lib/supabase/client");
-                const supabase = createClient();
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                  // Check if conversation exists
-                  let { data: conv } = await supabase
-                    .from("conversations")
-                    .select("id")
-                    .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
-                    .single();
-
-                  if (!conv) {
-                    const { data: newConv } = await supabase
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                onClick={async () => {
+                  setMessaging(true);
+                  const { createClient } = await import("@/lib/supabase/client");
+                  const supabase = createClient();
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (user) {
+                    // Check if conversation exists
+                    let { data: conv } = await supabase
                       .from("conversations")
-                      .insert({ participant_one_id: user.id, participant_two_id: artisanId })
                       .select("id")
+                      .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${artisanId}),and(participant_one_id.eq.${artisanId},participant_two_id.eq.${user.id})`)
                       .single();
-                    conv = newConv;
-                  }
 
-                  if (conv) {
-                    window.location.href = `/renter/messages?conversationId=${conv.id}`;
+                    if (!conv) {
+                      const { data: newConv } = await supabase
+                        .from("conversations")
+                        .insert({ participant_one_id: user.id, participant_two_id: artisanId })
+                        .select("id")
+                        .single();
+                      conv = newConv;
+                    }
+
+                    if (conv) {
+                      window.location.href = `/renter/messages?conversationId=${conv.id}`;
+                    }
                   }
-                }
-                setMessaging(false);
-              }}
-              disabled={messaging}
-              className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group text-left disabled:opacity-50"
-            >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">
-                {messaging ? (
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                ) : (
-                  "✉️"
-                )}
-              </div>
-              <div>
-                <p className="font-bold text-heading text-sm">Message</p>
-                <p className="text-xs text-body">Chat securely on DirectRent</p>
-              </div>
-            </button>
+                  setMessaging(false);
+                }}
+                disabled={messaging}
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition group text-left disabled:opacity-50"
+              >
+                <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg group-hover:scale-110 transition-transform">
+                  {messaging ? (
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                  ) : (
+                    "✉️"
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold text-heading text-sm truncate">Message</p>
+                  <p className="text-xs text-body truncate">Chat securely</p>
+                </div>
+              </button>
+
+              {artisanPhone && (
+                <a
+                  href={`tel:${artisanPhone}`}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-emerald-500/50 hover:bg-emerald-50 transition group text-left"
+                >
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-lg group-hover:scale-110 transition-transform">
+                    📞
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-heading text-sm truncate">Call</p>
+                    <p className="text-xs text-body truncate">{artisanPhone}</p>
+                  </div>
+                </a>
+              )}
+            </div>
           </div>
         )}
 
         {/* Cancel */}
-        <button
-          onClick={handleCancel}
-          disabled={cancelling}
-          className="mt-1 w-full rounded-xl border border-red-300 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-50"
-        >
-          {cancelling ? "Cancelling…" : "Cancel Booking"}
-        </button>
+        {booking.status === "pending" && (
+          <button
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="mt-1 w-full rounded-xl border border-red-300 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-50"
+          >
+            {cancelling ? "Cancelling…" : "Cancel Booking"}
+          </button>
+        )}
       </div>
     );
   }

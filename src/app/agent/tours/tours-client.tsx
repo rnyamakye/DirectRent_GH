@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -37,8 +37,35 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
   const [activeTab, setActiveTab] = useState<"pending" | "confirmed" | "cancelled">("pending");
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const [contactTarget, setContactTarget] = useState<TourRequest | null>(null);
-  
+
   const router = useRouter();
+
+  // Read tourId from URL to set active tab and scroll to it
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tourId = params.get("tourId");
+      if (tourId) {
+        const targetTour = tours.find((t) => t.id === tourId);
+        if (targetTour) {
+          setActiveTab(targetTour.status);
+          setTimeout(() => {
+            const el = document.getElementById(`tour-${tourId}`);
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "center" });
+              // Add temporary highlight
+              el.classList.add("ring-2", "ring-primary", "ring-offset-4");
+              setTimeout(() => {
+                el.classList.remove("ring-2", "ring-primary", "ring-offset-4");
+                // Remove param from URL
+                window.history.replaceState({}, '', '/agent/tours');
+              }, 2000);
+            }
+          }, 100);
+        }
+      }
+    }
+  }, [tours]);
 
   const filteredTours = tours.filter((t) => t.status === activeTab);
 
@@ -48,24 +75,24 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
       if (!user) return;
 
       let { data: conv } = await supabase
-          .from("conversations")
-          .select("id")
-          .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${renterId}),and(participant_one_id.eq.${renterId},participant_two_id.eq.${user.id})`)
-          .single();
+        .from("conversations")
+        .select("id")
+        .or(`and(participant_one_id.eq.${user.id},participant_two_id.eq.${renterId}),and(participant_one_id.eq.${renterId},participant_two_id.eq.${user.id})`)
+        .single();
 
       if (!conv) {
-          const { data: newConv, error: createError } = await supabase
-              .from("conversations")
-              .insert({ participant_one_id: user.id, participant_two_id: renterId })
-              .select("id")
-              .single();
-          
-          if (createError) throw createError;
-          conv = newConv;
+        const { data: newConv, error: createError } = await supabase
+          .from("conversations")
+          .insert({ participant_one_id: user.id, participant_two_id: renterId })
+          .select("id")
+          .single();
+
+        if (createError) throw createError;
+        conv = newConv;
       }
-      
+
       if (conv) {
-          router.push(`/agent/messages?conversationId=${conv.id}`);
+        router.push(`/agent/messages?conversationId=${conv.id}`);
       }
     } catch (err: any) {
       console.error(err);
@@ -75,7 +102,7 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
 
   const handleUpdateStatus = async (tourId: string, newStatus: "confirmed" | "cancelled") => {
     setIsUpdating(tourId);
-    
+
     const { error } = await supabase
       .from("tour_requests")
       .update({ status: newStatus })
@@ -90,7 +117,7 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
         prev.map((t) => (t.id === tourId ? { ...t, status: newStatus } : t))
       );
     }
-    
+
     setIsUpdating(null);
   };
 
@@ -104,7 +131,7 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-bold text-heading">Requested Tours</h1>
-        <p className="text-body mt-1">Manage tour requests from prospective renters.</p>
+        <p className="text-sm mt-1">Manage tour requests from prospective renters.</p>
       </div>
 
       <div className="flex gap-4 border-b border-border">
@@ -147,25 +174,25 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
           {filteredTours.map((tour) => {
             const dateObj = new Date(`${tour.tour_date}T${tour.tour_time}`);
             return (
-              <div key={tour.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col md:flex-row gap-6">
-                
+              <div id={`tour-${tour.id}`} key={tour.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col md:flex-row gap-6 transition-all duration-500">
+
                 {/* Renter & Listing Info */}
                 <div className="flex-1 flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-border flex-shrink-0">
+                  <Link href={`/renters/${tour.renter.id}`} className="flex items-center gap-3 group">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-border flex-shrink-0 group-hover:border-primary/50 transition-colors">
                       {tour.renter.avatar_url ? (
                         <img src={tour.renter.avatar_url} alt={tour.renter.full_name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
+                        <div className="w-full h-full flex items-center justify-center font-bold text-slate-400 group-hover:text-primary transition-colors">
                           {tour.renter.full_name.charAt(0)}
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-heading text-sm">{tour.renter.full_name}</p>
+                      <p className="font-semibold text-heading text-sm group-hover:text-primary transition-colors">{tour.renter.full_name}</p>
                       <p className="text-xs text-body/70">Requested a tour</p>
                     </div>
-                  </div>
+                  </Link>
 
                   <Link href={`/listings/${tour.listing.id}`} target="_blank" className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition group">
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-200 flex-shrink-0">

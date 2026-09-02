@@ -126,10 +126,14 @@ export function Header({ className }: HeaderProps) {
   }
 
 
+  if (pathname?.startsWith("/admin")) return null;
+
+  const isAuthPage = pathname?.startsWith("/auth");
+
   return (
     <div className={twMerge(
       "relative z-50 w-full transition-all duration-300",
-      !isAuthLoaded ? "hidden md:block opacity-0" : (user ? "hidden md:block" : "block")
+      !isAuthLoaded ? "hidden md:block opacity-0" : (user || isAuthPage ? "hidden md:block" : "block")
     )}>
       <header
         className={twMerge(

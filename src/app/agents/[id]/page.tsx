@@ -97,7 +97,7 @@ export default async function AgentProfilePage({
                                         src={agent.avatar_url}
                                         alt={displayName}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover rounded-full"
                                     />
                                 ) : (
                                     <span>{initials}</span>

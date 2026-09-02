@@ -1,7 +1,13 @@
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_123456789");
+
+const supabaseAdmin = createSupabaseClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SECRET_KEY!
+);
 
 export type NotificationType = 
   | "new_listing_alerts"
@@ -41,7 +47,7 @@ export async function sendNotification({
 
   // 2. Insert In-App Notification (Always, if they haven't explicitly disabled the preference)
   if (isEnabled) {
-    await supabase.from("in_app_notifications").insert({
+    await supabaseAdmin.from("in_app_notifications").insert({
       user_id: userId,
       type,
       title,

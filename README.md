@@ -66,18 +66,16 @@ Before building a new section, check if these common components apply:
 9. **Saved Items:** Renters can save listings, agents, and artisans to their dashboard.
 10. **Password Reset Flow:** Full frontend implementation for the email confirmation step of password resets, including styled `/auth/forgot-password` and `/auth/reset-password` pages.
 
+11. **Advanced Dashboard Analytics:** Real charts tracking profile views over time and earnings history on the Agent dashboard.
+12. **User Verification (KYC):** Identity Verification and Business Registration upload flow.
+13. **Renter Search Alerts:** Renters can save search filters and manage alerts.
+14. **Reporting and Moderation UI:** Users can flag inappropriate content or scam listings via a reporting modal.
+
 ## 🚧 Features Yet To Be Implemented (Feature Audit)
 
-The following features are pending implementation. Prioritize these when planning new development cycles:
+The core feature roadmap is currently complete!
 
-7. **Advanced Dashboard Analytics:** 
-   - *Goal:* Replace hardcoded placeholder metrics on the Agent dashboard with real charts tracking profile views over time and earnings history.
-8. **User Verification (KYC):** 
-   - *Goal:* Identity Verification or Business Registration upload flow for Agents and Artisans to earn a "Verified" badge.
-9. **Renter Search Alerts:** 
-   - *Goal:* Allow renters to save a search filter and get email/in-app alerts when matching properties are listed.
-10. **Reporting and Moderation UI:** 
-   - *Goal:* Add "Report this Listing" or "Report User" buttons for renters to flag inappropriate content.
+*(Note: Ad banners and Privacy Policy currently use placeholder content and need final integration).*
 
 ## 📝 Implementation Changelog
 

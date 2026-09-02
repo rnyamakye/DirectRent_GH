@@ -21,11 +21,11 @@ export default async function AdminDashboardPage() {
   ]);
 
   const stats = [
-    { label: "Total Renters", value: usersCount ?? 0, color: "bg-blue-50 text-blue-700" },
-    { label: "Total Agents", value: agentsCount ?? 0, color: "bg-emerald-50 text-emerald-700" },
-    { label: "Total Artisans", value: artisansCount ?? 0, color: "bg-orange-50 text-orange-700" },
-    { label: "Total Listings", value: listingsCount ?? 0, color: "bg-purple-50 text-purple-700" },
-    { label: "Total Bookings", value: bookingsCount ?? 0, color: "bg-rose-50 text-rose-700" },
+    { label: "Total Renters", value: usersCount ?? 0, color: "text-blue-700" },
+    { label: "Total Agents", value: agentsCount ?? 0, color: "text-emerald-700" },
+    { label: "Total Artisans", value: artisansCount ?? 0, color: "text-orange-700" },
+    { label: "Total Listings", value: listingsCount ?? 0, color: "text-purple-700" },
+    { label: "Total Bookings", value: bookingsCount ?? 0, color: "text-rose-700" },
   ];
 
   return (

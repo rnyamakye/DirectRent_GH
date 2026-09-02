@@ -76,23 +76,22 @@ export function AgentCard({ agent }: { agent: Agent }) {
 export function AgentsPageClient({ agents }: { agents: Agent[] }) {
     const filterOptions = ["All Agents", "With Active Listings"];
     const [activeFilter, setActiveFilter] = useState("All Agents");
-    // const [query, setQuery] = useState("");
+    const [query, setQuery] = useState("");
 
     const results = useMemo(() => {
         return agents.filter((a) => {
             if (activeFilter === "With Active Listings" && a.activeListingsCount === 0) return false;
 
-            /*
             if (query) {
                 const q = query.toLowerCase();
                 const fullNameMatch = a.fullName?.toLowerCase().includes(q) ?? false;
                 const businessNameMatch = a.businessName?.toLowerCase().includes(q) ?? false;
                 if (!fullNameMatch && !businessNameMatch) return false;
             }
-            */
+
             return true;
         });
-    }, [agents, activeFilter]);
+    }, [agents, activeFilter, query]);
 
     return (
         <main className="min-h-screen bg-canvas py-8">
@@ -115,7 +114,6 @@ export function AgentsPageClient({ agents }: { agents: Agent[] }) {
                     ))}
                 </div>
 
-                {/* Search is commented out
                 <div className="flex items-center gap-3 w-full sm:w-80 rounded-full border border-border bg-card px-4 py-2 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition">
                     <svg className="h-4 w-4 text-body/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -128,7 +126,6 @@ export function AgentsPageClient({ agents }: { agents: Agent[] }) {
                         className="flex-1 bg-transparent text-sm text-heading outline-none placeholder:text-body/40"
                     />
                 </div>
-                */}
 
                 {/* Results */}
                 <div>

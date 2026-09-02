@@ -28,7 +28,7 @@ export default async function ListingDetailPage({
 
   const { data: listing, error } = await supabase
     .from("listings")
-    .select("*, profiles!listings_agent_id_fkey(full_name, email, avatar_url)")
+    .select("*, profiles!listings_agent_id_fkey(full_name, email, phone, avatar_url)")
     .eq("id", id)
     .single();
 
@@ -315,8 +315,10 @@ export default async function ListingDetailPage({
             <ContactAgentButton
               agentId={listing.agent_id}
               email={listing.profiles?.email ?? null}
+              phone={listing.profiles?.phone ?? null}
               listingId={listing.id}
               listingTitle={listing.title}
+              existingTour={existingTour}
             />
             <RequestTourButton
               listingId={listing.id}

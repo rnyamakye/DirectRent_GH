@@ -28,7 +28,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
   const [contextListing, setContextListing] = useState<{ id: string; title: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [otherParticipant, setOtherParticipant] = useState<{ full_name: string; avatar_url: string | null; role: string } | null>(null);
+  const [otherParticipant, setOtherParticipant] = useState<{ id: string; full_name: string; avatar_url: string | null; role: string } | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +53,7 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
         const otherId = conv.participant_one_id === currentUserId ? conv.participant_two_id : conv.participant_one_id;
         const { data: profile } = await supabase
           .from("profiles")
-          .select("full_name, avatar_url, role")
+          .select("id, full_name, avatar_url, role")
           .eq("id", otherId)
           .single();
 
@@ -206,23 +206,31 @@ export function ChatWindow({ currentUserId, conversationId, onBack }: ChatWindow
             </svg>
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-500 font-bold">
-              {otherParticipant?.avatar_url ? (
-                <img src={otherParticipant.avatar_url} alt={otherParticipant.full_name} className="w-full h-full object-cover" />
-              ) : (
-                <span>{otherParticipant?.full_name?.charAt(0) || "U"}</span>
-              )}
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-heading leading-tight">{otherParticipant?.full_name || "Loading..."}</h2>
-              {otherParticipant?.role && (
-                <p className="text-[11px] text-primary uppercase tracking-widest font-bold leading-tight">
+          {otherParticipant ? (
+            <Link href={`/${otherParticipant.role}s/${otherParticipant.id}`} className="flex items-center gap-3 group hover:opacity-80 transition-opacity">
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-500 font-bold group-hover:border-primary/50 transition-colors">
+                {otherParticipant.avatar_url ? (
+                  <img src={otherParticipant.avatar_url} alt={otherParticipant.full_name} className="w-full h-full object-cover" />
+                ) : (
+                  <span>{otherParticipant.full_name?.charAt(0) || "U"}</span>
+                )}
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-heading leading-tight group-hover:text-primary transition-colors">{otherParticipant.full_name}</h2>
+                <p className="text-[11px] text-primary uppercase tracking-widest font-bold leading-tight mt-0.5">
                   {otherParticipant.role}
                 </p>
-              )}
+              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full border border-border bg-slate-100 flex-shrink-0 animate-pulse"></div>
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-24 bg-slate-100 rounded animate-pulse"></div>
+                <div className="h-2 w-12 bg-slate-100 rounded animate-pulse"></div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

@@ -20,7 +20,7 @@ export default async function ArtisanProfilePage({
 
   const { data: artisan, error } = await supabase
     .from("artisan_profiles")
-    .select("*, profiles(full_name, created_at, avatar_url, is_verified)")
+    .select("*, profiles(full_name, created_at, avatar_url, is_verified, phone)")
     .eq("id", id)
     .single();
 
@@ -90,7 +90,7 @@ export default async function ArtisanProfilePage({
             <div className="relative">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-mint flex items-center justify-center text-4xl text-primary font-bold">
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt={artisanName} fill className="object-cover" />
+                  <Image src={avatarUrl} alt={artisanName} fill className="object-cover rounded-full" />
                 ) : (
                   <span>{initials}</span>
                 )}
@@ -112,6 +112,7 @@ export default async function ArtisanProfilePage({
             <BookArtisanButton
               artisanId={id}
               artisanName={artisanName}
+              artisanPhone={artisan.profiles?.phone}
               existingBooking={existingBooking}
             />
 

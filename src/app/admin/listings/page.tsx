@@ -12,7 +12,7 @@ export default async function AdminListingsPage() {
     .from("listings")
     .select(`
       *,
-      profiles ( full_name, business_name, email )
+      profiles!agent_id ( full_name, business_name, email )
     `)
     .order("created_at", { ascending: false });
 

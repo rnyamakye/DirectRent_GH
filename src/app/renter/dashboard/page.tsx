@@ -398,7 +398,7 @@ export default async function RenterDashboardPage() {
               {savedAgents.slice(0, 4).map(agent => (
                 <Link prefetch={false}
                   key={agent.id}
-                  href={`/renters/${agent.id}`}
+                  href={`/agents/${agent.id}`}
                   className="group flex flex-row items-center gap-4 bg-card rounded-2xl border border-border p-3 hover:shadow-md transition"
                 >
                   <div className="relative w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-border bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl">

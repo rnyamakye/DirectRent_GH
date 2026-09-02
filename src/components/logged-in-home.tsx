@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { CarouselRow } from "@/components/carousel-row";
+import { AdUnit } from "@/components/ad-unit";
 
 type Listing = {
     id: string;
@@ -76,6 +77,12 @@ export function LoggedInHome({
                 {filteredNewListings.length > 0 && (
                     <CarouselRow title="New on DirectRent GH" type="listing" listings={filteredNewListings} viewAllHref="/listings" />
                 )}
+                
+                {/* Inline tablet ad banner */}
+                <div className="hidden md:block 2xl:hidden w-full h-[120px] rounded-2xl overflow-hidden shadow-sm relative my-4">
+                    <AdUnit slot="5555555555" format="auto" className="w-full h-full" />
+                </div>
+
                 {filteredListingsByCity.map((group) => (
                     <CarouselRow key={group.title} title={group.title} type="listing" listings={group.listings} viewAllHref="/listings" />
                 ))}

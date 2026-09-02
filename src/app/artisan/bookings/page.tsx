@@ -59,13 +59,13 @@ export default async function ArtisanOverviewPage() {
     }
   }
 
-  const activeBookings = bookings.filter((b) => b.status === "pending" || b.status === "confirmed");
+  const activeBookings = bookings.filter((b) => b.status === "pending" || b.status === "confirmed" || b.status === "completed");
 
   return (
     <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12 pt-5 flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl sm:text-4xl font-bold text-heading">Bookings</h1>
-        <p className="text-base text-body/80">Manage your pending and confirmed bookings.</p>
+        <p className="text-base text-body/80">Manage your pending, confirmed, and completed bookings.</p>
       </div>
 
       <div className="flex flex-col gap-4">

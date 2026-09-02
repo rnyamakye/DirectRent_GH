@@ -11,7 +11,7 @@ export default async function AdminReviewsPage() {
     .from("reviews")
     .select(`
       *,
-      renter_profiles:renter_id ( full_name )
+      renter_profiles:profiles!reviewer_id ( full_name )
     `)
     .order("created_at", { ascending: false });
 

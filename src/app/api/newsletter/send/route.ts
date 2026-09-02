@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     // Resend allows sending to up to 50 recipients per batch
     // For large lists, you would need to chunk this array and send in batches
     const { data, error } = await resend.emails.send({
-      from: "DirectRent GH <newsletter@yourdomain.com>", // Update this with your verified domain
+      from: "DirectRent GH <onboarding@resend.dev>", // Using Resend testing email
       to: emails,
       subject: subject,
       html: html,

@@ -18,7 +18,7 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body;
 
-    if (!status || !["confirmed", "cancelled"].includes(status)) {
+    if (!status || !["confirmed", "cancelled", "completed"].includes(status)) {
       return NextResponse.json(
         { error: "Invalid status update" },
         { status: 400 }
@@ -71,6 +71,16 @@ export async function PATCH(
           type: "account_updates",
           title: "Booking Confirmed",
           message: `${updaterName} has accepted your booking request.`,
+          link: "/renter/bookings",
+        });
+      }
+    } else if (status === "completed") {
+      if (isArtisan) {
+        await sendNotification({
+          userId: booking.renter_id,
+          type: "account_updates",
+          title: "Booking Completed",
+          message: `${updaterName} has marked your booking as completed.`,
           link: "/renter/bookings",
         });
       }

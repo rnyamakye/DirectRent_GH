@@ -253,9 +253,9 @@ export default async function AgentDashboardPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h2 className="text-2xl font-semibold text-heading">Recent Tours</h2>
-            {tours.length > 0 && (
+            {tours.filter((t) => t.status === "pending").length > 0 && (
               <span className="flex items-center justify-center bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full">
-                {tours.length}
+                {tours.filter((t) => t.status === "pending").length}
               </span>
             )}
           </div>
@@ -288,7 +288,7 @@ export default async function AgentDashboardPage() {
               const dateObj = new Date(`${tour.tour_date}T${tour.tour_time}`);
               const formatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "numeric" });
               return (
-                <div key={tour.id} className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between gap-4">
+                <Link prefetch={false} key={tour.id} href={`/agent/tours?tourId=${tour.id}`} className="bg-card border border-border hover:border-primary/50 rounded-2xl p-4 flex items-center justify-between gap-4 transition group cursor-pointer">
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-100 border border-border flex-shrink-0">
                       {tour.renter.avatar_url ? (
@@ -314,10 +314,12 @@ export default async function AgentDashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <Link prefetch={false} href="/agent/tours" className="flex-shrink-0 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-full transition">
-                    View
-                  </Link>
-                </div>
+                  <div className="flex-shrink-0 text-body/30 group-hover:text-primary transition">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </div>
+                </Link>
               );
             })}
           </div>

@@ -10,6 +10,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { AdSidebar } from "@/components/ad-sidebar";
 import { AdMobileBanner } from "@/components/ad-mobile-banner";
 import { AdHorizontalBanner } from "@/components/ad-horizontal-banner";
+import { AdSenseScript } from "@/components/ad-unit";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -42,22 +43,22 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${dmSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <AdSenseScript />
+      </head>
       <body className="min-h-full flex flex-col bg-canvas text-body font-sans pb-16 md:pb-0" suppressHydrationWarning>
         <Header className="" />
+        <AdMobileBanner />
         <div className="flex-1 flex flex-row justify-center w-full max-w-[1920px] mx-auto relative">
-          <div className="hidden 2xl:block w-[280px] shrink-0 border-r border-border/50 bg-slate-50/30">
-            <AdSidebar side="left" />
-          </div>
-          <div className="flex-1 flex flex-col min-h-screen relative max-w-full overflow-hidden">
-            <AdMobileBanner />
+          <AdSidebar side="left" />
+          <div className="flex-1 flex flex-col min-h-screen relative max-w-full">
+
             <PageTransition>
               {children}
               {modal}
             </PageTransition>
           </div>
-          <div className="hidden 2xl:block w-[280px] shrink-0 border-l border-border/50 bg-slate-50/30">
-            <AdSidebar side="right" />
-          </div>
+          <AdSidebar side="right" />
         </div>
         <AdHorizontalBanner />
         <Footer />

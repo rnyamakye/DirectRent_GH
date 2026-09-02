@@ -1,14 +1,34 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { AdUnit } from "@/components/ad-unit";
+
 export function AdHorizontalBanner() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname === "/") {
+      const checkAuth = async () => {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { data } = await supabase.auth.getSession();
+        setIsAuthenticated(!!data.session);
+      };
+      checkAuth();
+    }
+  }, [pathname]);
+  const isMarketingPage = pathname === "/" && isAuthenticated !== true;
+  if (isMarketingPage) return null;
+
+  const isTargetPage = pathname === "/" || pathname === "/about" || pathname === "/contact" || pathname?.startsWith("/blog");
+  if (!isTargetPage) return null;
+
   return (
-    <div className="w-full max-w-6xl mx-auto py-12 px-4 flex flex-col items-center justify-center">
-      <div className="w-full max-w-[970px] h-[90px] md:h-[250px] rounded-2xl border-2 border-dashed border-border/60 bg-slate-50 flex flex-col items-center justify-center p-4 text-center shadow-sm">
-        <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-1 md:mb-2">
-          Advertisement
-        </span>
-        <h4 className="text-base md:text-lg font-bold text-heading mb-0 md:mb-1">Your Ad Here</h4>
-        <p className="hidden md:block text-sm text-body/80">
-          Reach thousands of renters and artisans across Ghana.
-        </p>
+    <div className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6">
+      <div className="w-full h-auto min-h-[90px] md:min-h-[120px] rounded-2xl overflow-hidden shadow-sm relative">
+        <AdUnit slot="5555555555" format="auto" className="w-full h-[90px] md:h-[120px]" />
       </div>
     </div>
   );

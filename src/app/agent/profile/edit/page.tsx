@@ -107,8 +107,8 @@ export default function AgentProfileEditPage() {
       return;
     }
 
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    toast.success("Profile updated successfully");
+    router.push("/agent/profile");
   }
 
   const displayAvatar = avatarPreview ?? avatarUrl;
@@ -255,7 +255,7 @@ export default function AgentProfileEditPage() {
                 {saving ? "Saving..." : saved ? "Saved ✓" : "Save changes"}
               </button>
               <button
-                onClick={() => router.push("/agent/dashboard")}
+                onClick={() => router.push("/agent/profile")}
                 className="rounded-full border border-border bg-card hover:bg-slate-50 text-heading px-8 py-3 text-sm font-bold transition"
               >
                 Done

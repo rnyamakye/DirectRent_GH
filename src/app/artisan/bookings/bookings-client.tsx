@@ -4,6 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Booking = {
   id: string;
@@ -61,7 +62,7 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
     }
   };
 
-  const handleStatusUpdate = async (id: string, newStatus: "confirmed" | "cancelled") => {
+  const handleStatusUpdate = async (id: string, newStatus: "confirmed" | "cancelled" | "completed") => {
 
     setProcessingId(id);
     try {
@@ -79,7 +80,7 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
       setBookings((current) =>
         current.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
       );
-      toast.success(`Booking ${newStatus === "confirmed" ? "accepted" : "declined"} successfully.`);
+      toast.success(`Booking ${newStatus === "confirmed" ? "accepted" : newStatus === "completed" ? "completed" : "declined"} successfully.`);
       if (newStatus === "cancelled") setBookingToDecline(null);
 
       router.refresh(); // Invalidate Next.js client router cache so this persists
@@ -107,6 +108,8 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
         return <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wide">Confirmed</span>;
       case "cancelled":
         return <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wide">Declined</span>;
+      case "completed":
+        return <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wide">Completed</span>;
       default:
         return <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wide">{status}</span>;
     }
@@ -131,14 +134,14 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
           <div key={booking.id} className="bg-white border border-border rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 justify-between shadow-sm hover:shadow-md transition">
             <div className="flex flex-col gap-4">
               {/* Renter Info */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-lg border border-border/50">
+              <Link href={`/renters/${booking.renter_id}`} className="flex items-center gap-3 group">
+                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-lg border border-border/50 group-hover:border-primary/50 group-hover:text-primary transition-colors">
                   {renterName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-bold text-heading text-base">{renterName}</p>
+                  <p className="font-bold text-heading text-base group-hover:text-primary transition-colors">{renterName}</p>
                 </div>
-              </div>
+              </Link>
 
               {/* Booking Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
@@ -191,7 +194,14 @@ export function ArtisanBookingsClient({ initialBookings }: { initialBookings: an
               )}
 
               {booking.status === "confirmed" && (
-                <div className="flex w-full sm:w-auto mt-auto">
+                <div className="flex w-full sm:w-auto mt-auto gap-2">
+                  <button
+                    onClick={() => handleStatusUpdate(booking.id, "completed")}
+                    disabled={processingId === booking.id}
+                    className="flex-1 sm:flex-none px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    Complete
+                  </button>
                   <button
                     onClick={() => handleMessageRenter(booking.renter_id)}
                     disabled={messagingId === booking.renter_id}

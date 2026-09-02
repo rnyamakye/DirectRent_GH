@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { MobileNav } from "@/components/mobile-nav";
 import { Toaster } from "react-hot-toast";
 import { PageTransition } from "@/components/page-transition";
+import { Suspense } from "react";
 import { NavigationLoader } from "@/components/navigation-loader";
 import { CookieConsent } from "@/components/cookie-consent";
 import { AdSidebar } from "@/components/ad-sidebar";
@@ -54,17 +55,17 @@ export default function RootLayout({
           <div className="flex-1 flex flex-row justify-center w-full max-w-[1920px] mx-auto relative">
             <AdSidebar side="left" />
             <div className="flex-1 flex flex-col min-h-screen relative max-w-full">
-              <PageTransition>
+              <Suspense><PageTransition>
                 {children}
                 {modal}
-              </PageTransition>
+              </PageTransition></Suspense>
             </div>
             <AdSidebar side="right" />
           </div>
           <AdHorizontalBanner />
           <Footer />
           <MobileNav />
-          <NavigationLoader />
+          <Suspense><NavigationLoader /></Suspense>
           <CookieConsent />
           <Toaster position="bottom-center" />
         </ThemeProvider>

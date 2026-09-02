@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/client";
 
 type Role = "renter" | "agent" | "artisan";
@@ -125,7 +126,7 @@ function RegisterFormInner() {
   return (
     <div className="w-full">
       <Link prefetch={false} href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
-        DirectRent<span className="text-primary"> GH</span>
+        <Logo className="h-8 w-auto" />
       </Link>
 
       <div className="mb-8 flex items-center gap-3">

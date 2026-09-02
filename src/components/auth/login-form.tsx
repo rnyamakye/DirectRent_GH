@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/client";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -82,7 +83,7 @@ function LoginFormInner() {
     <div className="w-full">
       <div className="mb-8">
         <Link prefetch={false} href="/" className="inline-flex lg:hidden mb-8 font-extrabold text-xl text-heading">
-          DirectRent<span className="text-primary"> GH</span>
+          <Logo className="h-8 w-auto" />
         </Link>
         <h1 className="text-3xl font-bold text-heading">Welcome back</h1>
         <p className="mt-2 text-sm text-body/70">

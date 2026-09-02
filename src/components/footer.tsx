@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/logo";
 
 const socialLinks = [
   {
@@ -238,7 +239,7 @@ export function Footer() {
               href="/"
               className="inline-block text-xl font-extrabold tracking-tight text-white transition hover:text-[#4ade80]"
             >
-              DirectRent<span className="text-[#4ade80]"> GH</span>
+              <Logo className="h-10 w-auto" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-white/50">
               Ghana&apos;s trusted platform for finding rooms, apartments, and

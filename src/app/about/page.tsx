@@ -23,7 +23,7 @@ export default async function AboutPage() {
   return (
     <div className="min-h-screen bg-canvas pb-24">
       {/* 1. Hero Section */}
-      <section className="relative w-full h-[60vh] min-h-screen flex items-center justify-center -mt-[76px] overflow-hidden">
+      <section className="relative w-full h-[60vh] min-h-screen flex items-center justify-center overflow-hidden">
         <Image
           src="/about/hero.png"
           alt="Modern Home in Ghana"

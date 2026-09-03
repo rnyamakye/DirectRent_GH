@@ -12,7 +12,7 @@ export function MarketingHome({ stats = { users: 0, listings: 0, artisans: 0 }, 
     return (
         <div>
             <main className="min-h-screen bg-canvas text-body">
-                <section className="relative flex min-h-screen items-center justify-center overflow-hidden -top-25">
+                <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
                     <div className="absolute inset-0">
                         <img
                             alt="Modern home exterior"

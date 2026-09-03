@@ -196,6 +196,7 @@ export default async function RenterDashboardPage() {
                   <img
                     src={profile.avatar_url}
                     alt={profile?.full_name ?? "Renter"}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                 ) : (

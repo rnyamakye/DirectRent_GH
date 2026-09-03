@@ -14,7 +14,8 @@ export async function POST(req: Request) {
     const { 
       title, description, price, landmark, property_type, 
       bedrooms, bathrooms, is_self_contained, has_shared_kitchen, 
-      has_shared_bathroom, status, photo_urls, city
+      has_shared_bathroom, status, photo_urls, city,
+      latitude, longitude
     } = body;
 
     // 1. Insert the new listing
@@ -33,7 +34,10 @@ export async function POST(req: Request) {
         has_shared_kitchen,
         has_shared_bathroom,
         status,
-        photo_urls
+        photo_urls,
+        city,
+        latitude,
+        longitude
       })
       .select()
       .single();

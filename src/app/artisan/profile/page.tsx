@@ -168,25 +168,36 @@ export default async function ArtisanProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
             <ThemePreferenceCard />
-            {SETTINGS_SECTIONS.map((section) => (
-              <Link prefetch={false}
-                key={section.href}
-                href={section.href}
-                className="group rounded-3xl border border-border bg-card p-6 flex flex-col gap-4 shadow-sm hover:shadow-md hover:border-heading/20 transition-all duration-200"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-mint flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                  {section.icon}
-                </div>
-                <div className="flex flex-col gap-1 flex-1">
-                  <h3 className="text-base font-bold text-heading group-hover:text-primary transition-colors">{section.title}</h3>
-                  <p className="text-sm text-body/70 leading-relaxed">{section.description}</p>
-                </div>
-                <div className="flex items-center gap-1 text-sm font-semibold text-body/50 group-hover:text-primary transition-colors mt-auto">
-                  Manage
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6" /></svg>
-                </div>
-              </Link>
-            ))}
+            {SETTINGS_SECTIONS.map((section) => {
+              const isVerification = section.title === "Identity verification";
+              return (
+                <Link prefetch={false}
+                  key={section.href}
+                  href={section.href}
+                  className={`group rounded-3xl border p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-200 ${
+                    isVerification
+                      ? "bg-amber-50/30 border-amber-200 hover:border-amber-400"
+                      : "border-border bg-card hover:border-heading/20"
+                  }`}
+                >
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-200 ${
+                    isVerification
+                      ? "bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white"
+                      : "bg-mint text-primary group-hover:bg-primary group-hover:text-white"
+                  }`}>
+                    {section.icon}
+                  </div>
+                  <div className="flex flex-col gap-1 flex-1">
+                    <h3 className="text-base font-bold text-heading group-hover:text-primary transition-colors">{section.title}</h3>
+                    <p className="text-sm text-body/70 leading-relaxed">{section.description}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-body/50 group-hover:text-primary transition-colors mt-auto">
+                    Manage
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6" /></svg>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 

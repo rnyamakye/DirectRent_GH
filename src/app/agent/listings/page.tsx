@@ -61,7 +61,12 @@ export default async function AgentListingsPage() {
                 key={listing.id}
                 className="group flex flex-row md:flex-col items-center md:items-stretch gap-4 md:gap-0 bg-card md:bg-transparent rounded-2xl border border-border md:border-none p-3 md:p-0 hover:shadow-md md:hover:shadow-none transition"
               >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-full md:h-auto md:aspect-square flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden bg-mint/50 border border-border md:border-none">
+                <Link 
+                  prefetch={false} 
+                  href={`/listings/${listing.id}`} 
+                  target="_blank"
+                  className="relative block w-24 h-24 sm:w-32 sm:h-32 md:w-full md:h-auto md:aspect-square flex-shrink-0 rounded-xl md:rounded-2xl overflow-hidden bg-mint/50 border border-border md:border-none"
+                >
                   {hasPhoto ? (
                     <img
                       src={listing.photo_urls[0]}
@@ -82,7 +87,7 @@ export default async function AgentListingsPage() {
                     }`}>
                     {listing.status}
                   </span>
-                </div>
+                </Link>
 
                 <div className="flex flex-col flex-1 min-w-0 md:mt-3">
                   <Link prefetch={false} href={`/listings/${listing.id}`} target="_blank" className="font-semibold text-heading truncate group-hover:text-primary transition-colors md:text-sm">

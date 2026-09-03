@@ -53,7 +53,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
   }
 
   return (
-    <main className="flex-1 w-full bg-canvas pb-20 -mt-28">
+    <main className="flex-1 w-full bg-canvas pb-20">
       {/* Premium Hero Section */}
       <section className="relative pt-40 pb-24 md:pt-48 md:pb-32 border-b border-border overflow-hidden">
         {/* Background Image & Overlay */}

@@ -139,14 +139,11 @@ export function Header({ className }: HeaderProps) {
     )}>
       <header
         className={twMerge(
-          "transition-all duration-300 border-border bg-card/95 backdrop-blur-md",
-          isScrolled
-            ? "mt-5 mx-auto max-w-6xl border rounded-full shadow-sm px-2"
-            : "mt-6 mx-auto max-w-6xl border-b rounded-full shadow-lg",
+          "transition-all duration-300 bg-card/95 backdrop-blur-md w-full",
           className
         )}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+        <div className="mx-auto flex h-[88px] max-w-6xl items-center justify-between px-5">
 
           {/* ── Left: Logo ── */}
           <div className="flex-1 flex items-center">
@@ -212,7 +209,7 @@ export function Header({ className }: HeaderProps) {
                   className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-500 text-white text-sm font-semibold overflow-hidden border border-border hover:ring-2 hover:ring-primary/50 transition-all"
                 >
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                    <img src={avatarUrl} alt="Profile" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
                   ) : initials ? (
                     <span>{initials}</span>
                   ) : (

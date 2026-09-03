@@ -15,7 +15,7 @@ type TourRequest = {
   tour_date: string;
   tour_time: string;
   tour_type: "physical" | "virtual";
-  status: "pending" | "confirmed" | "cancelled";
+  status: "pending" | "confirmed" | "cancelled" | "completed";
   created_at: string;
   renter: {
     id: string;
@@ -34,7 +34,7 @@ type TourRequest = {
 export default function ToursClient({ initialTours, currentUserId }: { initialTours: any[]; currentUserId: string }) {
   const supabase = createClient();
   const [tours, setTours] = useState<TourRequest[]>(initialTours);
-  const [activeTab, setActiveTab] = useState<"pending" | "confirmed" | "cancelled">("pending");
+  const [activeTab, setActiveTab] = useState<"pending" | "confirmed" | "cancelled" | "completed">("pending");
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const [contactTarget, setContactTarget] = useState<TourRequest | null>(null);
 
@@ -100,7 +100,7 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
     }
   };
 
-  const handleUpdateStatus = async (tourId: string, newStatus: "confirmed" | "cancelled") => {
+  const handleUpdateStatus = async (tourId: string, newStatus: "confirmed" | "cancelled" | "completed") => {
     setIsUpdating(tourId);
 
     const { error } = await supabase
@@ -112,7 +112,8 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
       console.error(error);
       toast.error(`Failed to ${newStatus === "confirmed" ? "accept" : "decline"} tour.`);
     } else {
-      toast.success(`Tour ${newStatus === "confirmed" ? "accepted" : "declined"} successfully.`);
+      const actionText = newStatus === "confirmed" ? "accepted" : newStatus === "completed" ? "completed" : "declined";
+      toast.success(`Tour ${actionText} successfully.`);
       setTours((prev) =>
         prev.map((t) => (t.id === tourId ? { ...t, status: newStatus } : t))
       );
@@ -124,6 +125,7 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
   const tabs = [
     { id: "pending", label: "Pending" },
     { id: "confirmed", label: "Confirmed" },
+    { id: "completed", label: "Completed" },
     { id: "cancelled", label: "Cancelled" },
   ] as const;
 
@@ -265,6 +267,27 @@ export default function ToursClient({ initialTours, currentUserId }: { initialTo
                   )}
 
                   {activeTab === "confirmed" && (
+                    <div className="flex gap-2 w-full md:w-auto mt-auto">
+                      <button
+                        disabled={isUpdating === tour.id}
+                        onClick={() => handleUpdateStatus(tour.id, "completed")}
+                        className="flex-1 md:flex-none px-4 py-2 rounded-xl font-semibold text-sm bg-blue-50 hover:bg-blue-100 text-blue-600 transition disabled:opacity-50"
+                      >
+                        {isUpdating === tour.id ? <Spinner className="w-4 h-4" /> : "Complete Tour"}
+                      </button>
+                      <button
+                        onClick={() => setContactTarget(tour)}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                        Contact Renter
+                      </button>
+                    </div>
+                  )}
+
+                  {activeTab === "completed" && (
                     <button
                       onClick={() => setContactTarget(tour)}
                       className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"

@@ -77,12 +77,8 @@ export default async function ListingDetailPage({
   }));
 
   const photos = listing.photo_urls || [];
-  const displayPhotos = [...photos];
-  while (displayPhotos.length < 5 && displayPhotos.length > 0) {
-    displayPhotos.push(displayPhotos[0]);
-  }
-
-  const hasPhotos = displayPhotos.length > 0;
+  const hasPhotos = photos.length > 0;
+  const isOwner = user?.id === listing.agent_id;
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-6">
@@ -94,9 +90,21 @@ export default async function ListingDetailPage({
         <h1 className="text-3xl sm:text-4xl font-bold text-heading">{listing.title}</h1>
         <div className="flex items-center gap-4 text-sm font-semibold underline text-heading">
           <ShareButton title={listing.title} />
-          <div className="flex items-center gap-2 hover:bg-slate-100 rounded-lg transition">
-            <SaveButton listingId={id} initialSaved={initialSaved} isLoggedIn={!!user} />
-          </div>
+          {!isOwner ? (
+            <div className="flex items-center gap-2 hover:bg-slate-100 rounded-lg transition">
+              <SaveButton listingId={id} initialSaved={initialSaved} isLoggedIn={!!user} />
+            </div>
+          ) : (
+            <Link prefetch={false}
+              href={`/agent/listings/${listing.id}/edit`}
+              className="flex items-center gap-2 hover:bg-slate-100 rounded-lg transition px-3 py-2 text-primary border border-primary/20"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-1.414a2 2 0 01.586-1.414z" />
+              </svg>
+              <span className="no-underline">Edit Listing</span>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -125,32 +133,56 @@ export default async function ListingDetailPage({
           </div>
 
           {/* Desktop Grid View */}
-          <div className="hidden sm:grid relative grid-cols-4 grid-rows-2 gap-2 h-[400px] sm:h-[500px] md:h-[60vh] min-h-[400px] rounded-2xl overflow-hidden group">
-            <div className="col-span-2 row-span-2 relative">
-              <Image
-                src={displayPhotos[0]}
-                alt={listing.title}
-                fill
-                sizes="(max-width: 640px) 100vw, 50vw"
-                className="object-cover hover:opacity-90 transition cursor-pointer"
-              />
-            </div>
-            <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[1]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
-            </div>
-            <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[2]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
-            </div>
-            <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[3]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
-            </div>
-            <div className="col-span-1 row-span-1 relative">
-              <Image src={displayPhotos[4]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
-              <button className="absolute bottom-4 right-4 bg-card border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
-                <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
-                Show all photos
-              </button>
-            </div>
+          <div className={`hidden sm:grid relative gap-2 h-[400px] sm:h-[500px] md:h-[60vh] min-h-[400px] rounded-2xl overflow-hidden group ${
+            photos.length === 1 ? 'grid-cols-1 grid-rows-1' :
+            photos.length === 2 ? 'grid-cols-2 grid-rows-1' :
+            photos.length === 3 ? 'grid-cols-3 grid-rows-2' :
+            photos.length === 4 ? 'grid-cols-2 grid-rows-2' :
+            'grid-cols-4 grid-rows-2'
+          }`}>
+            {photos.length > 0 && (
+              <div className={`relative ${
+                photos.length === 1 ? 'col-span-1 row-span-1' :
+                photos.length === 2 ? 'col-span-1 row-span-1' :
+                photos.length === 3 ? 'col-span-2 row-span-2' :
+                photos.length === 4 ? 'col-span-1 row-span-1' :
+                'col-span-2 row-span-2'
+              }`}>
+                <Image
+                  src={photos[0]}
+                  alt={listing.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  className="object-cover hover:opacity-90 transition cursor-pointer"
+                />
+              </div>
+            )}
+            {photos.length > 1 && (
+              <div className="col-span-1 row-span-1 relative">
+                <Image src={photos[1]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
+              </div>
+            )}
+            {photos.length > 2 && (
+              <div className="col-span-1 row-span-1 relative">
+                <Image src={photos[2]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
+              </div>
+            )}
+            {photos.length > 3 && (
+              <div className="col-span-1 row-span-1 relative">
+                <Image src={photos[3]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
+              </div>
+            )}
+            {photos.length > 4 && (
+              <div className="col-span-1 row-span-1 relative">
+                <Image src={photos[4]} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover hover:opacity-90 transition cursor-pointer" />
+                {photos.length > 5 && (
+                  <button className="absolute bottom-4 right-4 bg-card border border-heading px-4 py-1.5 rounded-lg text-sm font-semibold text-heading shadow-md hover:bg-slate-50 transition flex items-center gap-2">
+                    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentColor' }}><path d="M14.33 2.67h-3V1.33h3c.74 0 1.34.6 1.34 1.34v3h-1.34v-3zM2.67 2.67v3H1.33v-3c0-.74.6-1.34 1.34-1.34h3v1.34h-3zm11.66 10.66v-3h1.34v3c0 .74-.6 1.34-1.34 1.34h-3v-1.34h3zm-11.66 0h3v1.34h-3c-.74 0-1.34-.6-1.34-1.34v-3h1.34v3z"></path></svg>
+                    Show all photos
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -172,25 +204,29 @@ export default async function ListingDetailPage({
             </p>
           </div>
 
-          <hr className="border-border" />
+          {!isOwner && (
+            <>
+              <hr className="border-border" />
 
-          {/* Hosted By — now a real link to the agent's public profile */}
-          <Link prefetch={false}
-            href={`/agents/${listing.agent_id}`}
-            className="flex items-center gap-4 hover:opacity-80 transition"
-          >
-            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-border flex items-center justify-center text-heading font-bold text-lg">
-              {listing.profiles?.avatar_url ? (
-                <Image src={listing.profiles.avatar_url} alt={listing.profiles?.full_name ?? "Agent"} fill sizes="48px" className="object-cover" />
-              ) : (
-                <span>{(listing.profiles?.full_name ?? "Agent").charAt(0).toUpperCase()}</span>
-              )}
-            </div>
-            <div>
-              <h3 className="font-semibold text-heading text-lg">Hosted by {listing.profiles?.full_name ?? "Unknown"}</h3>
-              <p className="text-body text-sm underline">View profile</p>
-            </div>
-          </Link>
+              {/* Hosted By — now a real link to the agent's public profile */}
+              <Link prefetch={false}
+                href={`/agents/${listing.agent_id}`}
+                className="flex items-center gap-4 hover:opacity-80 transition"
+              >
+                <div className="relative w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-border flex items-center justify-center text-heading font-bold text-lg">
+                  {listing.profiles?.avatar_url ? (
+                    <Image src={listing.profiles.avatar_url} alt={listing.profiles?.full_name ?? "Agent"} fill sizes="48px" className="object-cover" />
+                  ) : (
+                    <span>{(listing.profiles?.full_name ?? "Agent").charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-heading text-lg">Hosted by {listing.profiles?.full_name ?? "Unknown"}</h3>
+                  <p className="text-body text-sm underline">View profile</p>
+                </div>
+              </Link>
+            </>
+          )}
 
           <hr className="border-border" />
 
@@ -248,19 +284,23 @@ export default async function ListingDetailPage({
             </div>
           </div>
 
-          <hr className="border-border" />
+          {!isOwner && (
+            <>
+              <hr className="border-border" />
 
-          <div>
-            <h3 className="text-xl font-semibold text-heading mb-4">Reviews</h3>
-            <ReviewsSection
-              targetType="listing"
-              targetId={listing.id}
-              targetName={listing.title}
-              initialReviews={reviews}
-              currentUserId={user?.id ?? null}
-              currentUserRole={user?.user_metadata?.role ?? null}
-            />
-          </div>
+              <div>
+                <h3 className="text-xl font-semibold text-heading mb-4">Reviews</h3>
+                <ReviewsSection
+                  targetType="listing"
+                  targetId={listing.id}
+                  targetName={listing.title}
+                  initialReviews={reviews}
+                  currentUserId={user?.id ?? null}
+                  currentUserRole={user?.user_metadata?.role ?? null}
+                />
+              </div>
+            </>
+          )}
 
         </div>
 
@@ -302,7 +342,7 @@ export default async function ListingDetailPage({
                 </a>
               </div>
             ) : (
-              <div className="rounded-xl border border-border bg-slate-50 aspect-[4/3] flex items-center justify-center text-slate-300">
+                <div className="rounded-xl border border-border bg-slate-50 aspect-[4/3] flex items-center justify-center text-slate-300">
                 <div className="text-center">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10 mx-auto mb-2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -313,20 +353,24 @@ export default async function ListingDetailPage({
               </div>
             )}
 
-            <ContactAgentButton
-              agentId={listing.agent_id}
-              email={listing.profiles?.email ?? null}
-              phone={listing.profiles?.phone ?? null}
-              listingId={listing.id}
-              listingTitle={listing.title}
-              existingTour={existingTour}
-            />
-            <RequestTourButton
-              listingId={listing.id}
-              agentId={listing.agent_id}
-              existingTour={existingTour}
-            />
-            <p className="text-center text-sm text-body/70 mt-3">You won't be charged yet</p>
+            {!isOwner && (
+              <>
+                <ContactAgentButton
+                  agentId={listing.agent_id}
+                  email={listing.profiles?.email ?? null}
+                  phone={listing.profiles?.phone ?? null}
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                  existingTour={existingTour}
+                />
+                <RequestTourButton
+                  listingId={listing.id}
+                  agentId={listing.agent_id}
+                  existingTour={existingTour}
+                />
+                <p className="text-center text-sm text-body/70 mt-3">You won't be charged yet</p>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ import { AdMobileBanner } from "@/components/ad-mobile-banner";
 import { AdHorizontalBanner } from "@/components/ad-horizontal-banner";
 import { AdSenseScript } from "@/components/ad-unit";
 import { ThemeProvider } from "@/components/theme-provider";
+import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -32,13 +33,17 @@ export const metadata: Metadata = {
   description: "Find rental rooms and trusted local artisans across Ghana.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   modal,
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isLoggedIn = !!user;
+
   return (
     <html
       lang="en"
@@ -46,23 +51,23 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <AdSenseScript />
+        {isLoggedIn && <AdSenseScript />}
       </head>
       <body className="min-h-full flex flex-col bg-canvas text-body font-sans pb-16 md:pb-0" suppressHydrationWarning>
         <ThemeProvider>
           <Header className="" />
-          <AdMobileBanner />
+          {isLoggedIn && <AdMobileBanner />}
           <div className="flex-1 flex flex-row justify-center w-full max-w-[1920px] mx-auto relative">
-            <AdSidebar side="left" />
+            {isLoggedIn && <AdSidebar side="left" />}
             <div className="flex-1 flex flex-col min-h-screen relative max-w-full">
               <Suspense><PageTransition>
                 {children}
                 {modal}
               </PageTransition></Suspense>
             </div>
-            <AdSidebar side="right" />
+            {isLoggedIn && <AdSidebar side="right" />}
           </div>
-          <AdHorizontalBanner />
+          {isLoggedIn && <AdHorizontalBanner />}
           <Footer />
           <MobileNav />
           <Suspense><NavigationLoader /></Suspense>

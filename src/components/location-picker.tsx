@@ -55,8 +55,72 @@ export default function LocationPicker({
     onChange: (lat: number, lng: number) => void;
 }) {
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     const initialCenter: [number, number] = [5.6037, -0.187];
+
+    const handleSearch = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            return;
+        }
+        setIsSearching(true);
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=gh`);
+            const data = await res.json();
+            setSearchResults(data);
+        } catch (e) {
+            console.error("Search failed:", e);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const handleSelectLocation = (lat: string, lon: string) => {
+        const parsedLat = parseFloat(lat);
+        const parsedLon = parseFloat(lon);
+        onChange(parsedLat, parsedLon);
+        setSearchResults([]);
+        setSearchQuery("");
+    };
+
+    const SearchUI = (
+        <div className="relative w-full">
+            <form onSubmit={handleSearch} className="flex gap-2">
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for a location..."
+                    className="flex-1 rounded-xl border border-border bg-white px-4 py-2 text-sm text-heading focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <button
+                    type="submit"
+                    disabled={isSearching}
+                    className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-xl text-sm font-bold transition disabled:opacity-70"
+                >
+                    {isSearching ? "Searching..." : "Search"}
+                </button>
+            </form>
+            {searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-border max-h-60 overflow-y-auto z-[500]">
+                    {searchResults.map((result, i) => (
+                        <button
+                            key={i}
+                            type="button"
+                            onClick={() => handleSelectLocation(result.lat, result.lon)}
+                            className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-border/50 last:border-0 text-sm text-heading transition"
+                        >
+                            {result.display_name}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 
     const mapContent = (
         <>
@@ -74,10 +138,13 @@ export default function LocationPicker({
     // Fullscreen overlay
     if (isFullscreen) {
         return (
-            <div className="fixed inset-0 z-[300] bg-black">
+            <div className="fixed inset-0 z-[300] bg-black flex flex-col">
                 {/* Header bar */}
-                <div className="absolute top-0 left-0 right-0 z-[301] flex items-center justify-between px-4 py-3 bg-black/70 backdrop-blur-sm">
-                    <span className="text-white text-sm font-semibold">📍 Tap to pin your location</span>
+                <div className="flex-shrink-0 z-[301] flex items-center justify-between px-4 py-3 bg-black/70 backdrop-blur-sm gap-4">
+                    <div className="flex-1 max-w-sm">
+                        {SearchUI}
+                    </div>
+                    <span className="text-white text-sm font-semibold hidden md:inline">📍 Tap to pin your location</span>
                     <button
                         type="button"
                         onClick={() => setIsFullscreen(false)}
@@ -91,9 +158,11 @@ export default function LocationPicker({
                 </div>
 
                 {/* Full-page map */}
-                <MapContainer center={initialCenter} zoom={7} className="h-full w-full" zoomControl={false}>
-                    {mapContent}
-                </MapContainer>
+                <div className="flex-1 relative">
+                    <MapContainer center={initialCenter} zoom={7} className="h-full w-full" zoomControl={false}>
+                        {mapContent}
+                    </MapContainer>
+                </div>
 
                 {/* Zoom controls repositioned to bottom-right */}
                 {latitude != null && longitude != null && (
@@ -107,22 +176,27 @@ export default function LocationPicker({
 
     // Normal inline map with fullscreen button overlay
     return (
-        <div className="relative rounded-xl overflow-hidden border border-border h-64">
-            <MapContainer center={initialCenter} zoom={7} className="h-full w-full">
-                {mapContent}
-            </MapContainer>
+        <div className="flex flex-col gap-3">
+            <div className="z-[10]">
+                {SearchUI}
+            </div>
+            <div className="relative rounded-xl overflow-hidden border border-border h-64 z-0">
+                <MapContainer center={initialCenter} zoom={7} className="h-full w-full">
+                    {mapContent}
+                </MapContainer>
 
-            {/* Fullscreen toggle button */}
-            <button
-                type="button"
-                onClick={() => setIsFullscreen(true)}
-                title="Expand map"
-                className="absolute top-2 right-2 z-[400] bg-card text-heading rounded-lg p-1.5 shadow-md hover:bg-slate-50 transition border border-border/50"
-            >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            </button>
+                {/* Fullscreen toggle button */}
+                <button
+                    type="button"
+                    onClick={() => setIsFullscreen(true)}
+                    title="Expand map"
+                    className="absolute top-2 right-2 z-[400] bg-card text-heading rounded-lg p-1.5 shadow-md hover:bg-slate-50 transition border border-border/50"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </button>
+            </div>
         </div>
     );
 }

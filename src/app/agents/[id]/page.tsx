@@ -109,9 +109,15 @@ export default async function AgentProfilePage({
                         </div>
 
                         <h1 className="text-3xl font-extrabold text-heading mt-5">{displayName}</h1>
-                        <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-2">
-                            🏆 <span className="uppercase tracking-widest text-[#E61E4D]">Superagent</span>
-                        </div>
+                        {listings.length > 10 ? (
+                            <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-2">
+                                🏆 <span className="uppercase tracking-widest text-[#E61E4D]">Superagent</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-1 font-bold text-sm text-heading mt-1 mb-2">
+                                <span className="uppercase tracking-widest text-primary">Agent</span>
+                            </div>
+                        )}
                         <ContactAgentButton agentId={id} email={agent.email} />
 
                         <div className="flex w-full divide-x divide-border border-t border-border pt-6">

@@ -21,6 +21,7 @@ export default function SelectRolePage() {
     const [occupation, setOccupation] = useState("");
     const [bio, setBio] = useState("");
     const [interests, setInterests] = useState(""); // Comma separated
+    const [languages, setLanguages] = useState(""); // Comma separated
 
     useEffect(() => {
         async function check() {
@@ -30,7 +31,7 @@ export default function SelectRolePage() {
             } = await supabase.auth.getUser();
 
             if (!user) {
-                router.push("/auth/login");
+                router.replace("/auth/login");
                 return;
             }
 
@@ -41,7 +42,7 @@ export default function SelectRolePage() {
                 .single();
 
             if (profile?.role) {
-                router.push(`/${profile.role}/dashboard`);
+                router.replace(`/${profile.role}/dashboard`);
                 return;
             }
 
@@ -89,8 +90,12 @@ export default function SelectRolePage() {
             if (location.trim()) updates.location = location.trim();
             if (occupation.trim()) updates.occupation = occupation.trim();
             if (bio.trim()) updates.bio = bio.trim();
-            if (interests.trim()) {
-                updates.interests = interests.split(",").map(i => i.trim()).filter(i => i);
+            if (selectedRole === 'agent') {
+                if (languages.trim()) updates.languages = languages.trim();
+            } else {
+                if (interests.trim()) {
+                    updates.interests = interests.split(",").map(i => i.trim()).filter(i => i);
+                }
             }
         }
 
@@ -106,7 +111,7 @@ export default function SelectRolePage() {
             return;
         }
 
-        router.push(`/${selectedRole}/dashboard`);
+        router.replace(`/${selectedRole}/dashboard`);
     }
 
     if (checking) {
@@ -209,18 +214,33 @@ export default function SelectRolePage() {
                                 />
                             </div>
 
-                            <div>
-                                <label className="font-supporting text-xs text-body mb-1 block">
-                                    Interests (comma separated)
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Reading, Hiking, Coding"
-                                    value={interests}
-                                    onChange={(e) => setInterests(e.target.value)}
-                                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-                                />
-                            </div>
+                            {selectedRole === "agent" ? (
+                                <div>
+                                    <label className="font-supporting text-xs text-body mb-1 block">
+                                        Languages spoken (comma separated)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. English, Twi, Ga"
+                                        value={languages}
+                                        onChange={(e) => setLanguages(e.target.value)}
+                                        className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                    />
+                                </div>
+                            ) : (
+                                <div>
+                                    <label className="font-supporting text-xs text-body mb-1 block">
+                                        Interests (comma separated)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Reading, Hiking, Coding"
+                                        value={interests}
+                                        onChange={(e) => setInterests(e.target.value)}
+                                        className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
+                                    />
+                                </div>
+                            )}
 
                             <div>
                                 <label className="font-supporting text-xs text-body mb-1 block">

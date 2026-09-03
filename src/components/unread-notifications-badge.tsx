@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export function UnreadNotificationsBadge() {
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
+
+  const fetchCount = useCallback(async (userId: string) => {
+    const { count, error } = await supabase
+      .from("in_app_notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("is_read", false);
+
+    if (!error && count !== null) {
+      setUnreadCount(count);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     let channel: any;
@@ -14,38 +26,18 @@ export function UnreadNotificationsBadge() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch initial unread count
-      const { count, error } = await supabase
-        .from("in_app_notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
+      // Fetch initial count
+      await fetchCount(user.id);
 
-      if (!error && count !== null) {
-        setUnreadCount(count);
-      }
-
-      // Subscribe to changes in in_app_notifications table
+      // Re-fetch the true count from DB on every change — avoids increment/decrement
+      // race conditions when both mobile badge and desktop bell are mounted together.
       channel = supabase
-        .channel(`unread-notifications-mobile-${Math.random().toString(36).substring(2)}`)
+        .channel(`unread-notifications-badge-${user.id}`)
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'in_app_notifications', filter: `user_id=eq.${user.id}` },
-          (payload) => {
-            if (payload.eventType === 'INSERT') {
-              const newNotif = payload.new as any;
-              if (!newNotif.is_read) {
-                setUnreadCount((prev) => prev + 1);
-              }
-            } else if (payload.eventType === 'UPDATE') {
-              const oldNotif = payload.old as any;
-              const newNotif = payload.new as any;
-              if (!oldNotif.is_read && newNotif.is_read) {
-                setUnreadCount((prev) => Math.max(0, prev - 1));
-              } else if (oldNotif.is_read && !newNotif.is_read) {
-                setUnreadCount((prev) => prev + 1);
-              }
-            }
+          () => {
+            fetchCount(user.id);
           }
         )
         .subscribe();
@@ -58,7 +50,7 @@ export function UnreadNotificationsBadge() {
         supabase.removeChannel(channel);
       }
     };
-  }, [supabase]);
+  }, [supabase, fetchCount]);
 
   if (unreadCount === 0) return null;
 

@@ -1,57 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { playNotificationAlert } from "@/lib/audio";
 
 export function UnreadMessagesBadge() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const [userId, setUserId] = useState<string | null>(null);
   const supabase = createClient();
+
+  const fetchCount = useCallback(async (userId: string) => {
+    const { count, error } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .is("read_at", null)
+      .neq("sender_id", userId);
+
+    if (!error && count !== null) {
+      setUnreadCount(count);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     let channel: any;
+    let currentUserId: string | null = null;
 
     const setup = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      
-      setUserId(user.id);
 
-      // Fetch initial unread count
-      // RLS ensures they only see messages in conversations they are a part of
-      const { count, error } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .is("read_at", null)
-        .neq("sender_id", user.id);
+      currentUserId = user.id;
 
-      if (!error && count !== null) {
-        setUnreadCount(count);
-      }
+      // Fetch initial count
+      await fetchCount(user.id);
 
-      // Subscribe to changes in messages table
+      // Re-fetch actual count from DB on every change — avoids double-counting
+      // when both the mobile badge and header badge are mounted simultaneously.
       channel = supabase
-        .channel(`unread-messages-${Math.random().toString(36).substring(2)}`)
+        .channel(`unread-messages-badge-${user.id}`)
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'messages' },
           (payload) => {
+            // Only play alert for new incoming unread messages
             if (payload.eventType === 'INSERT') {
               const newMsg = payload.new as any;
-              // If someone else sent a message and it's unread
-              if (newMsg.sender_id !== user.id && !newMsg.read_at) {
-                setUnreadCount((prev) => prev + 1);
+              if (newMsg.sender_id !== currentUserId && !newMsg.read_at) {
                 playNotificationAlert();
               }
-            } else if (payload.eventType === 'UPDATE') {
-              const oldMsg = payload.old as any;
-              const newMsg = payload.new as any;
-              // If it changed from unread to read
-              if (newMsg.sender_id !== user.id && !oldMsg.read_at && newMsg.read_at) {
-                setUnreadCount((prev) => Math.max(0, prev - 1));
-              }
             }
+            // Always refetch the true count from DB
+            if (currentUserId) fetchCount(currentUserId);
           }
         )
         .subscribe();
@@ -64,7 +62,7 @@ export function UnreadMessagesBadge() {
         supabase.removeChannel(channel);
       }
     };
-  }, []);
+  }, [supabase, fetchCount]);
 
   if (unreadCount === 0) return null;
 

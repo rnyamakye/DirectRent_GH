@@ -54,6 +54,21 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(dashboardUrl);
     }
 
+    // If a logged-in user with no role lands on the homepage, redirect them
+    // to select-role immediately — prevents the marketing page flashing.
+    const isHomepage = request.nextUrl.pathname === "/";
+    if (isHomepage && user) {
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
+
+        if (!profile?.role) {
+            return NextResponse.redirect(new URL("/auth/select-role", request.url));
+        }
+    }
+
     // Route protection, per the Page Layout & Routing Guide: everything
     // under /renter/, /agent/, /artisan/ requires a signed-in user.
 

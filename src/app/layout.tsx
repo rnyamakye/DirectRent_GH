@@ -11,6 +11,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { AdSidebar } from "@/components/ad-sidebar";
 import { AdMobileBanner } from "@/components/ad-mobile-banner";
 import { AdHorizontalBanner } from "@/components/ad-horizontal-banner";
+import { AdFooterBanner } from "@/components/ad-footer-banner";
 import { AdSenseScript } from "@/components/ad-unit";
 import { ThemeProvider } from "@/components/theme-provider";
 import { createClient } from "@/lib/supabase/server";
@@ -68,6 +69,7 @@ export default async function RootLayout({
             {isLoggedIn && <AdSidebar side="right" />}
           </div>
           {isLoggedIn && <AdHorizontalBanner />}
+          {isLoggedIn && <AdFooterBanner />}
           <Footer />
           <MobileNav />
           <Suspense><NavigationLoader /></Suspense>

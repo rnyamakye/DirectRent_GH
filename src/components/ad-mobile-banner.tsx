@@ -92,7 +92,7 @@ export function AdMobileBanner() {
             setShowOnScroll(true);
           }
         }}
-        className={`absolute right-6 -bottom-8 w-12 h-8 shrink-0 flex items-center justify-center rounded-b-xl bg-slate-50 border border-t-0 border-border/50 text-slate-600 hover:bg-slate-200 transition-all shadow-md z-10`}
+        className={`absolute right-6 -bottom-8 w-12 h-8 shrink-0 flex items-center justify-center rounded-none bg-slate-50 border border-t-0 border-border/50 text-slate-600 hover:bg-slate-200 transition-all shadow-md z-10`}
         aria-label={isExpanded ? "Collapse advertisement" : "Expand advertisement"}
       >
         {isExpanded ? (

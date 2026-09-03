@@ -217,7 +217,7 @@ export default function SelectRolePage() {
                             {selectedRole === "agent" ? (
                                 <div>
                                     <label className="font-supporting text-xs text-body mb-1 block">
-                                        Languages spoken (comma separated)
+                                        Languages spoken <span className="text-body/50">(optional, comma separated)</span>
                                     </label>
                                     <input
                                         type="text"
@@ -230,7 +230,7 @@ export default function SelectRolePage() {
                             ) : (
                                 <div>
                                     <label className="font-supporting text-xs text-body mb-1 block">
-                                        Interests (comma separated)
+                                        Interests <span className="text-body/50">(optional, comma separated)</span>
                                     </label>
                                     <input
                                         type="text"

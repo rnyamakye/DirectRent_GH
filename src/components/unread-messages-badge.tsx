@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { playNotificationAlert } from "@/lib/audio";
 
 export function UnreadMessagesBadge() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const supabase = createClient();
-
-  const fetchCount = useCallback(async (userId: string) => {
-    const { count, error } = await supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .is("read_at", null)
-      .neq("sender_id", userId);
-
-    if (!error && count !== null) {
-      setUnreadCount(count);
-    }
-  }, [supabase]);
+  // Use a ref so the client instance is stable across renders and
+  // never causes useEffect / useCallback to re-fire.
+  const supabaseRef = useRef(createClient());
 
   useEffect(() => {
-    let channel: any;
+    const supabase = supabaseRef.current;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
     let currentUserId: string | null = null;
+
+    const fetchCount = async (userId: string) => {
+      const { count, error } = await supabase
+        .from("messages")
+        .select("*", { count: "exact", head: true })
+        .is("read_at", null)
+        .neq("sender_id", userId);
+
+      if (!error && count !== null) {
+        setUnreadCount(count);
+      }
+    };
 
     const setup = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -33,23 +35,22 @@ export function UnreadMessagesBadge() {
       // Fetch initial count
       await fetchCount(user.id);
 
-      // Re-fetch actual count from DB on every change — avoids double-counting
-      // when both the mobile badge and header badge are mounted simultaneously.
+      // Subscribe once — re-fetch true count on every change.
       channel = supabase
         .channel(`unread-messages-badge-${user.id}`)
         .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'messages' },
-          (payload) => {
-            // Only play alert for new incoming unread messages
-            if (payload.eventType === 'INSERT') {
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages" },
+          async (payload) => {
+            // Play alert only for new unread messages from others
+            if (payload.eventType === "INSERT") {
               const newMsg = payload.new as any;
               if (newMsg.sender_id !== currentUserId && !newMsg.read_at) {
+                const { playNotificationAlert } = await import("@/lib/audio");
                 playNotificationAlert();
               }
             }
-            // Always refetch the true count from DB
-            if (currentUserId) fetchCount(currentUserId);
+            if (currentUserId) await fetchCount(currentUserId);
           }
         )
         .subscribe();
@@ -60,15 +61,16 @@ export function UnreadMessagesBadge() {
     return () => {
       if (channel) {
         supabase.removeChannel(channel);
+        channel = null;
       }
     };
-  }, [supabase, fetchCount]);
+  }, []); // Empty deps — supabase client is stable via ref
 
   if (unreadCount === 0) return null;
 
   return (
     <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white shadow-sm ring-1 ring-white">
-      {unreadCount > 99 ? '99+' : unreadCount}
+      {unreadCount > 99 ? "99+" : unreadCount}
     </span>
   );
 }

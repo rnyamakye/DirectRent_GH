@@ -49,10 +49,12 @@ export default function LocationPicker({
     latitude,
     longitude,
     onChange,
+    hideSearch = false,
 }: {
     latitude: number | null;
     longitude: number | null;
     onChange: (lat: number, lng: number) => void;
+    hideSearch?: boolean;
 }) {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -177,9 +179,11 @@ export default function LocationPicker({
     // Normal inline map with fullscreen button overlay
     return (
         <div className="flex flex-col gap-3">
-            <div className="z-[10]">
-                {SearchUI}
-            </div>
+            {!hideSearch && (
+                <div className="z-[10]">
+                    {SearchUI}
+                </div>
+            )}
             <div className="relative rounded-xl overflow-hidden border border-border h-64 z-0">
                 <MapContainer center={initialCenter} zoom={7} className="h-full w-full">
                     {mapContent}

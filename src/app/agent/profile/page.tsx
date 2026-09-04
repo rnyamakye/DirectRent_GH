@@ -143,6 +143,36 @@ export default async function AgentProfilePage() {
             </div>
           </div>
 
+          {/* Personal Details Card */}
+          {(profile?.phone || profile?.location || profile?.languages || profile?.bio) && (
+            <div className="rounded-3xl border border-border bg-card p-6 flex flex-col gap-3.5 shadow-sm text-sm">
+              <h3 className="font-bold text-heading text-base border-b border-border pb-2.5">Personal Details</h3>
+              {profile?.phone && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">📞</span>
+                  <span className="text-body font-medium">{profile.phone}</span>
+                </div>
+              )}
+              {profile?.location && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">📍</span>
+                  <span className="text-body font-medium">{profile.location}</span>
+                </div>
+              )}
+              {profile?.languages && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">🌍</span>
+                  <span className="text-body font-medium">{profile.languages}</span>
+                </div>
+              )}
+              {profile?.bio && (
+                <p className="text-body/80 pt-2 italic text-xs leading-relaxed border-t border-border/50">
+                  &ldquo;{profile.bio}&rdquo;
+                </p>
+              )}
+            </div>
+          )}
+
           <ProfileCompletenessCard
             completenessPercent={completenessPercent}
             role="agent"

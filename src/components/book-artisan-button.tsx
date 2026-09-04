@@ -488,6 +488,7 @@ export function BookArtisanButton({ artisanId, artisanName, artisanPhone, existi
                   latitude={lat}
                   longitude={lng}
                   onChange={handleMapPick}
+                  hideSearch={true}
                 />
 
                 {/* Resolved address confirmation */}

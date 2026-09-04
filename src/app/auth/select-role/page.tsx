@@ -90,12 +90,9 @@ export default function SelectRolePage() {
             if (location.trim()) updates.location = location.trim();
             if (occupation.trim()) updates.occupation = occupation.trim();
             if (bio.trim()) updates.bio = bio.trim();
-            if (selectedRole === 'agent') {
-                if (languages.trim()) updates.languages = languages.trim();
-            } else {
-                if (interests.trim()) {
-                    updates.interests = interests.split(",").map(i => i.trim()).filter(i => i);
-                }
+            if (languages.trim()) updates.languages = languages.trim();
+            if (interests.trim()) {
+                updates.interests = interests.split(",").map(i => i.trim()).filter(i => i);
             }
         }
 
@@ -103,6 +100,16 @@ export default function SelectRolePage() {
             .from("profiles")
             .update(updates)
             .eq("id", user.id);
+
+        if (selectedRole === "artisan") {
+            await supabase.from("artisan_profiles").upsert({
+                id: user.id,
+                phone: phone.trim() || null,
+                service_area: location.trim() || null,
+                bio: bio.trim() || null,
+                trade: occupation.trim() || "Artisan",
+            });
+        }
 
         setSaving(false);
 

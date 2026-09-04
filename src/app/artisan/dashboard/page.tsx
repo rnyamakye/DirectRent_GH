@@ -42,7 +42,7 @@ export default async function ArtisanDashboardPage() {
     `).eq("artisan_id", user.id).order("created_at", { ascending: false }).limit(4)
   ]);
 
-  let bookings = rawBookings || [];
+  const bookings = rawBookings || [];
   if (bookings.length > 0) {
     const renterIds = [...new Set(bookings.map((b) => b.renter_id))];
     const { data: profiles } = await supabase

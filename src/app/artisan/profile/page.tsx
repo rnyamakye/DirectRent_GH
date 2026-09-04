@@ -83,7 +83,7 @@ export default async function ArtisanProfilePage() {
     { data: kycRequest },
     { data: artisanProfile },
   ] = await Promise.all([
-    supabase.from("profiles").select("full_name, avatar_url, is_verified").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, avatar_url, is_verified, phone, location, bio, languages, interests").eq("id", user.id).single(),
     supabase.from("verification_requests").select("status, notes").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     supabase.from("artisan_profiles").select("*").eq("id", user.id).single(),
   ]);
@@ -152,6 +152,48 @@ export default async function ArtisanProfilePage() {
               </Link>
             </div>
           </div>
+
+          {/* Personal Details Card */}
+          {(profile?.phone || profile?.location || profile?.bio || (profile?.interests && profile.interests.length > 0)) && (
+            <div className="rounded-3xl border border-border bg-card p-6 flex flex-col gap-3.5 shadow-sm text-sm">
+              <h3 className="font-bold text-heading text-base border-b border-border pb-2.5">Personal Details</h3>
+              {profile?.phone && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">📞</span>
+                  <span className="text-body font-medium">{profile.phone}</span>
+                </div>
+              )}
+              {profile?.location && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">📍</span>
+                  <span className="text-body font-medium">{profile.location}</span>
+                </div>
+              )}
+              {profile?.languages && (
+                <div className="flex items-center gap-3">
+                  <span className="text-base">🌍</span>
+                  <span className="text-body font-medium">{profile.languages}</span>
+                </div>
+              )}
+              {profile?.interests && profile.interests.length > 0 && (
+                <div className="flex flex-col gap-1.5 pt-1">
+                  <span className="text-xs font-semibold text-body/60 uppercase tracking-wider">Interests</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.interests.map((interest: string) => (
+                      <span key={interest} className="px-2.5 py-1 rounded-full text-xs font-semibold bg-mint/50 text-primary border border-mint">
+                        {interest}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profile?.bio && (
+                <p className="text-body/80 pt-2 italic text-xs leading-relaxed border-t border-border/50">
+                  &ldquo;{profile.bio}&rdquo;
+                </p>
+              )}
+            </div>
+          )}
 
           <ProfileCompletenessCard
             completenessPercent={completenessPercent}
